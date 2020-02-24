@@ -101,7 +101,7 @@ namespace LH.Collections
         }
 
         /// <summary>
-        /// 每生成一组集合后调用回调函数，输出组合的集合。
+        /// 每生成一组集合后调用回调函数。
         /// </summary>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
@@ -261,7 +261,7 @@ namespace LH.Collections
         }
 
         /// <summary>
-        /// 每生成一组集合后调用回调函数，输出排列的集合。
+        /// 每生成一组集合后调用回调函数。
         /// </summary>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
