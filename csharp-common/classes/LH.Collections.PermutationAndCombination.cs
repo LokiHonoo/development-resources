@@ -42,6 +42,7 @@ namespace LH.Collections
         /// </summary>
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
+        /// <exception cref="Exception" />
         public Combination(T[] array, int m)
         {
             if (array.Length == 0)
@@ -61,6 +62,7 @@ namespace LH.Collections
         /// </summary>
         /// <param name="array">元素数组切片。</param>
         /// <param name="m">指定选择的元素数量。</param>
+        /// <exception cref="Exception" />
         public Combination(ArraySegment<T> array, int m)
         {
             if (array.Count == 0)
@@ -88,6 +90,7 @@ namespace LH.Collections
         /// 输出组合的集合。
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="Exception" />
         public List<T[]> Output()
         {
             BigInteger count = GetCount();
@@ -202,6 +205,7 @@ namespace LH.Collections
         /// </summary>
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
+        /// <exception cref="Exception" />
         public Permutation(T[] array, int m)
         {
             if (array.Length == 0)
@@ -221,6 +225,7 @@ namespace LH.Collections
         /// </summary>
         /// <param name="array">元素数组切片。</param>
         /// <param name="m">指定选择的元素数量。</param>
+        /// <exception cref="Exception" />
         public Permutation(ArraySegment<T> array, int m)
         {
             if (array.Count == 0)
@@ -248,6 +253,7 @@ namespace LH.Collections
         /// 输出排列的集合。
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="Exception" />
         public List<T[]> Output()
         {
             BigInteger count = GetCount();

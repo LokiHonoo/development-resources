@@ -562,6 +562,7 @@ namespace LH.CottonInspection
         /// <param name="rd">反射率。Lab 值中的 L。</param>
         /// <param name="b">黄色深度。Lab 值中的 b。</param>
         /// <returns></returns>
+        /// <exception cref="Exception" />
         public static byte GetGrade(double rd, double b)
         {
             b = Math.Round(b, 1);
@@ -584,6 +585,7 @@ namespace LH.CottonInspection
         /// </summary>
         /// <param name="value">颜色级的值。</param>
         /// <returns></returns>
+        /// <exception cref="Exception" />
         public static string GetName(byte value)
         {
             switch (value)

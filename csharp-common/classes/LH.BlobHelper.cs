@@ -25,12 +25,25 @@ namespace LH
         /// </summary>
         /// <param name="bytes">使用 GZip 压缩过的字节数组。</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202")]
         public static byte[] Decompress(byte[] bytes)
+        {
+            return Decompress(bytes, 0, bytes.Length);
+        }
+
+        /// <summary>
+        /// 使用 GZip 解压缩字节数组。
+        /// </summary>
+        /// <param name="bytes">使用 GZip 压缩过的字节数组。</param>
+        /// <param name="offset">字节数组的偏移量。</param>
+        /// <param name="count">要解压的字节个数。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        public static byte[] Decompress(byte[] bytes, int offset, int count)
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                using (GZipStream gzip = new GZipStream(new MemoryStream(bytes), CompressionMode.Decompress))
+                using (GZipStream gzip = new GZipStream(new MemoryStream(bytes, offset, count), CompressionMode.Decompress))
                 {
                     gzip.CopyTo(ms);
                 }
@@ -55,7 +68,8 @@ namespace LH
         /// <param name="offset">字节数组的偏移量。</param>
         /// <param name="count">要压缩的字节个数。</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202")]
+        /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         internal static byte[] Compress(byte[] bytes, int offset, int count)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -77,6 +91,7 @@ namespace LH
         /// </summary>
         /// <param name="hex">无分隔符的十六进制字符串。</param>
         /// <returns></returns>
+        /// <exception cref="Exception" />
         public static byte[] GetHexBytes(string hex)
         {
             byte[] result = new byte[hex.Length / 2];
@@ -93,6 +108,7 @@ namespace LH
         /// <param name="hex">十六进制字符串。</param>
         /// <param name="remove">要移除的分隔符。</param>
         /// <returns></returns>
+        /// <exception cref="Exception" />
         public static byte[] GetHexBytes(string hex, string remove)
         {
             return GetHexBytes(hex.Replace(remove, string.Empty));
