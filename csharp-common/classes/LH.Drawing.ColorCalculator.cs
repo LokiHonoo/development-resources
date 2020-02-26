@@ -925,6 +925,7 @@ namespace LH.Drawing
         /// <param name="observer">观测角度。</param>
         /// <param name="model">RGB 模型。</param>
         /// <param name="adaptation">调整器。</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
         public Reference(Illuminant illuminant, Observer observer, RGBModel model, Adaptation adaptation)
         {
             this.Illuminant = illuminant;

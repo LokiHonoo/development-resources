@@ -43,9 +43,10 @@ namespace LH.Collections
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public Combination(T[] array, int m)
         {
-            if (array.Length == 0)
+            if (array is null || array.Length == 0)
             {
                 throw new Exception("元素数组不能是空数组。");
             }
@@ -63,6 +64,7 @@ namespace LH.Collections
         /// <param name="array">元素数组切片。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public Combination(ArraySegment<T> array, int m)
         {
             if (array.Count == 0)
@@ -91,6 +93,7 @@ namespace LH.Collections
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public List<T[]> Output()
         {
             BigInteger count = GetCount();
@@ -206,9 +209,10 @@ namespace LH.Collections
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public Permutation(T[] array, int m)
         {
-            if (array.Length == 0)
+            if (array is null || array.Length == 0)
             {
                 throw new Exception("元素数组不能是空数组。");
             }
@@ -226,6 +230,7 @@ namespace LH.Collections
         /// <param name="array">元素数组切片。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public Permutation(ArraySegment<T> array, int m)
         {
             if (array.Count == 0)
@@ -254,6 +259,7 @@ namespace LH.Collections
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public List<T[]> Output()
         {
             BigInteger count = GetCount();

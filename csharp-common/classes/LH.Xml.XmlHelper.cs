@@ -41,6 +41,10 @@ namespace LH.Xml
         /// <returns></returns>
         public static string GetFormattedString(XmlDocument doc, XmlWriterSettings settings)
         {
+            if (doc is null)
+            {
+                throw new ArgumentNullException(nameof(doc));
+            }
             StringBuilder sb = new StringBuilder();
             using (XmlWriter writer = XmlWriter.Create(sb, settings))
             {
@@ -66,8 +70,13 @@ namespace LH.Xml
         /// <param name="path">保存的文件路径。</param>
         /// <param name="doc">XmlDocument 文档。</param>
         /// <param name="settings">格式化设置。</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void SaveFormattedToFile(string path, XmlDocument doc, XmlWriterSettings settings)
         {
+            if (doc is null)
+            {
+                throw new ArgumentNullException(nameof(doc));
+            }
             using (XmlWriter writer = XmlWriter.Create(path, settings))
             {
                 doc.WriteContentTo(writer);

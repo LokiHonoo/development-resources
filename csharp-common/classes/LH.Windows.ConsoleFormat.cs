@@ -17,19 +17,6 @@ namespace LH.Windows
     /// </summary>
     public static class ConsoleFormat
     {
-        #region API
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint mode);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern IntPtr GetStdHandle(int hConsoleHandle);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint mode);
-
-        #endregion API
-
         private const uint ENABLE_INSERT_MODE = 0x0020;
 
         private const uint ENABLE_QUICK_EDIT_MODE = 0x0040;
@@ -41,11 +28,23 @@ namespace LH.Windows
         /// </summary>
         public static void DisableQuickEditMode()
         {
-            IntPtr hStdin = GetStdHandle(STD_INPUT_HANDLE);
-            GetConsoleMode(hStdin, out uint mode);
+            IntPtr hStdin = NativeMethods.GetStdHandle(STD_INPUT_HANDLE);
+            NativeMethods.GetConsoleMode(hStdin, out uint mode);
             mode &= ~ENABLE_INSERT_MODE;
             mode &= ~ENABLE_QUICK_EDIT_MODE;
-            SetConsoleMode(hStdin, mode);
+            NativeMethods.SetConsoleMode(hStdin, mode);
         }
+    }
+
+    internal static partial class NativeMethods
+    {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint mode);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern IntPtr GetStdHandle(int hConsoleHandle);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint mode);
     }
 }

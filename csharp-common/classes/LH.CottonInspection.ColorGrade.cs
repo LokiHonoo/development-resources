@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace LH.CottonInspection
@@ -20,7 +21,8 @@ namespace LH.CottonInspection
         /// <summary>
         /// 颜色级和聚焦扫描值对应关系表。
         /// </summary>
-        public static byte[,] Table { get; } = new byte[501, 141] {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1814:Prefer jagged arrays over multidimensional", Justification = "<Pending>")]
+        private readonly static byte[,] _table = new byte[501, 141] {
             { 21, 21, 21, 21, 21, 21, 21, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14 },
             { 31, 21, 21, 21, 21, 21, 21, 21, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14 },
             { 31, 21, 21, 21, 21, 21, 21, 21, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14 },
@@ -535,17 +537,17 @@ namespace LH.CottonInspection
             sb.Append(",");
             for (int i = 0; i < 141; i++)
             {
-                sb.Append(i < 141 ? b.ToString("f1") + "," : b.ToString("f1"));
+                sb.Append(i < 141 ? b.ToString("f1", CultureInfo.InvariantCulture) + "," : b.ToString("f1", CultureInfo.InvariantCulture));
                 b += 0.1d;
             }
             sb.AppendLine();
             double rd = 90d;
             for (int i = 0; i < 501; i++)
             {
-                sb.Append(rd.ToString("f1") + ",");
+                sb.Append(rd.ToString("f1", CultureInfo.InvariantCulture) + ",");
                 for (int j = 0; j < 141; j++)
                 {
-                    sb.Append(j < 141 ? Table[i, j].ToString() + "," : Table[i, j].ToString());
+                    sb.Append(j < 141 ? _table[i, j].ToString(CultureInfo.InvariantCulture) + "," : _table[i, j].ToString(CultureInfo.InvariantCulture));
                 }
                 if (i < 501)
                 {
@@ -563,6 +565,7 @@ namespace LH.CottonInspection
         /// <param name="b">黄色深度。Lab 值中的 b。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public static byte GetGrade(double rd, double b)
         {
             b = Math.Round(b, 1);
@@ -577,7 +580,7 @@ namespace LH.CottonInspection
             }
             int x = (int)(b * 10d) - 40;
             int y = 500 - ((int)(rd * 10d) - 400);
-            return Table[y, x];
+            return _table[y, x];
         }
 
         /// <summary>
@@ -586,6 +589,8 @@ namespace LH.CottonInspection
         /// <param name="value">颜色级的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0066:Convert switch statement to expression", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public static string GetName(byte value)
         {
             switch (value)

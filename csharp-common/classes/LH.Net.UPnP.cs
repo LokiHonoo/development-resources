@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -24,36 +25,43 @@ namespace LH.Net.UPnP
         /// <summary>
         /// urn:schemas-upnp-org:device:InternetGatewayDevice:1
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string DEVICE_TYPE_INTERNET_GATEWAY_DEVICE_1 = "urn:schemas-upnp-org:device:InternetGatewayDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:device:WANConnectionDevice:1
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string DEVICE_TYPE_WAN_CONNECTION_DEVICE_1 = "urn:schemas-upnp-org:device:WANConnectionDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:device:WANDevice:1
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string DEVICE_TYPE_WAN_DEVICE_1 = "urn:schemas-upnp-org:device:WANDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:Layer3Forwarding:1
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string SERVICE_TYPE_LAYER_3_FORWARDING_1 = "urn:schemas-upnp-org:service:Layer3Forwarding:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string SERVICE_TYPE_WAN_COMMON_INTERFACE_CONFIG_1 = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANIPConnection:1
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string SERVICE_TYPE_WAN_IP_CONNECTION_1 = "urn:schemas-upnp-org:service:WANIPConnection:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANPPPConnection:1
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string SERVICE_TYPE_WAN_PPP_CONNECTION_1 = "urn:schemas-upnp-org:service:WANPPPConnection:1";
 
         #region Base
@@ -65,13 +73,22 @@ namespace LH.Net.UPnP
         /// <param name="argument">Argument for device's service responses.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0057:Use range operator", Justification = "<Pending>")]
         public static string GetResponseValue(string responseXmlString, string argument)
         {
-            int index1 = responseXmlString.IndexOf(argument);
+            if (string.IsNullOrEmpty(responseXmlString))
+            {
+                throw new ArgumentNullException(nameof(responseXmlString));
+            }
+            if (string.IsNullOrEmpty(argument))
+            {
+                throw new ArgumentNullException(nameof(argument));
+            }
+            int index1 = responseXmlString.IndexOf(argument, StringComparison.InvariantCulture);
             if (index1 >= 0)
             {
                 index1 += argument.Length + 1;
-                int index2 = responseXmlString.IndexOf(argument, index1);
+                int index2 = responseXmlString.IndexOf(argument, index1, StringComparison.InvariantCulture);
                 if (index2 >= index1)
                 {
                     index2 -= 2;
@@ -93,8 +110,13 @@ namespace LH.Net.UPnP
         /// <param name="arguments">action arguments. The arguments must conform to the order specified. Set 'null' if haven't arguments.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static string PostAction(Service service, bool man, string action, params KeyValuePair<string, string>[] arguments)
         {
+            if (service is null)
+            {
+                throw new ArgumentNullException(nameof(service));
+            }
             using (WebClient wc = new WebClient())
             {
                 StringBuilder sb = new StringBuilder();
@@ -153,14 +175,18 @@ namespace LH.Net.UPnP
                                           int leaseDuration,
                                           string description)
         {
+            if (internalIPAddress is null)
+            {
+                throw new ArgumentNullException(nameof(internalIPAddress));
+            }
             KeyValuePair<string, string>[] arguments = new KeyValuePair<string, string>[] {
                 new KeyValuePair<string, string>("NewRemoteHost", string.Empty),
-                new KeyValuePair<string, string>("NewExternalPort", externalPort.ToString()),
+                new KeyValuePair<string, string>("NewExternalPort", externalPort.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("NewProtocol", protocol),
-                new KeyValuePair<string, string>("NewInternalPort", internalPort.ToString()),
+                new KeyValuePair<string, string>("NewInternalPort", internalPort.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("NewInternalClient", internalIPAddress.ToString()),
                 new KeyValuePair<string, string>("NewEnabled", (enabled ? "1" : "0")),
-                new KeyValuePair<string, string>("NewLeaseDuration", leaseDuration.ToString()),
+                new KeyValuePair<string, string>("NewLeaseDuration", leaseDuration.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("NewPortMappingDescription", description)
             };
             PostAction(service, man, "AddPortMapping", arguments);
@@ -179,7 +205,7 @@ namespace LH.Net.UPnP
         {
             KeyValuePair<string, string>[] arguments = new KeyValuePair<string, string>[] {
                 new KeyValuePair<string, string>("NewRemoteHost", string.Empty),
-                new KeyValuePair<string, string>("NewExternalPort", externalPort.ToString()),
+                new KeyValuePair<string, string>("NewExternalPort", externalPort.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("NewProtocol", protocol)
             };
             PostAction(service, man, "DeletePortMapping", arguments);
@@ -191,6 +217,8 @@ namespace LH.Net.UPnP
         /// <param name="addressFamilyFilter">Search for devices of the specified address family.</param>
         /// <param name="mx">Maximum search time. Unit is seconds.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static RootDevice[] Discover(AddressFamily addressFamilyFilter, int mx)
         {
             List<RootDevice> dis = new List<RootDevice>();
@@ -211,8 +239,9 @@ namespace LH.Net.UPnP
                 request.Append("ST: upnp:rootdevice\r\n");
                 request.Append("\r\n");
                 byte[] data = Encoding.UTF8.GetBytes(request.ToString());
-                client.Send(data, data.Length, new IPEndPoint(IPAddress.Broadcast, 1900));
-                IPEndPoint ep = new IPEndPoint(0, 0);
+                IPEndPoint ep = new IPEndPoint(IPAddress.Parse("239.255.255.250"), 1900);
+                client.Send(data, data.Length, ep);
+
                 while (true)
                 {
                     try
@@ -220,86 +249,90 @@ namespace LH.Net.UPnP
                         byte[] received = client.Receive(ref ep);
                         responses.Add(Encoding.UTF8.GetString(received));
                     }
-                    catch
+                    catch (SocketException)
                     {
                         break;
                     }
                 }
             }
-            foreach (string response in responses)
+            if (responses.Count > 0)
             {
-                if (response.Contains("200 OK"))
+                using (WebClient wc = new WebClient())
                 {
-                    string descriptionUrl;
-                    string find;
-                    int index;
-                    int count;
-                    find = "LOCATION:";
-                    index = response.IndexOf(find);
-                    if (index >= 0)
+                    foreach (string response in responses)
                     {
-                        index += find.Length;
-                        count = response.IndexOf("\r\n", index) - index;
-                        if (count > 0)
+                        if (response.Contains("200 OK", StringComparison.InvariantCulture))
                         {
-                            descriptionUrl = response.Substring(index, count).Trim();
-                            try
+                            string descriptionUrl;
+                            string find;
+                            int index;
+                            int count;
+                            find = "LOCATION:";
+                            index = response.IndexOf(find, StringComparison.InvariantCulture);
+                            if (index >= 0)
                             {
-                                Uri uri = new Uri(descriptionUrl);
-                                IPAddress ipAddress = IPAddress.Parse(uri.Host);
-                                if ((addressFamilyFilter & ipAddress.AddressFamily) != ipAddress.AddressFamily)
+                                index += find.Length;
+                                count = response.IndexOf("\r\n", index, StringComparison.InvariantCulture) - index;
+                                if (count > 0)
                                 {
-                                    continue;
-                                }
-                            }
-                            catch
-                            {
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                    bool exist = false;
-                    foreach (RootDevice di in dis)
-                    {
-                        if (descriptionUrl == di.DescriptionUrl)
-                        {
-                            exist = true;
-                            break;
-                        }
-                    }
-                    if (!exist)
-                    {
-                        try
-                        {
-                            using (WebClient wc = new WebClient())
-                            {
-                                byte[] down = wc.DownloadData(descriptionUrl);
-                                RootDevice di = new RootDevice(descriptionUrl, Encoding.UTF8.GetString(down));
-                                if (di != null)
-                                {
-                                    dis.Add(di);
+                                    descriptionUrl = response.Substring(index, count).Trim();
+                                    try
+                                    {
+                                        Uri uri = new Uri(descriptionUrl);
+                                        IPAddress ipAddress = IPAddress.Parse(uri.Host);
+                                        if ((addressFamilyFilter & ipAddress.AddressFamily) != ipAddress.AddressFamily)
+                                        {
+                                            continue;
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        continue;
+                                    }
                                 }
                                 else
                                 {
                                     continue;
                                 }
                             }
-                        }
-                        catch
-                        {
-                            continue;
+                            else
+                            {
+                                continue;
+                            }
+                            bool exist = false;
+                            foreach (RootDevice di in dis)
+                            {
+                                if (descriptionUrl == di.DescriptionUrl)
+                                {
+                                    exist = true;
+                                    break;
+                                }
+                            }
+                            if (!exist)
+                            {
+                                try
+                                {
+                                    byte[] down = wc.DownloadData(descriptionUrl);
+                                    RootDevice di = new RootDevice(descriptionUrl, Encoding.UTF8.GetString(down));
+                                    if (di != null)
+                                    {
+                                        dis.Add(di);
+                                    }
+                                    else
+                                    {
+                                        continue;
+                                    }
+                                }
+                                catch
+                                {
+                                    continue;
+                                }
+                            }
                         }
                     }
                 }
             }
+
             return dis.ToArray();
         }
 
@@ -327,8 +360,8 @@ namespace LH.Net.UPnP
         public static NatRsipStatus GetNATRSIPStatus(Service service, bool man)
         {
             string down = PostAction(service, man, "GetNATRSIPStatus", null);
-            return new NatRsipStatus(Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewRSIPAvailable"))),
-                                     Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewNATEnabled"))));
+            return new NatRsipStatus(Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewRSIPAvailable"), CultureInfo.InvariantCulture)),
+                                     Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewNATEnabled"), CultureInfo.InvariantCulture)));
         }
 
         /// <summary>
@@ -339,15 +372,16 @@ namespace LH.Net.UPnP
         /// <param name="index">The mapping index.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2200:Rethrow to preserve stack details.", Justification = "<Pending>")]
         public static PortMappingEntry GetSpecificPortMappingEntry(Service service, bool man, int index)
         {
             try
             {
-                string down = PostAction(service, man, "GetSpecificPortMappingEntry", new KeyValuePair<string, string>("NewPortMappingIndex", index.ToString()));
+                string down = PostAction(service, man, "GetSpecificPortMappingEntry", new KeyValuePair<string, string>("NewPortMappingIndex", index.ToString(CultureInfo.InvariantCulture)));
                 return new PortMappingEntry(true,
                     IPAddress.Parse(GetResponseValue(down, "NewInternalClient")),
-                    int.Parse(GetResponseValue(down, "NewInternalPort")),
-                    Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewEnabled"))),
+                    int.Parse(GetResponseValue(down, "NewInternalPort"), CultureInfo.InvariantCulture),
+                    Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewEnabled"), CultureInfo.InvariantCulture)),
                     GetResponseValue(down, "NewPortMappingDescription"));
             }
             catch (WebException ex)
@@ -358,7 +392,7 @@ namespace LH.Net.UPnP
                 }
                 else
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -376,7 +410,7 @@ namespace LH.Net.UPnP
         {
             KeyValuePair<string, string>[] arguments = new KeyValuePair<string, string>[] {
                 new KeyValuePair<string, string>("NewRemoteHost", string.Empty),
-                new KeyValuePair<string, string>("NewExternalPort", externalPort.ToString()),
+                new KeyValuePair<string, string>("NewExternalPort", externalPort.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("NewProtocol", protocol)
             };
             try
@@ -384,8 +418,8 @@ namespace LH.Net.UPnP
                 string down = PostAction(service, man, "GetSpecificPortMappingEntry", arguments);
                 return new PortMappingEntry(true,
                     IPAddress.Parse(GetResponseValue(down, "NewInternalClient")),
-                    int.Parse(GetResponseValue(down, "NewInternalPort")),
-                    Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewEnabled"))),
+                    int.Parse(GetResponseValue(down, "NewInternalPort"), CultureInfo.InvariantCulture),
+                    Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewEnabled"), CultureInfo.InvariantCulture)),
                     GetResponseValue(down, "NewPortMappingDescription"));
             }
             catch (WebException ex)
@@ -396,7 +430,7 @@ namespace LH.Net.UPnP
                 }
                 else
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -495,6 +529,10 @@ namespace LH.Net.UPnP
         /// <exception cref="Exception"/>
         public Device(Uri uri, RootDevice root, Device parent, XmlNode deviceNode, XmlNamespaceManager nm)
         {
+            if (deviceNode is null)
+            {
+                throw new ArgumentNullException(nameof(deviceNode));
+            }
             List<Device> childDevices = new List<Device>();
             List<Service> services = new List<Service>();
             //
@@ -509,7 +547,7 @@ namespace LH.Net.UPnP
             this.ModelNumber = deviceNode.SelectSingleNode("ns:modelNumber", nm).InnerText.Trim();
             this.ModelUrl = deviceNode.SelectSingleNode("ns:modelURL", nm).InnerText.Trim();
             this.SerialNumber = deviceNode.SelectSingleNode("ns:serialNumber", nm).InnerText.Trim();
-            this.Udn = deviceNode.SelectSingleNode("ns:UDN", nm).InnerText.Replace("uuid:", string.Empty).Trim();
+            this.Udn = deviceNode.SelectSingleNode("ns:UDN", nm).InnerText.Replace("uuid:", string.Empty, StringComparison.InvariantCulture).Trim();
             XmlNodeList childDeviceNodes = deviceNode.SelectNodes("ns:deviceList/ns:device", nm);
             //
             foreach (XmlNode childDeviceNode in childDeviceNodes)
@@ -574,7 +612,7 @@ namespace LH.Net.UPnP
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("{0} \"{1}\"", this.FriendlyName, this.DeviceType);
+            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.FriendlyName, this.DeviceType);
         }
     }
 
@@ -704,7 +742,7 @@ namespace LH.Net.UPnP
             nm.AddNamespace("ns", "urn:schemas-upnp-org:device-1-0");
             XmlNode deviceNode = doc.SelectSingleNode("/ns:root/ns:device", nm);
             Uri uri = new Uri(descriptionUrl);
-            this.Uri = new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Authority));
+            this.Uri = new Uri(string.Format(CultureInfo.InvariantCulture, "{0}://{1}", uri.Scheme, uri.Authority));
             this.DescriptionUrl = descriptionUrl;
             this.DescriptionXmlString = descriptionXmlString;
             this.Device = new Device(uri, this, null, deviceNode, nm);
@@ -736,7 +774,7 @@ namespace LH.Net.UPnP
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("{0} \"{1}\"", this.Device.FriendlyName, this.Device.DeviceType);
+            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.Device.FriendlyName, this.Device.DeviceType);
         }
     }
 
@@ -796,13 +834,21 @@ namespace LH.Net.UPnP
         /// <exception cref="Exception"/>
         public Service(Uri uri, RootDevice root, Device parent, XmlNode serviceNode, XmlNamespaceManager nm)
         {
+            if (uri is null)
+            {
+                throw new ArgumentNullException(nameof(uri));
+            }
+            if (serviceNode is null)
+            {
+                throw new ArgumentNullException(nameof(serviceNode));
+            }
             this.Root = root;
             this.Parent = parent;
             this.ServiceType = serviceNode.SelectSingleNode("ns:serviceType", nm).InnerText.Trim();
             this.ServiceID = serviceNode.SelectSingleNode("ns:serviceId", nm).InnerText.Trim();
-            this.ScpdUrl = string.Format("{0}{1}", uri.AbsoluteUri, serviceNode.SelectSingleNode("ns:SCPDURL", nm).InnerText.Trim().Trim('/'));
-            this.ControlUrl = string.Format("{0}{1}", uri.AbsoluteUri, serviceNode.SelectSingleNode("ns:controlURL", nm).InnerText.Trim().Trim('/'));
-            this.EventSubUrl = string.Format("{0}{1}", uri.AbsoluteUri, serviceNode.SelectSingleNode("ns:eventSubURL", nm).InnerText.Trim().Trim('/'));
+            this.ScpdUrl = string.Format(CultureInfo.InvariantCulture, "{0}{1}", uri.AbsoluteUri, serviceNode.SelectSingleNode("ns:SCPDURL", nm).InnerText.Trim().Trim('/'));
+            this.ControlUrl = string.Format(CultureInfo.InvariantCulture, "{0}{1}", uri.AbsoluteUri, serviceNode.SelectSingleNode("ns:controlURL", nm).InnerText.Trim().Trim('/'));
+            this.EventSubUrl = string.Format(CultureInfo.InvariantCulture, "{0}{1}", uri.AbsoluteUri, serviceNode.SelectSingleNode("ns:eventSubURL", nm).InnerText.Trim().Trim('/'));
         }
 
         /// <summary>
@@ -811,7 +857,7 @@ namespace LH.Net.UPnP
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("{0} \"{1}\"", this.ServiceID, this.ServiceType);
+            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.ServiceID, this.ServiceType);
         }
     }
 

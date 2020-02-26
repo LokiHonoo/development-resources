@@ -27,6 +27,10 @@ namespace LH
         /// <returns></returns>
         public static byte[] Decompress(byte[] bytes)
         {
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
             return Decompress(bytes, 0, bytes.Length);
         }
 
@@ -94,6 +98,10 @@ namespace LH
         /// <exception cref="Exception" />
         public static byte[] GetHexBytes(string hex)
         {
+            if (string.IsNullOrEmpty(hex))
+            {
+                throw new ArgumentNullException(nameof(hex));
+            }
             byte[] result = new byte[hex.Length / 2];
             for (int i = 0; i < result.Length; i++)
             {
@@ -111,7 +119,11 @@ namespace LH
         /// <exception cref="Exception" />
         public static byte[] GetHexBytes(string hex, string remove)
         {
-            return GetHexBytes(hex.Replace(remove, string.Empty));
+            if (string.IsNullOrEmpty(hex))
+            {
+                throw new ArgumentNullException(nameof(hex));
+            }
+            return GetHexBytes(hex.Replace(remove, string.Empty, StringComparison.InvariantCulture));
         }
 
         #endregion 转换

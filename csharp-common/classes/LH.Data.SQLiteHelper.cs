@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -58,6 +59,10 @@ namespace LH.Data
         /// <returns></returns>
         public static SQLiteConnection BuildConnection(SQLiteConnectionStringBuilder connectionStringBuilder)
         {
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
             return new SQLiteConnection(connectionStringBuilder.ConnectionString);
         }
 
@@ -91,6 +96,10 @@ namespace LH.Data
         /// <returns></returns>
         public static string BuildConnectionString(SQLiteConnectionStringBuilder connectionStringBuilder)
         {
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
             return connectionStringBuilder.ConnectionString;
         }
 
@@ -128,9 +137,13 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -161,9 +174,13 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -183,7 +200,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText) => new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
 
         /// <summary>
@@ -193,7 +210,7 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
             SQLiteDataAdapter result = new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -216,9 +233,13 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -247,9 +268,13 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -282,9 +307,13 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             CommandBehavior commandBehavior;
             if (DataReaderConnectionBehavior == SQLiteConnectionBehavior.Manual)
             {
@@ -330,9 +359,13 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int ExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (ExecuteConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -363,9 +396,14 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (ExecuteConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -395,9 +433,13 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object ExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (ExecuteConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -456,9 +498,15 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(SQLiteConnection connection, IsolationLevel iso, string commandText, params SQLiteParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (TransactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -529,9 +577,16 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(SQLiteConnection connection, IsolationLevel iso, string procedure, params SQLiteParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (TransactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -600,9 +655,15 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(SQLiteConnection connection, IsolationLevel iso, string commandText, params SQLiteParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (TransactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -705,8 +766,17 @@ namespace LH.Data
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void Dump(SQLiteConnection connection, SQLiteDumpSetting setting, TextWriter textWriter, out bool cancelled, SQLiteWrittenCallback written, object userState)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+            if (setting is null)
+            {
+                throw new ArgumentNullException(nameof(setting));
+            }
             if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -729,7 +799,7 @@ namespace LH.Data
             {
                 using (DataTable dt = GetDataTable(connection, string.Join(" UNION ALL ", union) + ";"))
                 {
-                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString());
+                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
                     total += recordCount;
                 }
             }
@@ -749,10 +819,10 @@ namespace LH.Data
             tmp.AppendLine("Server Version : " + connection.ServerVersion);
             tmp.AppendLine("Database       : " + connection.Database);
             tmp.AppendLine();
-            tmp.AppendLine("Table          : " + setting.Tables.Count.ToString("n0"));
-            tmp.AppendLine("Record         : " + recordCount.ToString("n0"));
-            tmp.AppendLine("View           : " + setting.Views.Count.ToString("n0"));
-            tmp.AppendLine("Trigger        : " + setting.Triggers.Count.ToString("n0"));
+            tmp.AppendLine("Table          : " + setting.Tables.Count.ToString("n0", CultureInfo.InvariantCulture));
+            tmp.AppendLine("Record         : " + recordCount.ToString("n0", CultureInfo.InvariantCulture));
+            tmp.AppendLine("View           : " + setting.Views.Count.ToString("n0", CultureInfo.InvariantCulture));
+            tmp.AppendLine("Trigger        : " + setting.Triggers.Count.ToString("n0", CultureInfo.InvariantCulture));
             tmp.AppendLine();
             tmp.AppendLine("Dump Time      : " + DateTime.Now);
             tmp.AppendLine();
@@ -893,9 +963,9 @@ namespace LH.Data
                                             {
                                                 switch (val)
                                                 {
-                                                    case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
-                                                    case int value: tmp.Append(value.ToString()); break;
-                                                    case double value: tmp.Append(value.ToString()); break;
+                                                    case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty, StringComparison.InvariantCulture) + "'"); break;
+                                                    case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                    case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                                                     default: tmp.Append("'" + val.ToString() + "'"); break;
                                                 }
                                             }
@@ -1025,17 +1095,17 @@ namespace LH.Data
         /// <summary>
         /// Dump table setting.
         /// </summary>
-        public List<SQLiteDumpTableSetting> Tables = new List<SQLiteDumpTableSetting>();
+        public List<SQLiteDumpTableSetting> Tables { get; } = new List<SQLiteDumpTableSetting>();
 
         /// <summary>
         /// Dump triggers at specified list.
         /// </summary>
-        public List<string> Triggers = new List<string>();
+        public List<string> Triggers { get; } = new List<string>();
 
         /// <summary>
         /// Dump views at specified list.
         /// </summary>
-        public List<string> Views = new List<string>();
+        public List<string> Views { get; } = new List<string>();
     }
 
     /// <summary>
@@ -1043,21 +1113,6 @@ namespace LH.Data
     /// </summary>
     public sealed class SQLiteDumpTableSetting
     {
-        /// <summary>
-        /// Dump records.
-        /// </summary>
-        public bool IncludingRecord;
-
-        /// <summary>
-        /// Reset Sequence=value. Set to 0 without changing.
-        /// </summary>
-        public int? Sequence;
-
-        /// <summary>
-        /// Table name.
-        /// </summary>
-        public string TableName;
-
         /// <summary>
         /// Dump table setting.
         /// </summary>
@@ -1070,6 +1125,21 @@ namespace LH.Data
             this.Sequence = sequence;
             this.IncludingRecord = includingRecord;
         }
+
+        /// <summary>
+        /// Dump records.
+        /// </summary>
+        public bool IncludingRecord { get; }
+
+        /// <summary>
+        /// Reset Sequence=value. Set to 0 without changing.
+        /// </summary>
+        public int? Sequence { get; }
+
+        /// <summary>
+        /// Table name.
+        /// </summary>
+        public string TableName { get; }
     }
 
     #endregion Dump

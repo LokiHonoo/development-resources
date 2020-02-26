@@ -10,6 +10,7 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Xml;
 
 namespace LH.Data
@@ -52,6 +53,11 @@ namespace LH.Data
         /// <returns></returns>
         public static SqlConnection BuildConnection(SqlConnectionStringBuilder connectionStringBuilder)
         {
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
+
             return new SqlConnection(connectionStringBuilder.ConnectionString);
         }
 
@@ -98,7 +104,7 @@ namespace LH.Data
         /// <returns></returns>
         public static SqlConnection BuildConnection(string server, uint port, string userID, string password, string catalog)
         {
-            string dataSource = string.Format("{0},{1}", server, port);
+            string dataSource = string.Format(CultureInfo.InvariantCulture, "{0},{1}", server, port);
             SqlConnectionStringBuilder connectionStringBuilder = new SqlConnectionStringBuilder()
             {
                 IntegratedSecurity = false,
@@ -118,6 +124,11 @@ namespace LH.Data
         /// <returns></returns>
         public static string BuildConnectionString(SqlConnectionStringBuilder connectionStringBuilder)
         {
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
+
             return connectionStringBuilder.ConnectionString;
         }
 
@@ -154,7 +165,7 @@ namespace LH.Data
         /// <returns></returns>
         public static string BuildConnectionString(string server, uint port, string userID, string password, string catalog)
         {
-            string dataSource = string.Format("{0},{1}", server, port);
+            string dataSource = string.Format(CultureInfo.InvariantCulture, "{0},{1}", server, port);
             SqlConnectionStringBuilder connectionStringBuilder = new SqlConnectionStringBuilder()
             {
                 IntegratedSecurity = false,
@@ -188,9 +199,14 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (DataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -221,9 +237,14 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (DataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -243,7 +264,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText) => new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
 
         /// <summary>
@@ -253,7 +274,7 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
             SqlDataAdapter result = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -276,9 +297,14 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataSet GetDataSet(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (DataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -307,9 +333,14 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataTable GetDataTable(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (DataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -342,9 +373,14 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static SqlDataReader GetDataReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             CommandBehavior commandBehavior;
             if (DataReaderConnectionBehavior == SqlConnectionBehavior.Manual)
             {
@@ -390,9 +426,14 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static XmlReader GetXmlReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (ExecuteConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -429,9 +470,14 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int ExecuteNonQuery(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (ExecuteConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -462,9 +508,15 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(SqlConnection connection, string procedure, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (ExecuteConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -494,9 +546,14 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object ExecuteScalar(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (ExecuteConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -555,9 +612,16 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(SqlConnection connection, IsolationLevel iso, string commandText, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (TransactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -628,9 +692,16 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(SqlConnection connection, IsolationLevel iso, string procedure, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (TransactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -699,9 +770,16 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(SqlConnection connection, IsolationLevel iso, string commandText, params SqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (TransactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());

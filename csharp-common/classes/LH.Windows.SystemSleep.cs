@@ -16,13 +16,6 @@ namespace LH.Windows
     /// </summary>
     public static class SystemSleep
     {
-        #region API
-
-        [DllImport("kernel32.dll")]
-        private static extern uint SetThreadExecutionState(uint Flags);
-
-        #endregion API
-
         private const uint ES_CONTINUOUS = 0x80000000;
 
         private const uint ES_DISPLAY_REQUIRED = 0x00000002;
@@ -33,15 +26,16 @@ namespace LH.Windows
         ///阻止系统休眠，直到恢复休眠策略。
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "<Pending>")]
         public static void PreventSleep(bool includeDisplay)
         {
             if (includeDisplay)
             {
-                SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
+                NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
             }
             else
             {
-                SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
+                NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
             }
         }
 
@@ -49,24 +43,32 @@ namespace LH.Windows
         ///重置系统休眠计时器。
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "<Pending>")]
         public static void ResetSleepTimer(bool includeDisplay)
         {
             if (includeDisplay)
             {
-                SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+                NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
             }
             else
             {
-                SetThreadExecutionState(ES_SYSTEM_REQUIRED);
+                NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED);
             }
         }
 
         /// <summary>
         ///恢复系统休眠策略。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "<Pending>")]
         public static void ResotreSleep()
         {
-            SetThreadExecutionState(ES_CONTINUOUS);
+            NativeMethods.SetThreadExecutionState(ES_CONTINUOUS);
         }
+    }
+
+    internal static partial class NativeMethods
+    {
+        [DllImport("kernel32.dll")]
+        internal static extern uint SetThreadExecutionState(uint Flags);
     }
 }

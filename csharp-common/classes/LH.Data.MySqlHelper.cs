@@ -15,6 +15,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -58,6 +59,10 @@ namespace LH.Data
         /// <returns></returns>
         public static MySqlConnection BuildConnection(MySqlConnectionStringBuilder connectionStringBuilder)
         {
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
             return new MySqlConnection(connectionStringBuilder.ConnectionString);
         }
 
@@ -81,13 +86,17 @@ namespace LH.Data
         /// <returns></returns>
         public static MySqlConnection BuildConnection(string host, string userID, string password, string database)
         {
+            if (string.IsNullOrEmpty(host))
+            {
+                throw new ArgumentNullException(nameof(host));
+            }
             string server;
             uint port;
             string[] split = host.Split(':');
             if (split.Length > 1)
             {
                 server = split[0];
-                port = Convert.ToUInt32(split[1]);
+                port = Convert.ToUInt32(split[1], CultureInfo.InvariantCulture);
             }
             else
             {
@@ -138,6 +147,10 @@ namespace LH.Data
         /// <returns></returns>
         public static string BuildConnectionString(MySqlConnectionStringBuilder connectionStringBuilder)
         {
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
             return connectionStringBuilder.ConnectionString;
         }
 
@@ -151,13 +164,17 @@ namespace LH.Data
         /// <returns></returns>
         public static string BuildConnectionString(string host, string userID, string password, string database)
         {
+            if (string.IsNullOrEmpty(host))
+            {
+                throw new ArgumentNullException(nameof(host));
+            }
             string server;
             uint port;
             string[] split = host.Split(':');
             if (split.Length > 1)
             {
                 server = split[0];
-                port = Convert.ToUInt32(split[1]);
+                port = Convert.ToUInt32(split[1], CultureInfo.InvariantCulture);
             }
             else
             {
@@ -222,9 +239,13 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -255,9 +276,13 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -277,7 +302,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText) => new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
 
         /// <summary>
@@ -287,7 +312,7 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             MySqlDataAdapter result = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -310,9 +335,13 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataSet GetDataSet(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -341,9 +370,13 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataTable GetDataTable(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -376,9 +409,13 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static MySqlDataReader GetDataReader(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             CommandBehavior commandBehavior;
             if (DataReaderConnectionBehavior == MySqlConnectionBehavior.Manual)
             {
@@ -424,9 +461,13 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int ExecuteNonQuery(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (ExecuteConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -457,9 +498,14 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(MySqlConnection connection, string procedure, params MySqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (ExecuteConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -489,9 +535,13 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object ExecuteScalar(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (ExecuteConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -519,7 +569,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText) =>
             TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, null);
 
@@ -530,7 +580,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText, params MySqlParameter[] parameters) =>
             TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, parameters);
 
@@ -541,7 +591,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(MySqlConnection connection, IsolationLevel iso, string commandText) =>
             TransactionExecuteNonQuery(connection, iso, commandText, null);
 
@@ -553,9 +603,16 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(MySqlConnection connection, IsolationLevel iso, string commandText, params MySqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (TransactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -598,7 +655,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(MySqlConnection connection, string procedure) =>
             TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, null);
 
@@ -608,7 +665,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(MySqlConnection connection, string procedure, params MySqlParameter[] parameters) =>
             TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, parameters);
 
@@ -618,7 +675,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(MySqlConnection connection, IsolationLevel iso, string procedure) =>
             TransactionExecuteProcedure(connection, iso, procedure, null);
 
@@ -629,9 +686,15 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(MySqlConnection connection, IsolationLevel iso, string procedure, params MySqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (TransactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -669,7 +732,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(MySqlConnection connection, string commandText) =>
             TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, null);
 
@@ -680,7 +743,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(MySqlConnection connection, string commandText, params MySqlParameter[] parameters) =>
             TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, parameters);
 
@@ -691,7 +754,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(MySqlConnection connection, IsolationLevel iso, string commandText) =>
             TransactionExecuteScalar(connection, iso, commandText, null);
 
@@ -703,9 +766,15 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(MySqlConnection connection, IsolationLevel iso, string commandText, params MySqlParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             if (TransactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -808,8 +877,18 @@ namespace LH.Data
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void Dump(MySqlConnection connection, MySqlDumpSetting setting, TextWriter textWriter, out bool cancelled, MySqlWrittenCallback written, object userState)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
+            if (setting is null)
+            {
+                throw new ArgumentNullException(nameof(setting));
+            }
             if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -832,7 +911,7 @@ namespace LH.Data
             {
                 using (DataTable dt = GetDataTable(connection, string.Join(" UNION ALL ", union) + ";"))
                 {
-                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString());
+                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
                     total += recordCount;
                 }
             }
@@ -859,13 +938,13 @@ namespace LH.Data
                 tmp.AppendLine("Collation      : " + (string)dt.Rows[0][2]);
                 tmp.AppendLine("Database       : " + connection.Database);
                 tmp.AppendLine();
-                tmp.AppendLine("Table          : " + setting.Tables.Count.ToString("n0"));
-                tmp.AppendLine("Record         : " + recordCount.ToString("n0"));
-                tmp.AppendLine("Trigger        : " + setting.Triggers.Count.ToString("n0"));
-                tmp.AppendLine("View           : " + setting.Views.Count.ToString("n0"));
-                tmp.AppendLine("Function       : " + setting.Functions.Count.ToString("n0"));
-                tmp.AppendLine("Procedure      : " + setting.Procedures.Count.ToString("n0"));
-                tmp.AppendLine("Event          : " + setting.Events.Count.ToString("n0"));
+                tmp.AppendLine("Table          : " + setting.Tables.Count.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Record         : " + recordCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Trigger        : " + setting.Triggers.Count.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("View           : " + setting.Views.Count.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Function       : " + setting.Functions.Count.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Procedure      : " + setting.Procedures.Count.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Event          : " + setting.Events.Count.ToString("n0", CultureInfo.InvariantCulture));
                 tmp.AppendLine();
                 tmp.AppendLine("Dump Time      : " + DateTime.Now);
                 tmp.AppendLine();
@@ -886,7 +965,7 @@ namespace LH.Data
                     {
                         if (info.Tables[1].Rows[0]["Auto_increment"] != null)
                         {
-                            tableCreate = tableCreate.Replace("AUTO_INCREMENT=" + (int)info.Tables[1].Rows[0]["Auto_increment"], "AUTO_INCREMENT=" + table.AutoIncrement);
+                            tableCreate = tableCreate.Replace("AUTO_INCREMENT=" + (int)info.Tables[1].Rows[0]["Auto_increment"], "AUTO_INCREMENT=" + table.AutoIncrement, StringComparison.InvariantCulture);
                         }
                     }
                     tmp.AppendLine();
@@ -1032,18 +1111,18 @@ namespace LH.Data
                                         {
                                             switch (val)
                                             {
-                                                case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
+                                                case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty, StringComparison.InvariantCulture) + "'"); break;
                                                 case bool value: tmp.Append(value ? 1 : 0); break;
-                                                case byte value: tmp.Append(value.ToString()); break;
-                                                case short value: tmp.Append(value.ToString()); break;
-                                                case ushort value: tmp.Append(value.ToString()); break;
-                                                case int value: tmp.Append(value.ToString()); break;
-                                                case uint value: tmp.Append(value.ToString()); break;
-                                                case long value: tmp.Append(value.ToString()); break;
-                                                case ulong value: tmp.Append(value.ToString()); break;
-                                                case double value: tmp.Append(value.ToString()); break;
-                                                case float value: tmp.Append(value.ToString()); break;
-                                                case decimal value: tmp.Append(value.ToString()); break;
+                                                case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case uint value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case long value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case ulong value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                                                 default: tmp.Append("'" + val.ToString() + "'"); break;
                                             }
                                         }
@@ -1132,17 +1211,26 @@ namespace LH.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public static void DumpToFiles(MySqlConnection connection, MySqlDumpSetting setting, string folder, Encoding encoding, long segmentSize, out bool cancelled, MySqlWrittenCallback written, object userState)
         {
-            if (segmentSize < 1024 * 1024)
+            if (connection is null)
             {
-                throw new ArgumentException("Segment size cannot be less than 1 MB.");
+                throw new ArgumentNullException(nameof(connection));
+            }
+            if (setting is null)
+            {
+                throw new ArgumentNullException(nameof(setting));
             }
             if (!Directory.Exists(folder))
             {
                 Directory.CreateDirectory(folder);
             }
-            //
+            if (segmentSize < 1024 * 1024)
+            {
+                throw new ArgumentException("Segment size cannot be less than 1 MB.");
+            }
             if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -1165,7 +1253,7 @@ namespace LH.Data
             {
                 using (DataTable dt = GetDataTable(connection, string.Join(" UNION ALL ", union) + ";"))
                 {
-                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString());
+                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
                     total += recordCount;
                 }
             }
@@ -1199,13 +1287,13 @@ namespace LH.Data
                 tmp.AppendLine("Collation      : " + (string)dt.Rows[0][2]);
                 tmp.AppendLine("Database       : " + connection.Database);
                 tmp.AppendLine();
-                tmp.AppendLine("Table          : " + setting.Tables.Count.ToString("n0"));
-                tmp.AppendLine("Record         : " + recordCount.ToString("n0"));
-                tmp.AppendLine("Trigger        : " + setting.Triggers.Count.ToString("n0"));
-                tmp.AppendLine("View           : " + setting.Views.Count.ToString("n0"));
-                tmp.AppendLine("Function       : " + setting.Functions.Count.ToString("n0"));
-                tmp.AppendLine("Procedure      : " + setting.Procedures.Count.ToString("n0"));
-                tmp.AppendLine("Event          : " + setting.Events.Count.ToString("n0"));
+                tmp.AppendLine("Table          : " + setting.Tables.Count.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Record         : " + recordCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Trigger        : " + setting.Triggers.Count.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("View           : " + setting.Views.Count.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Function       : " + setting.Functions.Count.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Procedure      : " + setting.Procedures.Count.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Event          : " + setting.Events.Count.ToString("n0", CultureInfo.InvariantCulture));
                 tmp.AppendLine();
                 tmp.AppendLine("Dump Time      : " + DateTime.Now);
                 tmp.AppendLine();
@@ -1227,7 +1315,7 @@ namespace LH.Data
                     {
                         if (info.Tables[1].Rows[0]["Auto_increment"] != null)
                         {
-                            tableCreate = tableCreate.Replace("AUTO_INCREMENT=" + (int)info.Tables[1].Rows[0]["Auto_increment"], "AUTO_INCREMENT=" + table.AutoIncrement);
+                            tableCreate = tableCreate.Replace("AUTO_INCREMENT=" + (int)info.Tables[1].Rows[0]["Auto_increment"], "AUTO_INCREMENT=" + table.AutoIncrement, StringComparison.InvariantCulture);
                         }
                     }
                     tmp.AppendLine();
@@ -1431,18 +1519,18 @@ namespace LH.Data
                                         {
                                             switch (val)
                                             {
-                                                case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
+                                                case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty, StringComparison.InvariantCulture) + "'"); break;
                                                 case bool value: tmp.Append(value ? 1 : 0); break;
-                                                case byte value: tmp.Append(value.ToString()); break;
-                                                case short value: tmp.Append(value.ToString()); break;
-                                                case ushort value: tmp.Append(value.ToString()); break;
-                                                case int value: tmp.Append(value.ToString()); break;
-                                                case uint value: tmp.Append(value.ToString()); break;
-                                                case long value: tmp.Append(value.ToString()); break;
-                                                case ulong value: tmp.Append(value.ToString()); break;
-                                                case double value: tmp.Append(value.ToString()); break;
-                                                case float value: tmp.Append(value.ToString()); break;
-                                                case decimal value: tmp.Append(value.ToString()); break;
+                                                case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case uint value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case long value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case ulong value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                                                 default: tmp.Append("'" + val.ToString() + "'"); break;
                                             }
                                         }
@@ -1494,6 +1582,10 @@ namespace LH.Data
         /// <returns></returns>
         public static MySqlDumpSetting GetDumpSetting(MySqlConnection connection)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             MySqlDumpSetting setting = new MySqlDumpSetting();
             StringBuilder sql = new StringBuilder();
             sql.AppendLine(MySqlCommandText.ShowTableStatus());
@@ -1610,32 +1702,32 @@ namespace LH.Data
         /// <summary>
         /// Dump events at specified list.
         /// </summary>
-        public List<string> Events = new List<string>();
+        public List<string> Events { get; } = new List<string>();
 
         /// <summary>
         /// Dump functions at specified list.
         /// </summary>
-        public List<string> Functions = new List<string>();
+        public List<string> Functions { get; } = new List<string>();
 
         /// <summary>
         /// Dump procedures at specified list.
         /// </summary>
-        public List<string> Procedures = new List<string>();
+        public List<string> Procedures { get; } = new List<string>();
 
         /// <summary>
         /// Dump table setting.
         /// </summary>
-        public List<MySqlDumpTableSetting> Tables = new List<MySqlDumpTableSetting>();
+        public List<MySqlDumpTableSetting> Tables { get; } = new List<MySqlDumpTableSetting>();
 
         /// <summary>
         /// Dump triggers at specified list.
         /// </summary>
-        public List<string> Triggers = new List<string>();
+        public List<string> Triggers { get; } = new List<string>();
 
         /// <summary>
         /// Dump views at specified list.
         /// </summary>
-        public List<string> Views = new List<string>();
+        public List<string> Views { get; } = new List<string>();
     }
 
     /// <summary>
@@ -1643,21 +1735,6 @@ namespace LH.Data
     /// </summary>
     public sealed class MySqlDumpTableSetting
     {
-        /// <summary>
-        /// Reset AUTO_INCREMENT=value. Set to 0 without changing.
-        /// </summary>
-        public int AutoIncrement;
-
-        /// <summary>
-        /// Dump records.
-        /// </summary>
-        public bool IncludingRecord;
-
-        /// <summary>
-        /// Table name.
-        /// </summary>
-        public string TableName;
-
         /// <summary>
         /// Dump table setting.
         /// </summary>
@@ -1670,6 +1747,21 @@ namespace LH.Data
             this.AutoIncrement = autoIncrement;
             this.IncludingRecord = includingRecord;
         }
+
+        /// <summary>
+        /// Reset AUTO_INCREMENT=value. Set to 0 without changing.
+        /// </summary>
+        public int AutoIncrement { get; }
+
+        /// <summary>
+        /// Dump records.
+        /// </summary>
+        public bool IncludingRecord { get; }
+
+        /// <summary>
+        /// Table name.
+        /// </summary>
+        public string TableName { get; }
     }
 
     #endregion Dump
@@ -1840,6 +1932,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="event_">The name of the event.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public static string DropEvent(string event_) => "DROP EVENT IF EXISTS `" + event_ + "`;";
 
         /// <summary>
@@ -1882,6 +1975,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="event_">The name of the event.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public static string ShowCreateEvent(string event_) => "SHOW CREATE EVENT `" + event_ + "`;";
 
         /// <summary>

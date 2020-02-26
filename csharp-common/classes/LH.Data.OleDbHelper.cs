@@ -51,6 +51,11 @@ namespace LH.Data
         /// <returns></returns>
         public static OleDbConnection BuildConnection(OleDbConnectionStringBuilder connectionStringBuilder)
         {
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
+
             return new OleDbConnection(connectionStringBuilder.ConnectionString);
         }
 
@@ -71,6 +76,11 @@ namespace LH.Data
         /// <returns></returns>
         public static string BuildConnectionString(OleDbConnectionStringBuilder connectionStringBuilder)
         {
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
+
             return connectionStringBuilder.ConnectionString;
         }
 
@@ -95,9 +105,14 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (DataAdapterConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -128,9 +143,14 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (DataAdapterConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -150,7 +170,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText) => new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
 
         /// <summary>
@@ -160,7 +180,7 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
             OleDbDataAdapter result = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -183,9 +203,14 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataSet GetDataSet(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (DataAdapterConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -214,9 +239,14 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataTable GetDataTable(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (DataAdapterConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -249,9 +279,14 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             CommandBehavior commandBehavior;
             if (DataReaderConnectionBehavior == OleDbConnectionBehavior.Manual)
             {
@@ -297,9 +332,14 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int ExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (ExecuteConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -330,9 +370,15 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (ExecuteConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -362,9 +408,14 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object ExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (ExecuteConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -423,9 +474,16 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (TransactionConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -496,9 +554,16 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure, params OleDbParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (TransactionConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -567,9 +632,16 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+
             if (TransactionConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
