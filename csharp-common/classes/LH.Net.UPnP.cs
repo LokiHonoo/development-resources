@@ -20,6 +20,7 @@ namespace LH.Net.UPnP
     /// <summary>
     /// UPnP.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1724:类型名 UPnP 与命名空间名称“LH.Net.UPnP”整体或部分冲突。请更改其中任一名称以消除冲突。", Justification = "<挂起>")]
     public static class UPnP
     {
         /// <summary>

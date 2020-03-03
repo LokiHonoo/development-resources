@@ -169,7 +169,8 @@ namespace LH.Collections
         /// <param name="array">元素数组切片。</param>
         /// <param name="indexA">要交换的第一个元素的索引。</param>
         /// <param name="indexB">要交换的第二个元素的索引。</param>
-        private static void Swap(ArraySegment<T> array, int indexA, int indexB)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
+        private void Swap(ArraySegment<T> array, int indexA, int indexB)
         {
             indexA = array.Offset + indexA;
             indexB = array.Offset + indexB;
@@ -349,7 +350,8 @@ namespace LH.Collections
         /// <param name="array">元素数组切片。</param>
         /// <param name="indexA">要交换的第一个元素的索引。</param>
         /// <param name="indexB">要交换的第二个元素的索引。</param>
-        private static void Swap(ArraySegment<T> array, int indexA, int indexB)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
+        private void Swap(ArraySegment<T> array, int indexA, int indexB)
         {
             indexA = array.Offset + indexA;
             indexB = array.Offset + indexB;
