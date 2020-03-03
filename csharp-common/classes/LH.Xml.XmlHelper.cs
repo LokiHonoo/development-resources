@@ -70,7 +70,7 @@ namespace LH.Xml
         /// <param name="path">保存的文件路径。</param>
         /// <param name="doc">XmlDocument 文档。</param>
         /// <param name="settings">格式化设置。</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         public static void SaveFormattedToFile(string path, XmlDocument doc, XmlWriterSettings settings)
         {
             if (doc is null)

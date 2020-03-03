@@ -1210,7 +1210,6 @@ namespace LH.Data
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public static void DumpToFiles(MySqlConnection connection, MySqlDumpSetting setting, string folder, Encoding encoding, long segmentSize, out bool cancelled, MySqlWrittenCallback written, object userState)

@@ -448,6 +448,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Child devices.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
         public Device[] Devices { get; }
 
         /// <summary>
@@ -468,6 +469,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Manufacturer url.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string ManufacturerUrl { get; }
 
         /// <summary>
@@ -488,6 +490,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Model url.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string ModelUrl { get; }
 
         /// <summary>
@@ -509,6 +512,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Services.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
         public Service[] Services { get; }
 
         /// <summary>
@@ -709,6 +713,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Description Url. This parameter is used only for records.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string DescriptionUrl { get; }
 
         /// <summary>
@@ -734,6 +739,7 @@ namespace LH.Net.UPnP
         /// <param name="descriptionUrl">Specify root device escription full url.</param>
         /// <param name="descriptionXmlString">Root device escription xml string.</param>
         /// <exception cref="Exception"/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054:Uri parameters should not be strings", Justification = "<Pending>")]
         public RootDevice(string descriptionUrl, string descriptionXmlString)
         {
             XmlDocument doc = new XmlDocument();
@@ -788,11 +794,13 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Control url.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string ControlUrl { get; }
 
         /// <summary>
         /// Event sub url.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string EventSubUrl { get; }
 
         /// <summary>
@@ -809,6 +817,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Scpd url.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string ScpdUrl { get; }
 
         /// <summary>

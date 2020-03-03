@@ -43,7 +43,7 @@ namespace LH.Collections
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public Combination(T[] array, int m)
         {
             if (array is null || array.Length == 0)
@@ -64,7 +64,7 @@ namespace LH.Collections
         /// <param name="array">元素数组切片。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public Combination(ArraySegment<T> array, int m)
         {
             if (array.Count == 0)
@@ -93,7 +93,7 @@ namespace LH.Collections
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public List<T[]> Output()
         {
             BigInteger count = GetCount();
@@ -167,15 +167,15 @@ namespace LH.Collections
         /// 交换元素数组切片中的两个元素。
         /// </summary>
         /// <param name="array">元素数组切片。</param>
-        /// <param name="index1">要交换的第一个元素的索引。</param>
-        /// <param name="index2">要交换的第二个元素的索引。</param>
-        private void Swap(ArraySegment<T> array, int index1, int index2)
+        /// <param name="indexA">要交换的第一个元素的索引。</param>
+        /// <param name="indexB">要交换的第二个元素的索引。</param>
+        private static void Swap(ArraySegment<T> array, int indexA, int indexB)
         {
-            index1 = array.Offset + index1;
-            index2 = array.Offset + index2;
-            T tmp = array.Array[index1];
-            array.Array[index1] = array.Array[index2];
-            array.Array[index2] = tmp;
+            indexA = array.Offset + indexA;
+            indexB = array.Offset + indexB;
+            T tmp = array.Array[indexA];
+            array.Array[indexA] = array.Array[indexB];
+            array.Array[indexB] = tmp;
         }
     }
 
@@ -209,7 +209,7 @@ namespace LH.Collections
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public Permutation(T[] array, int m)
         {
             if (array is null || array.Length == 0)
@@ -230,7 +230,7 @@ namespace LH.Collections
         /// <param name="array">元素数组切片。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public Permutation(ArraySegment<T> array, int m)
         {
             if (array.Count == 0)
@@ -259,7 +259,7 @@ namespace LH.Collections
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public List<T[]> Output()
         {
             BigInteger count = GetCount();
@@ -347,15 +347,15 @@ namespace LH.Collections
         /// 交换元素数组切片中的两个元素。
         /// </summary>
         /// <param name="array">元素数组切片。</param>
-        /// <param name="index1">要交换的第一个元素的索引。</param>
-        /// <param name="index2">要交换的第二个元素的索引。</param>
-        private void Swap(ArraySegment<T> array, int index1, int index2)
+        /// <param name="indexA">要交换的第一个元素的索引。</param>
+        /// <param name="indexB">要交换的第二个元素的索引。</param>
+        private static void Swap(ArraySegment<T> array, int indexA, int indexB)
         {
-            index1 = array.Offset + index1;
-            index2 = array.Offset + index2;
-            T tmp = array.Array[index1];
-            array.Array[index1] = array.Array[index2];
-            array.Array[index2] = tmp;
+            indexA = array.Offset + indexA;
+            indexB = array.Offset + indexB;
+            T tmp = array.Array[indexA];
+            array.Array[indexA] = array.Array[indexB];
+            array.Array[indexB] = tmp;
         }
     }
 }

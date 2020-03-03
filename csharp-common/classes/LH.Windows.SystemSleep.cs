@@ -26,16 +26,15 @@ namespace LH.Windows
         ///阻止系统休眠，直到恢复休眠策略。
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "<Pending>")]
         public static void PreventSleep(bool includeDisplay)
         {
             if (includeDisplay)
             {
-                NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
+                _ = NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
             }
             else
             {
-                NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
+                _ = NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
             }
         }
 
@@ -43,26 +42,24 @@ namespace LH.Windows
         ///重置系统休眠计时器。
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "<Pending>")]
         public static void ResetSleepTimer(bool includeDisplay)
         {
             if (includeDisplay)
             {
-                NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+                _ = NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
             }
             else
             {
-                NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED);
+                _ = NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED);
             }
         }
 
         /// <summary>
         ///恢复系统休眠策略。
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "<Pending>")]
         public static void ResotreSleep()
         {
-            NativeMethods.SetThreadExecutionState(ES_CONTINUOUS);
+            _ = NativeMethods.SetThreadExecutionState(ES_CONTINUOUS);
         }
     }
 
