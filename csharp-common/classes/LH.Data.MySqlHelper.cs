@@ -59,7 +59,7 @@ namespace LH.Data
         /// <returns></returns>
         public static MySqlConnection BuildConnection(MySqlConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder is null)
+            if (connectionStringBuilder == null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -147,7 +147,7 @@ namespace LH.Data
         /// <returns></returns>
         public static string BuildConnectionString(MySqlConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder is null)
+            if (connectionStringBuilder == null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -242,7 +242,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -279,7 +279,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -338,7 +338,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataSet GetDataSet(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -373,7 +373,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataTable GetDataTable(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -412,7 +412,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static MySqlDataReader GetDataReader(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -464,7 +464,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int ExecuteNonQuery(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -502,7 +502,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(MySqlConnection connection, string procedure, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -538,7 +538,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object ExecuteScalar(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -608,7 +608,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(MySqlConnection connection, IsolationLevel iso, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -691,7 +691,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(MySqlConnection connection, IsolationLevel iso, string procedure, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -771,7 +771,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(MySqlConnection connection, IsolationLevel iso, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -880,12 +880,12 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void Dump(MySqlConnection connection, MySqlDumpSetting setting, TextWriter textWriter, out bool cancelled, MySqlWrittenCallback written, object userState)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (setting is null)
+            if (setting == null)
             {
                 throw new ArgumentNullException(nameof(setting));
             }
@@ -1214,11 +1214,11 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         public static void DumpToFiles(MySqlConnection connection, MySqlDumpSetting setting, string folder, Encoding encoding, long segmentSize, out bool cancelled, MySqlWrittenCallback written, object userState)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (setting is null)
+            if (setting == null)
             {
                 throw new ArgumentNullException(nameof(setting));
             }
@@ -1581,7 +1581,7 @@ namespace LH.Data
         /// <returns></returns>
         public static MySqlDumpSetting GetDumpSetting(MySqlConnection connection)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -1663,6 +1663,7 @@ namespace LH.Data
     /// <summary>
     /// Note the type of dumping in the progress report.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1027:Mark enums with FlagsAttribute", Justification = "<Pending>")]
     public enum MySqlDumpType
     {
         /// <summary>Does not belong to any type. This type does not appear during the dumping process.</summary>

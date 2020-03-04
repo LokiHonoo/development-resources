@@ -53,7 +53,7 @@ namespace LH.Data
         /// <returns></returns>
         public static SqlConnection BuildConnection(SqlConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder is null)
+            if (connectionStringBuilder == null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -124,7 +124,7 @@ namespace LH.Data
         /// <returns></returns>
         public static string BuildConnectionString(SqlConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder is null)
+            if (connectionStringBuilder == null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -202,7 +202,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -240,7 +240,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -300,7 +300,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataSet GetDataSet(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -336,7 +336,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataTable GetDataTable(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -376,7 +376,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static SqlDataReader GetDataReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -429,7 +429,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static XmlReader GetXmlReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -473,7 +473,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int ExecuteNonQuery(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -512,7 +512,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(SqlConnection connection, string procedure, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -549,7 +549,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object ExecuteScalar(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -617,7 +617,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(SqlConnection connection, IsolationLevel iso, string commandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -697,7 +697,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(SqlConnection connection, IsolationLevel iso, string procedure, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -775,7 +775,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(SqlConnection connection, IsolationLevel iso, string commandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }

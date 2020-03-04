@@ -59,7 +59,7 @@ namespace LH.Data
         /// <returns></returns>
         public static SQLiteConnection BuildConnection(SQLiteConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder is null)
+            if (connectionStringBuilder == null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -96,7 +96,7 @@ namespace LH.Data
         /// <returns></returns>
         public static string BuildConnectionString(SQLiteConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder is null)
+            if (connectionStringBuilder == null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -140,7 +140,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -177,7 +177,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -236,7 +236,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -271,7 +271,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -310,7 +310,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -362,7 +362,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int ExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -400,7 +400,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -436,7 +436,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object ExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -503,7 +503,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(SQLiteConnection connection, IsolationLevel iso, string commandText, params SQLiteParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -582,7 +582,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(SQLiteConnection connection, IsolationLevel iso, string procedure, params SQLiteParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -660,7 +660,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(SQLiteConnection connection, IsolationLevel iso, string commandText, params SQLiteParameter[] parameters)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -769,11 +769,11 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void Dump(SQLiteConnection connection, SQLiteDumpSetting setting, TextWriter textWriter, out bool cancelled, SQLiteWrittenCallback written, object userState)
         {
-            if (connection is null)
+            if (connection == null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (setting is null)
+            if (setting == null)
             {
                 throw new ArgumentNullException(nameof(setting));
             }
@@ -1066,6 +1066,7 @@ namespace LH.Data
     /// <summary>
     /// Note the type of dumping in the progress report.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1027:Mark enums with FlagsAttribute", Justification = "<Pending>")]
     public enum SQLiteDumpType
     {
         /// <summary>Does not belong to any type. This type does not appear during the dumping process.</summary>

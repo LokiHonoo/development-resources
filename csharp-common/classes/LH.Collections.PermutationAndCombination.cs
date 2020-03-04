@@ -46,7 +46,7 @@ namespace LH.Collections
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public Combination(T[] array, int m)
         {
-            if (array is null || array.Length == 0)
+            if (array == null || array.Length == 0)
             {
                 throw new Exception("元素数组不能是空数组。");
             }
@@ -213,7 +213,7 @@ namespace LH.Collections
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public Permutation(T[] array, int m)
         {
-            if (array is null || array.Length == 0)
+            if (array == null || array.Length == 0)
             {
                 throw new Exception("元素数组不能是空数组。");
             }

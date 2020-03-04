@@ -114,7 +114,7 @@ namespace LH.Net.UPnP
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static string PostAction(Service service, bool man, string action, params KeyValuePair<string, string>[] arguments)
         {
-            if (service is null)
+            if (service == null)
             {
                 throw new ArgumentNullException(nameof(service));
             }
@@ -176,7 +176,7 @@ namespace LH.Net.UPnP
                                           int leaseDuration,
                                           string description)
         {
-            if (internalIPAddress is null)
+            if (internalIPAddress == null)
             {
                 throw new ArgumentNullException(nameof(internalIPAddress));
             }
@@ -315,13 +315,13 @@ namespace LH.Net.UPnP
                                 {
                                     byte[] down = wc.DownloadData(descriptionUrl);
                                     RootDevice di = new RootDevice(descriptionUrl, Encoding.UTF8.GetString(down));
-                                    if (di != null)
+                                    if (di == null)
                                     {
-                                        dis.Add(di);
+                                        continue;
                                     }
                                     else
                                     {
-                                        continue;
+                                        dis.Add(di);
                                     }
                                 }
                                 catch
@@ -534,7 +534,7 @@ namespace LH.Net.UPnP
         /// <exception cref="Exception"/>
         public Device(Uri uri, RootDevice root, Device parent, XmlNode deviceNode, XmlNamespaceManager nm)
         {
-            if (deviceNode is null)
+            if (deviceNode == null)
             {
                 throw new ArgumentNullException(nameof(deviceNode));
             }
@@ -844,11 +844,11 @@ namespace LH.Net.UPnP
         /// <exception cref="Exception"/>
         public Service(Uri uri, RootDevice root, Device parent, XmlNode serviceNode, XmlNamespaceManager nm)
         {
-            if (uri is null)
+            if (uri == null)
             {
                 throw new ArgumentNullException(nameof(uri));
             }
-            if (serviceNode is null)
+            if (serviceNode == null)
             {
                 throw new ArgumentNullException(nameof(serviceNode));
             }

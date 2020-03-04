@@ -121,7 +121,7 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] CCT2XYZ(double CCT, Reference reference)
         {
-            if (reference is null)
+            if (reference == null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -165,12 +165,12 @@ namespace LH.Drawing
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public static double DominantWavelength(double[] xyY, Reference reference, out Exception exception)
         {
-            if (xyY is null)
+            if (xyY == null)
             {
                 throw new ArgumentNullException(nameof(xyY));
             }
 
-            if (reference is null)
+            if (reference == null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -246,7 +246,7 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] Lab2LCHab(double[] Lab)
         {
-            if (Lab is null)
+            if (Lab == null)
             {
                 throw new ArgumentNullException(nameof(Lab));
             }
@@ -271,12 +271,12 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] Lab2XYZ(double[] Lab, Reference reference)
         {
-            if (Lab is null)
+            if (Lab == null)
             {
                 throw new ArgumentNullException(nameof(Lab));
             }
 
-            if (reference is null)
+            if (reference == null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -302,7 +302,7 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] LCHab2Lab(double[] LCHab)
         {
-            if (LCHab is null)
+            if (LCHab == null)
             {
                 throw new ArgumentNullException(nameof(LCHab));
             }
@@ -317,7 +317,7 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] LCHuv2Luv(double[] LCHuv)
         {
-            if (LCHuv is null)
+            if (LCHuv == null)
             {
                 throw new ArgumentNullException(nameof(LCHuv));
             }
@@ -332,7 +332,7 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] Luv2LCHuv(double[] Luv)
         {
-            if (Luv is null)
+            if (Luv == null)
             {
                 throw new ArgumentNullException(nameof(Luv));
             }
@@ -357,12 +357,12 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] Luv2XYZ(double[] Luv, Reference reference)
         {
-            if (Luv is null)
+            if (Luv == null)
             {
                 throw new ArgumentNullException(nameof(Luv));
             }
 
-            if (reference is null)
+            if (reference == null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -395,7 +395,7 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] RGB2RGB(byte[] RGB)
         {
-            if (RGB is null)
+            if (RGB == null)
             {
                 throw new ArgumentNullException(nameof(RGB));
             }
@@ -410,7 +410,7 @@ namespace LH.Drawing
         /// <returns></returns>
         public static byte[] RGB2RGB(double[] RGB)
         {
-            if (RGB is null)
+            if (RGB == null)
             {
                 throw new ArgumentNullException(nameof(RGB));
             }
@@ -430,12 +430,12 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] RGB2XYZ(double[] RGB, Reference reference)
         {
-            if (RGB is null)
+            if (RGB == null)
             {
                 throw new ArgumentNullException(nameof(RGB));
             }
 
-            if (reference is null)
+            if (reference == null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -494,7 +494,7 @@ namespace LH.Drawing
         [System.Diagnostics.CodeAnalysis.SuppressMessage("样式", "IDE1006:命名样式", Justification = "<挂起>")]
         public static double[] xyY2XYZ(double[] xyY)
         {
-            if (xyY is null)
+            if (xyY == null)
             {
                 throw new ArgumentNullException(nameof(xyY));
             }
@@ -519,11 +519,11 @@ namespace LH.Drawing
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public static double XYZ2CCT(double[] XYZ, Reference reference, out Exception exception)
         {
-            if (XYZ is null)
+            if (XYZ == null)
             {
                 throw new ArgumentNullException(nameof(XYZ));
             }
-            if (reference is null)
+            if (reference == null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -569,11 +569,11 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] XYZ2Lab(double[] XYZ, Reference reference)
         {
-            if (XYZ is null)
+            if (XYZ == null)
             {
                 throw new ArgumentNullException(nameof(XYZ));
             }
-            if (reference is null)
+            if (reference == null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -596,11 +596,11 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] XYZ2Luv(double[] XYZ, Reference reference)
         {
-            if (XYZ is null)
+            if (XYZ == null)
             {
                 throw new ArgumentNullException(nameof(XYZ));
             }
-            if (reference is null)
+            if (reference == null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -629,11 +629,11 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] XYZ2RGB(double[] XYZ, Reference reference)
         {
-            if (XYZ is null)
+            if (XYZ == null)
             {
                 throw new ArgumentNullException(nameof(XYZ));
             }
-            if (reference is null)
+            if (reference == null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -689,11 +689,11 @@ namespace LH.Drawing
         /// <returns></returns>
         public static double[] XYZ2xyY(double[] XYZ, Reference reference)
         {
-            if (XYZ is null)
+            if (XYZ == null)
             {
                 throw new ArgumentNullException(nameof(XYZ));
             }
-            if (reference is null)
+            if (reference == null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }

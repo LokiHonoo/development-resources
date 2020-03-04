@@ -41,7 +41,7 @@ namespace LH.Xml
         /// <returns></returns>
         public static string GetFormattedString(XmlDocument doc, XmlWriterSettings settings)
         {
-            if (doc is null)
+            if (doc == null)
             {
                 throw new ArgumentNullException(nameof(doc));
             }
@@ -73,7 +73,7 @@ namespace LH.Xml
         [System.Diagnostics.CodeAnalysis.SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         public static void SaveFormattedToFile(string path, XmlDocument doc, XmlWriterSettings settings)
         {
-            if (doc is null)
+            if (doc == null)
             {
                 throw new ArgumentNullException(nameof(doc));
             }

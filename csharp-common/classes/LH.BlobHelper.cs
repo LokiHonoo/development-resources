@@ -27,7 +27,7 @@ namespace LH
         /// <returns></returns>
         public static byte[] Decompress(byte[] bytes)
         {
-            if (bytes is null)
+            if (bytes == null)
             {
                 throw new ArgumentNullException(nameof(bytes));
             }
