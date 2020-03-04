@@ -1465,7 +1465,8 @@ namespace LH.Drawing
         /// <param name="m">3x3 矩阵。</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
-        private static double Determinant3x3(double[,] m)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1822:成员 Determinant3x3 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
+        private double Determinant3x3(double[,] m)
         {
             return m[0, 0] * (m[2, 2] * m[1, 1] - m[2, 1] * m[1, 2]) -
                    m[1, 0] * (m[2, 2] * m[0, 1] - m[2, 1] * m[0, 2]) +
