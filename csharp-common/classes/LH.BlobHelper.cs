@@ -16,7 +16,7 @@ namespace LH
     /// <summary>
     /// 二进制对象辅助。
     /// </summary>
-    public static class BlobHelper
+    internal static class BlobHelper
     {
         #region 压缩
 
@@ -25,7 +25,7 @@ namespace LH
         /// </summary>
         /// <param name="bytes">使用 GZip 压缩过的字节数组。</param>
         /// <returns></returns>
-        public static byte[] Decompress(byte[] bytes)
+        internal static byte[] Decompress(byte[] bytes)
         {
             if (bytes == null)
             {
@@ -43,7 +43,7 @@ namespace LH
         /// <returns></returns>
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        public static byte[] Decompress(byte[] bytes, int offset, int count)
+        internal static byte[] Decompress(byte[] bytes, int offset, int count)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -96,7 +96,7 @@ namespace LH
         /// <param name="hex">无分隔符的十六进制字符串。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] GetHexBytes(string hex)
+        internal static byte[] GetHexBytes(string hex)
         {
             if (string.IsNullOrEmpty(hex))
             {
@@ -117,7 +117,7 @@ namespace LH
         /// <param name="remove">要移除的分隔符。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] GetHexBytes(string hex, string remove)
+        internal static byte[] GetHexBytes(string hex, string remove)
         {
             if (string.IsNullOrEmpty(hex))
             {

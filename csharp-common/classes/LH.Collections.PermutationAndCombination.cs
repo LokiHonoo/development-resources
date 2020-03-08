@@ -17,7 +17,7 @@ namespace LH.Collections
     /// 求数组组合。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
-    public sealed class Combination<T>
+    internal sealed class Combination<T>
     {
         #region 成员
 
@@ -33,7 +33,7 @@ namespace LH.Collections
         /// </summary>
         /// <param name="result">组合完成后的一组元素集合。</param>
         /// <param name="userState">传递用户参数。</param>
-        public delegate void CreatedCallback(T[] result, object userState);
+        internal delegate void CreatedCallback(T[] result, object userState);
 
         #endregion 委托
 
@@ -44,7 +44,7 @@ namespace LH.Collections
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        public Combination(T[] array, int m)
+        internal Combination(T[] array, int m)
         {
             if (array == null || array.Length == 0)
             {
@@ -65,7 +65,7 @@ namespace LH.Collections
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        public Combination(ArraySegment<T> array, int m)
+        internal Combination(ArraySegment<T> array, int m)
         {
             if (array.Count == 0)
             {
@@ -83,7 +83,7 @@ namespace LH.Collections
         /// 计算可组合数量。
         /// </summary>
         /// <returns></returns>
-        public BigInteger GetCount()
+        internal BigInteger GetCount()
         {
             return C(_array.Count, _m);
         }
@@ -94,7 +94,7 @@ namespace LH.Collections
         /// <returns></returns>
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        public List<T[]> Output()
+        internal List<T[]> Output()
         {
             BigInteger count = GetCount();
             if (count > int.MaxValue)
@@ -111,7 +111,7 @@ namespace LH.Collections
         /// </summary>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        public void Output(CreatedCallback created, object userState)
+        internal void Output(CreatedCallback created, object userState)
         {
             Combine(_array, _m, 0, _m, created, userState);
         }
@@ -122,6 +122,7 @@ namespace LH.Collections
         /// <param name="n">指定元素总数。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
         private BigInteger C(int n, int m)
         {
             BigInteger numerator = BigInteger.One;
@@ -184,7 +185,7 @@ namespace LH.Collections
     /// 求数组排列。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
-    public sealed class Permutation<T>
+    internal sealed class Permutation<T>
     {
         #region 成员
 
@@ -200,7 +201,7 @@ namespace LH.Collections
         /// </summary>
         /// <param name="result">排列完成后的一组元素集合。</param>
         /// <param name="userState">传递用户参数。</param>
-        public delegate void CreatedCallback(T[] result, object userState);
+        internal delegate void CreatedCallback(T[] result, object userState);
 
         #endregion 委托
 
@@ -211,7 +212,7 @@ namespace LH.Collections
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        public Permutation(T[] array, int m)
+        internal Permutation(T[] array, int m)
         {
             if (array == null || array.Length == 0)
             {
@@ -232,7 +233,7 @@ namespace LH.Collections
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        public Permutation(ArraySegment<T> array, int m)
+        internal Permutation(ArraySegment<T> array, int m)
         {
             if (array.Count == 0)
             {
@@ -250,7 +251,7 @@ namespace LH.Collections
         /// 计算可排列数量。
         /// </summary>
         /// <returns></returns>
-        public BigInteger GetCount()
+        internal BigInteger GetCount()
         {
             return P(_array.Count, _m);
         }
@@ -261,7 +262,7 @@ namespace LH.Collections
         /// <returns></returns>
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        public List<T[]> Output()
+        internal List<T[]> Output()
         {
             BigInteger count = GetCount();
             if (count > int.MaxValue)
@@ -278,7 +279,7 @@ namespace LH.Collections
         /// </summary>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        public void Output(CreatedCallback created, object userState)
+        internal void Output(CreatedCallback created, object userState)
         {
             if (_m == _array.Count)
             {
@@ -300,6 +301,7 @@ namespace LH.Collections
         /// <param name="n">指定元素总数。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
         private BigInteger P(int n, int m)
         {
             BigInteger integer = BigInteger.One;

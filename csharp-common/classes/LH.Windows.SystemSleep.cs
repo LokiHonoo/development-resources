@@ -14,7 +14,7 @@ namespace LH.Windows
     /// <summary>
     /// 系统休眠。
     /// </summary>
-    public static class SystemSleep
+    internal static class SystemSleep
     {
         private const uint ES_CONTINUOUS = 0x80000000;
 
@@ -26,7 +26,7 @@ namespace LH.Windows
         ///阻止系统休眠，直到恢复休眠策略。
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
-        public static void PreventSleep(bool includeDisplay)
+        internal static void PreventSleep(bool includeDisplay)
         {
             if (includeDisplay)
             {
@@ -42,7 +42,7 @@ namespace LH.Windows
         ///重置系统休眠计时器。
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
-        public static void ResetSleepTimer(bool includeDisplay)
+        internal static void ResetSleepTimer(bool includeDisplay)
         {
             if (includeDisplay)
             {
@@ -57,7 +57,7 @@ namespace LH.Windows
         /// <summary>
         ///恢复系统休眠策略。
         /// </summary>
-        public static void ResotreSleep()
+        internal static void ResotreSleep()
         {
             _ = NativeMethods.SetThreadExecutionState(ES_CONTINUOUS);
         }

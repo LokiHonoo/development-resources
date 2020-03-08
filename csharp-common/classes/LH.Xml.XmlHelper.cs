@@ -16,7 +16,7 @@ namespace LH.Xml
     /// <summary>
     /// Xml 辅助。
     /// </summary>
-    public static class XmlHelper
+    internal static class XmlHelper
     {
         /// <summary>
         /// 格式化设置。
@@ -28,7 +28,7 @@ namespace LH.Xml
         /// </summary>
         /// <param name="doc">XmlDocument 文档。</param>
         /// <returns></returns>
-        public static string GetFormattedString(XmlDocument doc)
+        internal static string GetFormattedString(XmlDocument doc)
         {
             return GetFormattedString(doc, _settings);
         }
@@ -39,7 +39,7 @@ namespace LH.Xml
         /// <param name="doc">XmlDocument 文档。</param>
         /// <param name="settings">格式化设置。</param>
         /// <returns></returns>
-        public static string GetFormattedString(XmlDocument doc, XmlWriterSettings settings)
+        internal static string GetFormattedString(XmlDocument doc, XmlWriterSettings settings)
         {
             if (doc == null)
             {
@@ -59,7 +59,7 @@ namespace LH.Xml
         /// </summary>
         /// <param name="path">保存的文件路径。</param>
         /// <param name="doc">XmlDocument 文档。</param>
-        public static void SaveFormattedToFile(string path, XmlDocument doc)
+        internal static void SaveFormattedToFile(string path, XmlDocument doc)
         {
             SaveFormattedToFile(path, doc, _settings);
         }
@@ -71,7 +71,7 @@ namespace LH.Xml
         /// <param name="doc">XmlDocument 文档。</param>
         /// <param name="settings">格式化设置。</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        public static void SaveFormattedToFile(string path, XmlDocument doc, XmlWriterSettings settings)
+        internal static void SaveFormattedToFile(string path, XmlDocument doc, XmlWriterSettings settings)
         {
             if (doc == null)
             {

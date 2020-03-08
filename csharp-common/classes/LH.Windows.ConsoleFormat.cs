@@ -15,7 +15,7 @@ namespace LH.Windows
     /// <summary>
     /// Windows 控制台控制。
     /// </summary>
-    public static class ConsoleFormat
+    internal static class ConsoleFormat
     {
         private const uint ENABLE_INSERT_MODE = 0x0020;
 
@@ -26,7 +26,7 @@ namespace LH.Windows
         /// <summary>
         /// 关闭控制台快速编辑模式，防止阻塞现象。
         /// </summary>
-        public static void DisableQuickEditMode()
+        internal static void DisableQuickEditMode()
         {
             IntPtr hStdin = NativeMethods.GetStdHandle(STD_INPUT_HANDLE);
             NativeMethods.GetConsoleMode(hStdin, out uint mode);

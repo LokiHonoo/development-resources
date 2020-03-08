@@ -16,29 +16,29 @@ namespace LH.Data
     /// <summary>
     /// OleDb extension.
     /// </summary>
-    public static class OleDbHelper
+    internal static class OleDbHelper
     {
         #region ConnectionBehavior
 
         /// <summary>
         /// Connection open/close behavior when using DataAdapter. Default Auto.
         /// </summary>
-        public static OleDbConnectionBehavior DataAdapterConnectionBehavior { get; set; } = OleDbConnectionBehavior.Auto;
+        internal static OleDbConnectionBehavior DataAdapterConnectionBehavior { get; set; } = OleDbConnectionBehavior.Auto;
 
         /// <summary>
         /// Connection open/close behavior when using DataReader. Default Manual.
         /// </summary>
-        public static OleDbConnectionBehavior DataReaderConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
+        internal static OleDbConnectionBehavior DataReaderConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Execute. Default Manual.
         /// </summary>
-        public static OleDbConnectionBehavior ExecuteConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
+        internal static OleDbConnectionBehavior ExecuteConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Transaction. Default Manual.
         /// </summary>
-        public static OleDbConnectionBehavior TransactionConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
+        internal static OleDbConnectionBehavior TransactionConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
 
         #endregion ConnectionBehavior
 
@@ -49,7 +49,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static OleDbConnection BuildConnection(OleDbConnectionStringBuilder connectionStringBuilder)
+        internal static OleDbConnection BuildConnection(OleDbConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder == null)
             {
@@ -64,7 +64,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         /// <returns></returns>
-        public static OleDbConnection BuildConnection(string connectionString)
+        internal static OleDbConnection BuildConnection(string connectionString)
         {
             return new OleDbConnection(connectionString);
         }
@@ -74,7 +74,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(OleDbConnectionStringBuilder connectionStringBuilder)
+        internal static string BuildConnectionString(OleDbConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder == null)
             {
@@ -95,7 +95,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText) => FillDataSet(dataSet, connection, selectCommandText, null);
+        internal static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText) => FillDataSet(dataSet, connection, selectCommandText, null);
 
         /// <summary>
         /// Append the fill DataSet with records and schemas. Returns the number of populated data rows.
@@ -106,7 +106,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
+        internal static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
             if (connection == null)
             {
@@ -133,7 +133,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText) => FillDataTable(dataTable, connection, selectCommandText, null);
+        internal static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText) => FillDataTable(dataTable, connection, selectCommandText, null);
 
         /// <summary>
         /// Append the fill DataTable with records and schemas. Returns the number of populated data rows.
@@ -144,7 +144,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
+        internal static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
             if (connection == null)
             {
@@ -171,7 +171,7 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText) => new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+        internal static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText) => new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
 
         /// <summary>
         /// Get DataAdapter.
@@ -181,7 +181,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
+        internal static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
             OleDbDataAdapter result = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
             if (parameters != null && parameters.Length > 0) { result.SelectCommand.Parameters.AddRange(parameters); }
@@ -194,7 +194,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static DataSet GetDataSet(OleDbConnection connection, string selectCommandText) => GetDataSet(connection, selectCommandText, null);
+        internal static DataSet GetDataSet(OleDbConnection connection, string selectCommandText) => GetDataSet(connection, selectCommandText, null);
 
         /// <summary>
         /// Create a new DataSet with records and schemas.
@@ -204,7 +204,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static DataSet GetDataSet(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
+        internal static DataSet GetDataSet(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
             if (connection == null)
             {
@@ -230,7 +230,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static DataTable GetDataTable(OleDbConnection connection, string selectCommandText) => GetDataTable(connection, selectCommandText, null);
+        internal static DataTable GetDataTable(OleDbConnection connection, string selectCommandText) => GetDataTable(connection, selectCommandText, null);
 
         /// <summary>
         /// Create a new DataTable with records and schemas.
@@ -240,7 +240,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static DataTable GetDataTable(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
+        internal static DataTable GetDataTable(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
             if (connection == null)
             {
@@ -270,7 +270,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText) => GetDataReader(connection, commandText, null);
+        internal static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText) => GetDataReader(connection, commandText, null);
 
         /// <summary>
         /// Get DataReader.
@@ -280,7 +280,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
+        internal static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
             if (connection == null)
             {
@@ -323,7 +323,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(OleDbConnection connection, string commandText) => ExecuteNonQuery(connection, commandText, null);
+        internal static int ExecuteNonQuery(OleDbConnection connection, string commandText) => ExecuteNonQuery(connection, commandText, null);
 
         /// <summary>
         /// Execute the query command. Returns the number of rows affected.
@@ -333,7 +333,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static int ExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
+        internal static int ExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
             if (connection == null)
             {
@@ -362,7 +362,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        public static void ExecuteProcedure(OleDbConnection connection, string procedure) => ExecuteProcedure(connection, procedure, null);
+        internal static void ExecuteProcedure(OleDbConnection connection, string procedure) => ExecuteProcedure(connection, procedure, null);
 
         /// <summary>
         /// Executing stored procedure.
@@ -372,7 +372,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static void ExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters)
+        internal static void ExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters)
         {
             if (connection == null)
             {
@@ -399,7 +399,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(OleDbConnection connection, string commandText) => ExecuteScalar(connection, commandText, null);
+        internal static object ExecuteScalar(OleDbConnection connection, string commandText) => ExecuteScalar(connection, commandText, null);
 
         /// <summary>
         /// Execute the query command. Returns the first column of the first row in the query result set.
@@ -409,7 +409,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static object ExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
+        internal static object ExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
             if (connection == null)
             {
@@ -443,7 +443,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText) =>
+        internal static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText) =>
             TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, null);
 
         /// <summary>
@@ -453,7 +453,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters) =>
+        internal static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters) =>
             TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, parameters);
 
         /// <summary>
@@ -463,7 +463,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText) =>
+        internal static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText) =>
             TransactionExecuteNonQuery(connection, iso, commandText, null);
 
         /// <summary>
@@ -477,7 +477,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
+        internal static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
         {
             if (connection == null)
             {
@@ -526,7 +526,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        public static void TransactionExecuteProcedure(OleDbConnection connection, string procedure) =>
+        internal static void TransactionExecuteProcedure(OleDbConnection connection, string procedure) =>
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, null);
 
         /// <summary>
@@ -535,7 +535,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        public static void TransactionExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters) =>
+        internal static void TransactionExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters) =>
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, parameters);
 
         /// <summary>
@@ -544,7 +544,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        public static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure) =>
+        internal static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure) =>
             TransactionExecuteProcedure(connection, iso, procedure, null);
 
         /// <summary>
@@ -557,7 +557,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-        public static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure, params OleDbParameter[] parameters)
+        internal static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure, params OleDbParameter[] parameters)
         {
             if (connection == null)
             {
@@ -601,7 +601,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(OleDbConnection connection, string commandText) =>
+        internal static object TransactionExecuteScalar(OleDbConnection connection, string commandText) =>
             TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, null);
 
         /// <summary>
@@ -611,7 +611,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters) =>
+        internal static object TransactionExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters) =>
             TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, parameters);
 
         /// <summary>
@@ -621,7 +621,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText) =>
+        internal static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText) =>
             TransactionExecuteScalar(connection, iso, commandText, null);
 
         /// <summary>
@@ -635,7 +635,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
+        internal static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
         {
             if (connection == null)
             {
@@ -687,7 +687,7 @@ namespace LH.Data
     /// <summary>
     /// The mode of the connection when querying.
     /// </summary>
-    public enum OleDbConnectionBehavior
+    internal enum OleDbConnectionBehavior
     {
         /// <summary>Does not open automatically. If the connection is not open  when the querying, an exception is thrown.</summary>
         Manual,

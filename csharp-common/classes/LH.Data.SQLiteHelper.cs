@@ -24,29 +24,29 @@ namespace LH.Data
     /// <summary>
     /// SQLite extension.
     /// </summary>
-    public static class SQLiteHelper
+    internal static class SQLiteHelper
     {
         #region ConnectionBehavior
 
         /// <summary>
         /// Connection open/close behavior when using DataAdapter. Default Auto.
         /// </summary>
-        public static SQLiteConnectionBehavior DataAdapterConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Auto;
+        internal static SQLiteConnectionBehavior DataAdapterConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Auto;
 
         /// <summary>
         /// Connection open/close behavior when using DataReader. Default Manual.
         /// </summary>
-        public static SQLiteConnectionBehavior DataReaderConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Manual;
+        internal static SQLiteConnectionBehavior DataReaderConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Execute. Default Manual.
         /// </summary>
-        public static SQLiteConnectionBehavior ExecuteConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Manual;
+        internal static SQLiteConnectionBehavior ExecuteConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Transaction. Default Manual.
         /// </summary>
-        public static SQLiteConnectionBehavior TransactionConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Manual;
+        internal static SQLiteConnectionBehavior TransactionConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Manual;
 
         #endregion ConnectionBehavior
 
@@ -57,7 +57,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static SQLiteConnection BuildConnection(SQLiteConnectionStringBuilder connectionStringBuilder)
+        internal static SQLiteConnection BuildConnection(SQLiteConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder == null)
             {
@@ -71,7 +71,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         /// <returns></returns>
-        public static SQLiteConnection BuildConnection(string connectionString)
+        internal static SQLiteConnection BuildConnection(string connectionString)
         {
             return new SQLiteConnection(connectionString);
         }
@@ -82,7 +82,7 @@ namespace LH.Data
         /// <param name="dataSource">Data file path.</param>
         /// <param name="password">Password. Warning: Setting password is not supported on the NETSTANDARD and NETCORE. Set this argument to 'null'.</param>
         /// <returns></returns>
-        public static SQLiteConnection BuildConnection(string dataSource, string password)
+        internal static SQLiteConnection BuildConnection(string dataSource, string password)
         {
             SQLiteConnectionStringBuilder connectionStringBuilder = new SQLiteConnectionStringBuilder() { DataSource = dataSource };
             if (!string.IsNullOrEmpty(password)) { connectionStringBuilder.Password = password; }
@@ -94,7 +94,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(SQLiteConnectionStringBuilder connectionStringBuilder)
+        internal static string BuildConnectionString(SQLiteConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder == null)
             {
@@ -109,7 +109,7 @@ namespace LH.Data
         /// <param name="dataSource">Data file path.</param>
         /// <param name="password">Password. Warning: Setting password is not supported on the NETSTANDARD and NETCORE. Set this argument to 'null'.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(string dataSource, string password)
+        internal static string BuildConnectionString(string dataSource, string password)
         {
             SQLiteConnectionStringBuilder connectionStringBuilder = new SQLiteConnectionStringBuilder() { DataSource = dataSource };
             if (!string.IsNullOrEmpty(password)) { connectionStringBuilder.Password = password; }
@@ -127,7 +127,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText) => FillDataSet(dataSet, connection, selectCommandText, null);
+        internal static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText) => FillDataSet(dataSet, connection, selectCommandText, null);
 
         /// <summary>
         /// Append the fill DataSet with records and schemas. Returns the number of populated data rows.
@@ -138,7 +138,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
+        internal static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -164,7 +164,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText) => FillDataTable(dataTable, connection, selectCommandText, null);
+        internal static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText) => FillDataTable(dataTable, connection, selectCommandText, null);
 
         /// <summary>
         /// Append the fill DataTable with records and schemas. Returns the number of populated data rows.
@@ -175,7 +175,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
+        internal static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -201,7 +201,7 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText) => new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+        internal static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText) => new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
 
         /// <summary>
         /// Get DataAdapter.
@@ -211,7 +211,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
+        internal static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
             SQLiteDataAdapter result = new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
             if (parameters != null && parameters.Length > 0) { result.SelectCommand.Parameters.AddRange(parameters); }
@@ -224,7 +224,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText) => GetDataSet(connection, selectCommandText, null);
+        internal static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText) => GetDataSet(connection, selectCommandText, null);
 
         /// <summary>
         /// Create a new DataSet with records and schemas.
@@ -234,7 +234,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
+        internal static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -259,7 +259,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText) => GetDataTable(connection, selectCommandText, null);
+        internal static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText) => GetDataTable(connection, selectCommandText, null);
 
         /// <summary>
         /// Create a new DataTable with records and schemas.
@@ -269,7 +269,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
+        internal static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -298,7 +298,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText) => GetDataReader(connection, commandText, null);
+        internal static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText) => GetDataReader(connection, commandText, null);
 
         /// <summary>
         /// Get DataReader.
@@ -308,7 +308,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
+        internal static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -350,7 +350,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(SQLiteConnection connection, string commandText) => ExecuteNonQuery(connection, commandText, null);
+        internal static int ExecuteNonQuery(SQLiteConnection connection, string commandText) => ExecuteNonQuery(connection, commandText, null);
 
         /// <summary>
         /// Execute the query command. Returns the number of rows affected.
@@ -360,7 +360,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static int ExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
+        internal static int ExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -388,7 +388,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql query.</param>
-        public static void ExecuteProcedure(SQLiteConnection connection, string procedure) => ExecuteProcedure(connection, procedure, null);
+        internal static void ExecuteProcedure(SQLiteConnection connection, string procedure) => ExecuteProcedure(connection, procedure, null);
 
         /// <summary>
         /// Executing stored procedure.
@@ -398,7 +398,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static void ExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters)
+        internal static void ExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -424,7 +424,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(SQLiteConnection connection, string commandText) => ExecuteScalar(connection, commandText, null);
+        internal static object ExecuteScalar(SQLiteConnection connection, string commandText) => ExecuteScalar(connection, commandText, null);
 
         /// <summary>
         /// Execute the query command. Returns the first column of the first row in the query result set.
@@ -434,7 +434,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        public static object ExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
+        internal static object ExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -467,7 +467,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText) =>
+        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText) =>
             TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, null);
 
         /// <summary>
@@ -477,7 +477,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters) =>
+        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters) =>
             TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, parameters);
 
         /// <summary>
@@ -487,7 +487,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SQLiteConnection connection, IsolationLevel iso, string commandText) =>
+        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, IsolationLevel iso, string commandText) =>
             TransactionExecuteNonQuery(connection, iso, commandText, null);
 
         /// <summary>
@@ -501,7 +501,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-        public static int TransactionExecuteNonQuery(SQLiteConnection connection, IsolationLevel iso, string commandText, params SQLiteParameter[] parameters)
+        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, IsolationLevel iso, string commandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -549,7 +549,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        public static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure) =>
+        internal static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure) =>
             TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, null);
 
         /// <summary>
@@ -558,7 +558,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        public static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters) =>
+        internal static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters) =>
             TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, parameters);
 
         /// <summary>
@@ -567,7 +567,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        public static void TransactionExecuteProcedure(SQLiteConnection connection, IsolationLevel iso, string procedure) =>
+        internal static void TransactionExecuteProcedure(SQLiteConnection connection, IsolationLevel iso, string procedure) =>
             TransactionExecuteProcedure(connection, iso, procedure, null);
 
         /// <summary>
@@ -580,7 +580,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static void TransactionExecuteProcedure(SQLiteConnection connection, IsolationLevel iso, string procedure, params SQLiteParameter[] parameters)
+        internal static void TransactionExecuteProcedure(SQLiteConnection connection, IsolationLevel iso, string procedure, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -624,7 +624,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(SQLiteConnection connection, string commandText) =>
+        internal static object TransactionExecuteScalar(SQLiteConnection connection, string commandText) =>
             TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, null);
 
         /// <summary>
@@ -634,7 +634,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters) =>
+        internal static object TransactionExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters) =>
             TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, parameters);
 
         /// <summary>
@@ -644,7 +644,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(SQLiteConnection connection, IsolationLevel iso, string commandText) =>
+        internal static object TransactionExecuteScalar(SQLiteConnection connection, IsolationLevel iso, string commandText) =>
             TransactionExecuteScalar(connection, iso, commandText, null);
 
         /// <summary>
@@ -658,7 +658,7 @@ namespace LH.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-        public static object TransactionExecuteScalar(SQLiteConnection connection, IsolationLevel iso, string commandText, params SQLiteParameter[] parameters)
+        internal static object TransactionExecuteScalar(SQLiteConnection connection, IsolationLevel iso, string commandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -710,7 +710,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <returns></returns>
-        public static string GetServerVersion(SQLiteConnection connection)
+        internal static string GetServerVersion(SQLiteConnection connection)
         {
             return (string)ExecuteScalar(connection, "SELECT SQLITE_VERSION();");
         }
@@ -725,7 +725,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="textWriter">TextWriter.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        public static void Dump(SQLiteConnection connection, TextWriter textWriter, out bool cancelled)
+        internal static void Dump(SQLiteConnection connection, TextWriter textWriter, out bool cancelled)
         {
             SQLiteDumpSetting setting = GetDumpSetting(connection);
             Dump(connection, setting, textWriter, out cancelled, null, null);
@@ -739,7 +739,7 @@ namespace LH.Data
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
-        public static void Dump(SQLiteConnection connection, TextWriter textWriter, out bool cancelled, SQLiteWrittenCallback written, object userState)
+        internal static void Dump(SQLiteConnection connection, TextWriter textWriter, out bool cancelled, SQLiteWrittenCallback written, object userState)
         {
             SQLiteDumpSetting setting = GetDumpSetting(connection);
             Dump(connection, setting, textWriter, out cancelled, written, userState);
@@ -752,7 +752,7 @@ namespace LH.Data
         /// <param name="setting">Dump setting.</param>
         /// <param name="textWriter">TextWriter.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        public static void Dump(SQLiteConnection connection, SQLiteDumpSetting setting, TextWriter textWriter, out bool cancelled)
+        internal static void Dump(SQLiteConnection connection, SQLiteDumpSetting setting, TextWriter textWriter, out bool cancelled)
         {
             Dump(connection, setting, textWriter, out cancelled, null, null);
         }
@@ -767,7 +767,7 @@ namespace LH.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static void Dump(SQLiteConnection connection, SQLiteDumpSetting setting, TextWriter textWriter, out bool cancelled, SQLiteWrittenCallback written, object userState)
+        internal static void Dump(SQLiteConnection connection, SQLiteDumpSetting setting, TextWriter textWriter, out bool cancelled, SQLiteWrittenCallback written, object userState)
         {
             if (connection == null)
             {
@@ -1003,7 +1003,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <returns></returns>
-        public static SQLiteDumpSetting GetDumpSetting(SQLiteConnection connection)
+        internal static SQLiteDumpSetting GetDumpSetting(SQLiteConnection connection)
         {
             SQLiteDumpSetting setting = new SQLiteDumpSetting();
             using (DataTable dt = GetDataTable(connection, "SELECT type, name FROM `sqlite_master`;"))
@@ -1039,7 +1039,7 @@ namespace LH.Data
     /// <summary>
     /// The mode of the connection when querying.
     /// </summary>
-    public enum SQLiteConnectionBehavior
+    internal enum SQLiteConnectionBehavior
     {
         /// <summary>Does not open automatically. If the connection is not open  when the querying, an exception is thrown.</summary>
         Manual,
@@ -1061,13 +1061,13 @@ namespace LH.Data
     /// <param name="name">The name associated with dumping.</param>
     /// <param name="cancel">Cancel dump.</param>
     /// <param name="userState">User state.</param>
-    public delegate void SQLiteWrittenCallback(long written, long total, SQLiteDumpType dumpType, string name, ref bool cancel, object userState);
+    internal delegate void SQLiteWrittenCallback(long written, long total, SQLiteDumpType dumpType, string name, ref bool cancel, object userState);
 
     /// <summary>
     /// Note the type of dumping in the progress report.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1027:Mark enums with FlagsAttribute", Justification = "<Pending>")]
-    public enum SQLiteDumpType
+    internal enum SQLiteDumpType
     {
         /// <summary>Does not belong to any type. This type does not appear during the dumping process.</summary>
         None = 0,
@@ -1091,28 +1091,28 @@ namespace LH.Data
     /// <summary>
     /// Dump setting.
     /// </summary>
-    public sealed class SQLiteDumpSetting
+    internal sealed class SQLiteDumpSetting
     {
         /// <summary>
         /// Dump table setting.
         /// </summary>
-        public List<SQLiteDumpTableSetting> Tables { get; } = new List<SQLiteDumpTableSetting>();
+        internal List<SQLiteDumpTableSetting> Tables { get; } = new List<SQLiteDumpTableSetting>();
 
         /// <summary>
         /// Dump triggers at specified list.
         /// </summary>
-        public List<string> Triggers { get; } = new List<string>();
+        internal List<string> Triggers { get; } = new List<string>();
 
         /// <summary>
         /// Dump views at specified list.
         /// </summary>
-        public List<string> Views { get; } = new List<string>();
+        internal List<string> Views { get; } = new List<string>();
     }
 
     /// <summary>
     /// Dump table setting.
     /// </summary>
-    public sealed class SQLiteDumpTableSetting
+    internal sealed class SQLiteDumpTableSetting
     {
         /// <summary>
         /// Dump table setting.
@@ -1120,7 +1120,7 @@ namespace LH.Data
         /// <param name="tableName">Table name.</param>
         /// <param name="sequence">Reset Sequence=value. Set to 0 without changing.</param>
         /// <param name="includingRecord">Dump records.</param>
-        public SQLiteDumpTableSetting(string tableName, int? sequence, bool includingRecord)
+        internal SQLiteDumpTableSetting(string tableName, int? sequence, bool includingRecord)
         {
             this.TableName = tableName;
             this.Sequence = sequence;
@@ -1130,17 +1130,17 @@ namespace LH.Data
         /// <summary>
         /// Dump records.
         /// </summary>
-        public bool IncludingRecord { get; }
+        internal bool IncludingRecord { get; }
 
         /// <summary>
         /// Reset Sequence=value. Set to 0 without changing.
         /// </summary>
-        public int? Sequence { get; }
+        internal int? Sequence { get; }
 
         /// <summary>
         /// Table name.
         /// </summary>
-        public string TableName { get; }
+        internal string TableName { get; }
     }
 
     #endregion Dump
@@ -1150,7 +1150,7 @@ namespace LH.Data
     /// <summary>
     /// Command text.
     /// </summary>
-    public static class SQLiteCommandText
+    internal static class SQLiteCommandText
     {
         #region Table
 
@@ -1158,27 +1158,27 @@ namespace LH.Data
         /// Displays tables in the current database.
         /// </summary>
         /// <returns></returns>
-        public static string ShowTables() => "SELECT * FROM `sqlite_master` WHERE `type` = 'table';";
+        internal static string ShowTables() => "SELECT * FROM `sqlite_master` WHERE `type` = 'table';";
 
         /// <summary>
         /// Displays tables in the current database.
         /// </summary>
         /// <param name="like">Part of the table name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowTables(string like) => "SELECT * FROM `sqlite_master` WHERE `type` = 'table' AND `name` LIKE '" + like + "';";
+        internal static string ShowTables(string like) => "SELECT * FROM `sqlite_master` WHERE `type` = 'table' AND `name` LIKE '" + like + "';";
 
         /// <summary>
         /// Displays triggers in the current database.
         /// </summary>
         /// <returns></returns>
-        public static string ShowTriggers() => "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger';";
+        internal static string ShowTriggers() => "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger';";
 
         /// <summary>
         /// Displays triggers in the current database.
         /// </summary>
         /// <param name="like">Part of the trigger name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowTriggers(string like) => "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger' AND `name` LIKE '" + like + "';";
+        internal static string ShowTriggers(string like) => "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger' AND `name` LIKE '" + like + "';";
 
         /// <summary>
         /// Displays triggers in the current database.
@@ -1186,26 +1186,26 @@ namespace LH.Data
         /// <param name="like">Part of the trigger name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        public static string ShowTriggers(string like, string table) => "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger' AND `tbl_name` = '" + table + "' AND `name` LIKE '" + like + "';";
+        internal static string ShowTriggers(string like, string table) => "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger' AND `tbl_name` = '" + table + "' AND `name` LIKE '" + like + "';";
 
         /// <summary>
         /// Displays views in the current database.
         /// </summary>
         /// <returns></returns>
-        public static string ShowViews() => "SELECT * FROM `sqlite_master` WHERE `type` = 'view';";
+        internal static string ShowViews() => "SELECT * FROM `sqlite_master` WHERE `type` = 'view';";
 
         /// <summary>
         /// Displays views in the current database.
         /// </summary>
         /// <param name="like">Part of the view name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowViews(string like) => "SELECT * FROM `sqlite_master` WHERE `type` = 'view' AND `name` LIKE '" + like + "';";
+        internal static string ShowViews(string like) => "SELECT * FROM `sqlite_master` WHERE `type` = 'view' AND `name` LIKE '" + like + "';";
 
         /// <summary>
         /// Compress database files to recycle wasted space in the database.
         /// </summary>
         /// <returns></returns>
-        public static string Vacuum() => "VACUUM";
+        internal static string Vacuum() => "VACUUM";
 
         #endregion Table
     }
