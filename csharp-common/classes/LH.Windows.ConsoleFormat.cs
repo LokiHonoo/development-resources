@@ -15,8 +15,22 @@ namespace LH.Windows
     /// <summary>
     /// Windows 控制台控制。
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1060:将 pinvoke 移到本机方法类", Justification = "<挂起>")]
     internal static class ConsoleFormat
     {
+        #region Native
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint mode);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern IntPtr GetStdHandle(int hConsoleHandle);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        internal static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint mode);
+
+        #endregion Native
+
         private const uint ENABLE_INSERT_MODE = 0x0020;
 
         private const uint ENABLE_QUICK_EDIT_MODE = 0x0040;
@@ -28,23 +42,11 @@ namespace LH.Windows
         /// </summary>
         internal static void DisableQuickEditMode()
         {
-            IntPtr hStdin = NativeMethods.GetStdHandle(STD_INPUT_HANDLE);
-            NativeMethods.GetConsoleMode(hStdin, out uint mode);
+            IntPtr hStdin = GetStdHandle(STD_INPUT_HANDLE);
+            GetConsoleMode(hStdin, out uint mode);
             mode &= ~ENABLE_INSERT_MODE;
             mode &= ~ENABLE_QUICK_EDIT_MODE;
-            NativeMethods.SetConsoleMode(hStdin, mode);
+            SetConsoleMode(hStdin, mode);
         }
-    }
-
-    internal static partial class NativeMethods
-    {
-        [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint mode);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern IntPtr GetStdHandle(int hConsoleHandle);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint mode);
     }
 }

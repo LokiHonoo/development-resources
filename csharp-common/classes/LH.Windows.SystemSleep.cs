@@ -14,8 +14,16 @@ namespace LH.Windows
     /// <summary>
     /// 系统休眠。
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1060:将 pinvoke 移到本机方法类", Justification = "<挂起>")]
     internal static class SystemSleep
     {
+        #region Native
+
+        [DllImport("kernel32.dll")]
+        internal static extern uint SetThreadExecutionState(uint Flags);
+
+        #endregion Native
+
         private const uint ES_CONTINUOUS = 0x80000000;
 
         private const uint ES_DISPLAY_REQUIRED = 0x00000002;
@@ -30,11 +38,11 @@ namespace LH.Windows
         {
             if (includeDisplay)
             {
-                _ = NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
+                _ = SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
             }
             else
             {
-                _ = NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
+                _ = SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
             }
         }
 
@@ -46,11 +54,11 @@ namespace LH.Windows
         {
             if (includeDisplay)
             {
-                _ = NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+                _ = SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
             }
             else
             {
-                _ = NativeMethods.SetThreadExecutionState(ES_SYSTEM_REQUIRED);
+                _ = SetThreadExecutionState(ES_SYSTEM_REQUIRED);
             }
         }
 
@@ -59,13 +67,7 @@ namespace LH.Windows
         /// </summary>
         internal static void ResotreSleep()
         {
-            _ = NativeMethods.SetThreadExecutionState(ES_CONTINUOUS);
+            _ = SetThreadExecutionState(ES_CONTINUOUS);
         }
-    }
-
-    internal static partial class NativeMethods
-    {
-        [DllImport("kernel32.dll")]
-        internal static extern uint SetThreadExecutionState(uint Flags);
     }
 }
