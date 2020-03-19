@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace LH.Windows
@@ -15,7 +16,7 @@ namespace LH.Windows
     /// <summary>
     /// Windows 控制台控制。
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1060:将 pinvoke 移到本机方法类", Justification = "<挂起>")]
+    [SuppressMessage("Design", "CA1060:将 pinvoke 移到本机方法类", Justification = "<挂起>")]
     internal static class ConsoleFormat
     {
         #region Native

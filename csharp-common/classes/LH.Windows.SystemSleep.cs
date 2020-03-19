@@ -7,6 +7,7 @@
  * This code page is published under the terms of the MIT license.
  */
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace LH.Windows
@@ -14,7 +15,7 @@ namespace LH.Windows
     /// <summary>
     /// 系统休眠。
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1060:将 pinvoke 移到本机方法类", Justification = "<挂起>")]
+    [SuppressMessage("Design", "CA1060:将 pinvoke 移到本机方法类", Justification = "<挂起>")]
     internal static class SystemSleep
     {
         #region Native

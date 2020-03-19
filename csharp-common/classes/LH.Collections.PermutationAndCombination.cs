@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace LH.Collections
@@ -43,7 +44,7 @@ namespace LH.Collections
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         internal Combination(T[] array, int m)
         {
             if (array == null || array.Length == 0)
@@ -64,7 +65,7 @@ namespace LH.Collections
         /// <param name="array">元素数组切片。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         internal Combination(ArraySegment<T> array, int m)
         {
             if (array.Count == 0)
@@ -93,7 +94,7 @@ namespace LH.Collections
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         internal List<T[]> Output()
         {
             BigInteger count = GetCount();
@@ -122,7 +123,7 @@ namespace LH.Collections
         /// <param name="n">指定元素总数。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
+        [SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
         private BigInteger C(int n, int m)
         {
             BigInteger numerator = BigInteger.One;
@@ -170,7 +171,7 @@ namespace LH.Collections
         /// <param name="array">元素数组切片。</param>
         /// <param name="indexA">要交换的第一个元素的索引。</param>
         /// <param name="indexB">要交换的第二个元素的索引。</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
+        [SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
         private void Swap(ArraySegment<T> array, int indexA, int indexB)
         {
             indexA = array.Offset + indexA;
@@ -211,7 +212,7 @@ namespace LH.Collections
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         internal Permutation(T[] array, int m)
         {
             if (array == null || array.Length == 0)
@@ -232,7 +233,7 @@ namespace LH.Collections
         /// <param name="array">元素数组切片。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         internal Permutation(ArraySegment<T> array, int m)
         {
             if (array.Count == 0)
@@ -261,7 +262,7 @@ namespace LH.Collections
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         internal List<T[]> Output()
         {
             BigInteger count = GetCount();
@@ -301,7 +302,7 @@ namespace LH.Collections
         /// <param name="n">指定元素总数。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
+        [SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
         private BigInteger P(int n, int m)
         {
             BigInteger integer = BigInteger.One;
@@ -352,7 +353,7 @@ namespace LH.Collections
         /// <param name="array">元素数组切片。</param>
         /// <param name="indexA">要交换的第一个元素的索引。</param>
         /// <param name="indexB">要交换的第二个元素的索引。</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
+        [SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
         private void Swap(ArraySegment<T> array, int indexA, int indexB)
         {
             indexA = array.Offset + indexA;

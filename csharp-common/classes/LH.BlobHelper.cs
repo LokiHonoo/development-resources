@@ -8,6 +8,7 @@
  */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 
@@ -42,7 +43,7 @@ namespace LH
         /// <param name="count">要解压的字节个数。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         internal static byte[] Decompress(byte[] bytes, int offset, int count)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -73,7 +74,7 @@ namespace LH
         /// <param name="count">要压缩的字节个数。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         internal static byte[] Compress(byte[] bytes, int offset, int count)
         {
             using (MemoryStream ms = new MemoryStream())

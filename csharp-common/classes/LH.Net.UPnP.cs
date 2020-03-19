@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
@@ -20,49 +21,49 @@ namespace LH.Net.UPnP
     /// <summary>
     /// UPnP.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Build", "CA1724:类型名 UPnP 与命名空间名称“LH.Net.UPnP”整体或部分冲突。请更改其中任一名称以消除冲突。", Justification = "<挂起>")]
+    [SuppressMessage("Build", "CA1724:类型名 UPnP 与命名空间名称“LH.Net.UPnP”整体或部分冲突。请更改其中任一名称以消除冲突。", Justification = "<挂起>")]
     internal static class UPnP
     {
         /// <summary>
         /// urn:schemas-upnp-org:device:InternetGatewayDevice:1
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
+        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         internal const string DEVICE_TYPE_INTERNET_GATEWAY_DEVICE_1 = "urn:schemas-upnp-org:device:InternetGatewayDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:device:WANConnectionDevice:1
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
+        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         internal const string DEVICE_TYPE_WAN_CONNECTION_DEVICE_1 = "urn:schemas-upnp-org:device:WANConnectionDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:device:WANDevice:1
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
+        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         internal const string DEVICE_TYPE_WAN_DEVICE_1 = "urn:schemas-upnp-org:device:WANDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:Layer3Forwarding:1
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
+        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         internal const string SERVICE_TYPE_LAYER_3_FORWARDING_1 = "urn:schemas-upnp-org:service:Layer3Forwarding:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
+        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         internal const string SERVICE_TYPE_WAN_COMMON_INTERFACE_CONFIG_1 = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANIPConnection:1
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
+        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         internal const string SERVICE_TYPE_WAN_IP_CONNECTION_1 = "urn:schemas-upnp-org:service:WANIPConnection:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANPPPConnection:1
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
+        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         internal const string SERVICE_TYPE_WAN_PPP_CONNECTION_1 = "urn:schemas-upnp-org:service:WANPPPConnection:1";
 
         #region Base
@@ -74,7 +75,7 @@ namespace LH.Net.UPnP
         /// <param name="argument">Argument for device's service responses.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0057:Use range operator", Justification = "<Pending>")]
+        [SuppressMessage("Style", "IDE0057:Use range operator", Justification = "<Pending>")]
         internal static string GetResponseValue(string responseXmlString, string argument)
         {
             if (string.IsNullOrEmpty(responseXmlString))
@@ -111,7 +112,7 @@ namespace LH.Net.UPnP
         /// <param name="arguments">action arguments. The arguments must conform to the order specified. Set 'null' if haven't arguments.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         internal static string PostAction(Service service, bool man, string action, params KeyValuePair<string, string>[] arguments)
         {
             if (service == null)
@@ -218,8 +219,8 @@ namespace LH.Net.UPnP
         /// <param name="addressFamilyFilter">Search for devices of the specified address family.</param>
         /// <param name="mx">Maximum search time. Unit is seconds.</param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
+        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         internal static RootDevice[] Discover(AddressFamily addressFamilyFilter, int mx)
         {
             List<RootDevice> dis = new List<RootDevice>();
@@ -373,7 +374,7 @@ namespace LH.Net.UPnP
         /// <param name="index">The mapping index.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2200:Rethrow to preserve stack details.", Justification = "<Pending>")]
+        [SuppressMessage("Usage", "CA2200:Rethrow to preserve stack details.", Justification = "<Pending>")]
         internal static PortMappingEntry GetSpecificPortMappingEntry(Service service, bool man, int index)
         {
             try
@@ -449,7 +450,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Child devices.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
         internal Device[] Devices { get; }
 
         /// <summary>
@@ -470,7 +471,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Manufacturer url.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
+        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         internal string ManufacturerUrl { get; }
 
         /// <summary>
@@ -491,7 +492,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Model url.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
+        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         internal string ModelUrl { get; }
 
         /// <summary>
@@ -513,7 +514,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Services.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
         internal Service[] Services { get; }
 
         /// <summary>
@@ -714,7 +715,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Description Url. This parameter is used only for records.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
+        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         internal string DescriptionUrl { get; }
 
         /// <summary>
@@ -740,7 +741,7 @@ namespace LH.Net.UPnP
         /// <param name="descriptionUrl">Specify root device escription full url.</param>
         /// <param name="descriptionXmlString">Root device escription xml string.</param>
         /// <exception cref="Exception"/>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054:Uri parameters should not be strings", Justification = "<Pending>")]
+        [SuppressMessage("Design", "CA1054:Uri parameters should not be strings", Justification = "<Pending>")]
         internal RootDevice(string descriptionUrl, string descriptionXmlString)
         {
             XmlDocument doc = new XmlDocument();
@@ -795,13 +796,13 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Control url.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
+        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         internal string ControlUrl { get; }
 
         /// <summary>
         /// Event sub url.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
+        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         internal string EventSubUrl { get; }
 
         /// <summary>
@@ -818,7 +819,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Scpd url.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
+        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         internal string ScpdUrl { get; }
 
         /// <summary>
