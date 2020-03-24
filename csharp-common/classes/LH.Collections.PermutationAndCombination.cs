@@ -182,10 +182,12 @@ namespace LH.Collections
         }
     }
 
+
     /// <summary>
     /// 求数组排列。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
+    [SuppressMessage("Performance", "CA1812:避免未实例化的内部类", Justification = "<挂起>")]
     internal sealed class Permutation<T>
     {
         #region 成员

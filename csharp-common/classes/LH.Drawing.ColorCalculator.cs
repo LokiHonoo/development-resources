@@ -801,6 +801,7 @@ namespace LH.Drawing
     /// <summary>
     /// 转换参照值。
     /// </summary>
+    [SuppressMessage("Performance", "CA1812:避免未实例化的内部类", Justification = "<挂起>")]
     internal sealed class Reference
     {
         #region 成员

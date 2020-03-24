@@ -42,13 +42,13 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建证书请求。
         /// </summary>
-        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量。根据私钥类型选择。如 SHA256WithRSA。</param>
         /// <param name="subjectPrivateKeyPair">使用者私钥密钥对。</param>
+        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量、PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers。根据私钥类型选择。如 SHA256WithRSA。</param>
         /// <param name="subjectDN">使用者 DN。</param>
         /// <param name="attributes">附加属性。</param>
         /// <returns></returns>
-        internal static Pkcs10CertificationRequest GenerateCsr(string signatureAlgorithmName,
-                                                               AsymmetricCipherKeyPair subjectPrivateKeyPair,
+        internal static Pkcs10CertificationRequest GenerateCsr(AsymmetricCipherKeyPair subjectPrivateKeyPair,
+                                                               string signatureAlgorithmName,
                                                                X509Name subjectDN,
                                                                Asn1Set attributes)
         {
@@ -105,65 +105,65 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建颁发机构自签名证书。
         /// </summary>
-        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量。根据私钥类型选择。如 SHA256WithRSA。</param>
         /// <param name="keyPair">密钥对。</param>
+        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量、PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers。根据私钥类型选择。如 SHA256WithRSA。</param>
         /// <param name="dn">颁发机构 DN。</param>
+        /// <param name="extensions">扩展属性。</param>
         /// <param name="start">启用时间。</param>
         /// <param name="days">从启用时间开始的有效天数。</param>
         /// <returns></returns>
-        internal static X509Certificate GenerateIssuerCert(string signatureAlgorithmName,
-                                                           AsymmetricCipherKeyPair keyPair,
+        internal static X509Certificate GenerateIssuerCert(AsymmetricCipherKeyPair keyPair,
+                                                           string signatureAlgorithmName,
                                                            X509Name dn,
                                                            X509Extensions extensions,
                                                            DateTime start,
                                                            int days)
         {
-            return GenerateCert(signatureAlgorithmName, keyPair.Private, dn, keyPair.Public, dn, extensions, start, days);
+            return GenerateCert(keyPair.Private, signatureAlgorithmName, dn, keyPair.Public, dn, extensions, start, days);
         }
 
         /// <summary>
         /// 创建使用者证书。
         /// </summary>
-        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量。根据颁发机构私钥类型选择。如 SHA256WithRSA。</param>
         /// <param name="issuerPrivateKey">颁发机构的私钥。</param>
         /// <param name="issuerCert">颁发机构的证书。</param>
         /// <param name="subjectCsr">使用者证书请求。</param>
+        /// <param name="extensions">扩展属性。</param>
         /// <param name="start">启用时间。</param>
         /// <param name="days">从启用时间开始的有效天数。</param>
         /// <returns></returns>
-        internal static X509Certificate GenerateSubjectCert(string signatureAlgorithmName,
-                                                            AsymmetricKeyParameter issuerPrivateKey,
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
+        [SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        internal static X509Certificate GenerateSubjectCert(AsymmetricKeyParameter issuerPrivateKey,
                                                             X509Certificate issuerCert,
                                                             Pkcs10CertificationRequest subjectCsr,
                                                             X509Extensions extensions,
                                                             DateTime start,
                                                             int days)
         {
+            try
+            {
+                issuerCert.CheckValidity();
+            }
+            catch
+            {
+                throw new ArgumentException("颁发机构证书已过期。", nameof(issuerCert));
+            }
+            //try
+            //{
+            //    issuerCert.CheckValidity(start.AddDays(days));
+            //}
+            //catch
+            //{
+            //    throw new ArgumentException("签署的有效期超出了颁发机构证书的有效期。", nameof(issuerCert));
+            //}
             var csrInfo = subjectCsr.GetCertificationRequestInfo();
-            return GenerateCert(signatureAlgorithmName, issuerPrivateKey, issuerCert.SubjectDN, subjectCsr.GetPublicKey(), csrInfo.Subject, extensions, start, days);
-        }
-
-        /// <summary>
-        /// 创建使用者证书。
-        /// </summary>
-        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量。根据颁发机构私钥类型选择。如 SHA256WithRSA。</param>
-        /// <param name="issuerPrivateKey">颁发机构的私钥。</param>
-        /// <param name="issuerCert">颁发机构的证书。</param>
-        /// <param name="subjectPublicKey">使用者提供的公钥。</param>
-        /// <param name="subjectDN">使用者 DN。</param>
-        /// <param name="start">启用时间。</param>
-        /// <param name="days">从启用时间开始的有效天数。</param>
-        /// <returns></returns>
-        internal static X509Certificate GenerateSubjectCert(string signatureAlgorithmName,
-                                                            AsymmetricKeyParameter issuerPrivateKey,
-                                                            X509Certificate issuerCert,
-                                                            AsymmetricKeyParameter subjectPublicKey,
-                                                            X509Name subjectDN,
-                                                            X509Extensions extensions,
-                                                            DateTime start,
-                                                            int days)
-        {
-            return GenerateCert(signatureAlgorithmName, issuerPrivateKey, issuerCert.SubjectDN, subjectPublicKey, subjectDN, extensions, start, days);
+            var subjectPublicKey = subjectCsr.GetPublicKey();
+            if (!SignatureHelper.Verify(subjectPublicKey, subjectCsr.SignatureAlgorithm.Algorithm.Id, csrInfo.GetEncoded(), subjectCsr.GetSignatureOctets()))
+            {
+                throw new ArgumentException("证书请求签名异常。", nameof(subjectCsr));
+            }
+            return GenerateCert(issuerPrivateKey, issuerCert.SigAlgOid, issuerCert.SubjectDN, subjectPublicKey, csrInfo.Subject, extensions, start, days);
         }
 
         /// <summary>
@@ -198,8 +198,8 @@ namespace LH.BouncyCastleHelpers
         }
 
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<挂起>")]
-        private static X509Certificate GenerateCert(string signatureAlgorithmName,
-                                                    AsymmetricKeyParameter issuerPrivateKey,
+        private static X509Certificate GenerateCert(AsymmetricKeyParameter issuerPrivateKey,
+                                                    string signatureAlgorithmName,
                                                     X509Name issuerDN,
                                                     AsymmetricKeyParameter subjectPublicKey,
                                                     X509Name subjectDN,
@@ -252,21 +252,26 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建 P12 证书。
         /// </summary>
+        /// <param name="chainAlias">证书链和私钥的别名。</param>
         /// <param name="privateKey">私钥。</param>
-        /// <param name="cert">证书。</param>
+        /// <param name="namedCerts">设置了别名的证书集合。</param>
         /// <param name="password">设置密码。</param>
         /// <param name="output">输出到流。</param>
-        internal static void GeneratePfx(AsymmetricKeyParameter privateKey, X509Certificate[] certs, string password, Stream output)
+        internal static void GeneratePfx(string chainAlias,
+                                         AsymmetricKeyParameter privateKey,
+                                         IDictionary<string, X509Certificate> namedCerts,
+                                         string password,
+                                         Stream output)
         {
             var store = new Pkcs12StoreBuilder().Build();
             var certEntries = new List<X509CertificateEntry>();
-            foreach (var cert in certs)
+            foreach (var namedCert in namedCerts)
             {
-                var certEntry = new X509CertificateEntry(cert);
-                store.SetCertificateEntry("CERT", certEntry);
+                var certEntry = new X509CertificateEntry(namedCert.Value);
+                store.SetCertificateEntry(namedCert.Key, certEntry);
                 certEntries.Add(certEntry);
             }
-            store.SetKeyEntry("KEY", new AsymmetricKeyEntry(privateKey), certEntries.ToArray());
+            store.SetKeyEntry(chainAlias, new AsymmetricKeyEntry(privateKey), certEntries.ToArray());
             var pass = string.IsNullOrEmpty(password) ? null : password.ToCharArray();
             store.Save(output, pass, Common.SecureRandom);
             output.Flush();
@@ -305,7 +310,7 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建 ECDSA 密钥对。
         /// </summary>
-        /// <param name="curveName">使用的曲线名称。可使用预置常量。</param>
+        /// <param name="curveName">使用的曲线名称。可使用预置常量、SecObjectIdentifiers。</param>
         /// <returns></returns>
         internal static AsymmetricCipherKeyPair GenerateEcdsaKeyPair(string curveName)
         {
@@ -538,14 +543,28 @@ namespace LH.BouncyCastleHelpers
         /// 签名。
         /// </summary>
         /// <param name="privateKey">本地私钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量。根据私钥类型选择。如 SHA256WithRSA。</param>
-        /// <param name="data">待签名数据。</param>
+        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量、PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers。根据私钥类型选择。如 SHA256WithRSA。</param>
+        /// <param name="data">要计算签名的数据。</param>
         /// <returns></returns>
         internal static byte[] Sign(AsymmetricKeyParameter privateKey, string signatureAlgorithmName, byte[] data)
         {
-            ISigner signer = SignerUtilities.GetSigner(signatureAlgorithmName);
+            return Sign(privateKey, signatureAlgorithmName, data, 0, data.Length);
+        }
+
+        /// <summary>
+        /// 签名。
+        /// </summary>
+        /// <param name="privateKey">本地私钥。</param>
+        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量、PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers。根据私钥类型选择。如 SHA256WithRSA。</param>
+        /// <param name="buffer">包含要计算签名的数据的缓冲区。</param>
+        /// <param name="offset">缓冲区偏移。</param>
+        /// <param name="count">从缓冲区读取的字节数。</param>
+        /// <returns></returns>
+        internal static byte[] Sign(AsymmetricKeyParameter privateKey, string signatureAlgorithmName, byte[] buffer, int offset, int count)
+        {
+            var signer = SignerUtilities.GetSigner(signatureAlgorithmName);
             signer.Init(true, privateKey);
-            signer.BlockUpdate(data, 0, data.Length);
+            signer.BlockUpdate(buffer, offset, count);
             return signer.GenerateSignature();
         }
 
@@ -554,15 +573,29 @@ namespace LH.BouncyCastleHelpers
         /// </summary>
         /// <param name="publicKey">从对方证书中导出的公钥。</param>
         /// <param name="signatureAlgorithmName">对方协商的签名算法。</param>
-        /// <param name="data">待验证签名数据。</param>
+        /// <param name="data">要计算签名的数据。</param>
         /// <param name="signature">对方发送的签名。</param>
         /// <returns></returns>
         internal static bool Verify(AsymmetricKeyParameter publicKey, string signatureAlgorithmName, byte[] data, byte[] signature)
         {
-            ISigner verifier = SignerUtilities.GetSigner(signatureAlgorithmName);
-            verifier.Init(false, publicKey);
-            verifier.BlockUpdate(data, 0, data.Length);
+            return Verify(publicKey, signatureAlgorithmName, data, 0, data.Length, signature);
+        }
 
+        /// <summary>
+        /// 验证签名。
+        /// </summary>
+        /// <param name="publicKey">从对方证书中导出的公钥。</param>
+        /// <param name="signatureAlgorithmName">对方协商的签名算法。</param>
+        /// <param name="buffer">包含要计算签名的数据的缓冲区。</param>
+        /// <param name="offset">缓冲区偏移。</param>
+        /// <param name="count">从缓冲区读取的字节数。</param>
+        /// <param name="signature">对方发送的签名。</param>
+        /// <returns></returns>
+        internal static bool Verify(AsymmetricKeyParameter publicKey, string signatureAlgorithmName, byte[] buffer, int offset, int count, byte[] signature)
+        {
+            var verifier = SignerUtilities.GetSigner(signatureAlgorithmName);
+            verifier.Init(false, publicKey);
+            verifier.BlockUpdate(buffer, offset, count);
             return verifier.VerifySignature(signature);
         }
     }
