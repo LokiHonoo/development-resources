@@ -441,23 +441,6 @@ namespace LH.BouncyCastleHelpers
                 return obj as AsymmetricKeyParameter;
             }
         }
-
-        private sealed class Password : IPasswordFinder
-        {
-            private readonly char[] _chars;
-
-            internal Password(string password)
-            {
-                _chars = password.ToCharArray();
-            }
-
-            /// <summary></summary>
-            /// <returns></returns>
-            public char[] GetPassword()
-            {
-                return _chars;
-            }
-        }
     }
 
     /// <summary>
@@ -581,6 +564,24 @@ namespace LH.BouncyCastleHelpers
             verifier.BlockUpdate(data, 0, data.Length);
 
             return verifier.VerifySignature(signature);
+        }
+    }
+
+    /// <summary></summary>
+    internal sealed class Password : IPasswordFinder
+    {
+        private readonly char[] _chars;
+
+        internal Password(string password)
+        {
+            _chars = password.ToCharArray();
+        }
+
+        /// <summary></summary>
+        /// <returns></returns>
+        public char[] GetPassword()
+        {
+            return _chars;
         }
     }
 }
