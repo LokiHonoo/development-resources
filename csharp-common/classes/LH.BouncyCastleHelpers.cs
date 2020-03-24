@@ -11,6 +11,18 @@
  * PackageReference: Portable.BouncyCastle 1.8.5+
  */
 
+/*
+ * 签名算法名称 signatureAlgorithmName 的补充说明
+ *
+ * 可使用 PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers 中的签名相关的算法 OID。
+ * 也可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。
+ * 名称根据签名私钥类型选择。如 RSA 密钥可使用 SHA256WithRSA、SHA512WithRSA。
+ *
+ * 部分算法名称不能被 Microsoft 证书链验证。如 SHA224WithRSA（1.2.840.113549.1.1.14）。参见 http://oidref.com 关于算法的 Description。
+ *
+ * BUG: 至 BouncyCastle 1.8.6， SHA256WithECDSA 指向 SHA224WithECDSA。传入 OID （1.2.840.10045.4.3.2）可使用正确的 SHA256WithECDSA 算法。
+ */
+
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.GM;
 using Org.BouncyCastle.Asn1.Sec;
@@ -43,16 +55,27 @@ namespace LH.BouncyCastleHelpers
         /// 创建证书请求。
         /// </summary>
         /// <param name="subjectPrivateKeyPair">使用者私钥密钥对。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量、PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers。根据私钥类型选择。如 SHA256WithRSA。</param>
+        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="subjectDN">使用者 DN。</param>
         /// <param name="attributes">附加属性。</param>
         /// <returns></returns>
+        [SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         internal static Pkcs10CertificationRequest GenerateCsr(AsymmetricCipherKeyPair subjectPrivateKeyPair,
                                                                string signatureAlgorithmName,
                                                                X509Name subjectDN,
                                                                Asn1Set attributes)
         {
-            return new Pkcs10CertificationRequest(signatureAlgorithmName, subjectDN, subjectPrivateKeyPair.Public, attributes, subjectPrivateKeyPair.Private);
+            ISignatureFactory signatureFactory;
+            try
+            {
+                var signatureAlgorithm = new DefaultSignatureAlgorithmIdentifierFinder().Find(signatureAlgorithmName);
+                signatureFactory = new Asn1SignatureFactory(signatureAlgorithm.Algorithm.Id, subjectPrivateKeyPair.Private, Common.SecureRandom);
+            }
+            catch
+            {
+                signatureFactory = new Asn1SignatureFactory(signatureAlgorithmName, subjectPrivateKeyPair.Private, Common.SecureRandom);
+            }
+            return new Pkcs10CertificationRequest(signatureFactory, subjectDN, subjectPrivateKeyPair.Public, attributes);
         }
 
         /// <summary>
@@ -106,7 +129,7 @@ namespace LH.BouncyCastleHelpers
         /// 创建颁发机构自签名证书。
         /// </summary>
         /// <param name="keyPair">密钥对。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量、PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers。根据私钥类型选择。如 SHA256WithRSA。</param>
+        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="dn">颁发机构 DN。</param>
         /// <param name="extensions">扩展属性。</param>
         /// <param name="start">启用时间。</param>
@@ -126,6 +149,7 @@ namespace LH.BouncyCastleHelpers
         /// 创建使用者证书。
         /// </summary>
         /// <param name="issuerPrivateKey">颁发机构的私钥。</param>
+        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="issuerCert">颁发机构的证书。</param>
         /// <param name="subjectCsr">使用者证书请求。</param>
         /// <param name="extensions">扩展属性。</param>
@@ -135,6 +159,7 @@ namespace LH.BouncyCastleHelpers
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         [SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         internal static X509Certificate GenerateSubjectCert(AsymmetricKeyParameter issuerPrivateKey,
+                                                            string signatureAlgorithmName,
                                                             X509Certificate issuerCert,
                                                             Pkcs10CertificationRequest subjectCsr,
                                                             X509Extensions extensions,
@@ -161,9 +186,9 @@ namespace LH.BouncyCastleHelpers
             var subjectPublicKey = subjectCsr.GetPublicKey();
             if (!SignatureHelper.Verify(subjectPublicKey, subjectCsr.SignatureAlgorithm.Algorithm.Id, csrInfo.GetEncoded(), subjectCsr.GetSignatureOctets()))
             {
-                throw new ArgumentException("证书请求签名异常。", nameof(subjectCsr));
+                throw new ArgumentException("证书请求的签名异常。", nameof(subjectCsr));
             }
-            return GenerateCert(issuerPrivateKey, issuerCert.SigAlgOid, issuerCert.SubjectDN, subjectPublicKey, csrInfo.Subject, extensions, start, days);
+            return GenerateCert(issuerPrivateKey, signatureAlgorithmName, issuerCert.SubjectDN, subjectPublicKey, csrInfo.Subject, extensions, start, days);
         }
 
         /// <summary>
@@ -219,13 +244,12 @@ namespace LH.BouncyCastleHelpers
             ISignatureFactory signatureFactory;
             try
             {
-                signatureFactory = new Asn1SignatureFactory(signatureAlgorithmName, issuerPrivateKey, Common.SecureRandom);
+                var signatureAlgorithm = new DefaultSignatureAlgorithmIdentifierFinder().Find(signatureAlgorithmName);
+                signatureFactory = new Asn1SignatureFactory(signatureAlgorithm.Algorithm.Id, issuerPrivateKey, Common.SecureRandom);
             }
             catch
             {
-                var signatureAlgorithm = new DefaultSignatureAlgorithmIdentifierFinder().Find(signatureAlgorithmName);
-                signatureFactory = new Asn1SignatureFactory(signatureAlgorithm.Algorithm.Id, issuerPrivateKey, Common.SecureRandom);
-                //signatureFactory = new Asn1SignatureFactory(GMObjectIdentifiers.sm2sign_with_sm3.Id, issuerPrivateKey, _secureRandom);
+                signatureFactory = new Asn1SignatureFactory(signatureAlgorithmName, issuerPrivateKey, Common.SecureRandom);
             }
             var generator = new X509V3CertificateGenerator();
             generator.SetSerialNumber(sn);
@@ -310,7 +334,7 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建 ECDSA 密钥对。
         /// </summary>
-        /// <param name="curveName">使用的曲线名称。可使用预置常量、SecObjectIdentifiers。</param>
+        /// <param name="curveName">使用的曲线名称。可使用 NamedCurves 类中提供的常用算法名称。或 SecObjectIdentifiers 中的命名曲线。</param>
         /// <returns></returns>
         internal static AsymmetricCipherKeyPair GenerateEcdsaKeyPair(string curveName)
         {
@@ -378,7 +402,7 @@ namespace LH.BouncyCastleHelpers
         /// 使用密码保护，将私钥转换为 PEM 格式文本。
         /// </summary>
         /// <param name="privateKey">私钥。</param>
-        /// <param name="encryptionAlgorithm">加密算法。可使用预置常量。OpenSSL 定义的 DEK。</param>
+        /// <param name="encryptionAlgorithm">加密算法。可使用 NamedPemEncryptionAlgorithms 类中提供的常用算法名称。名称是 OpenSSL 定义的 DEK 格式。</param>
         /// <param name="password">设置密码。</param>
         /// <param name="privateKeyEncPem">带加密标签的 PEM 格式文本。</param>
         /// <returns></returns>
@@ -506,7 +530,7 @@ namespace LH.BouncyCastleHelpers
     }
 
     /// <summary>
-    /// 已命名 PEM 加密算法。OpenSSL 定义的 DEK。
+    /// 已命名 PEM 加密算法。OpenSSL 定义的 DEK 格式。
     /// </summary>
     internal static class NamedPemEncryptionAlgorithms
     {
@@ -525,7 +549,11 @@ namespace LH.BouncyCastleHelpers
     /// </summary>
     internal static class NamedSignatureAlgorithms
     {
-        internal const string SHA256_WITH_ECDSA = "SHA256WithECDSA";
+        /// <summary>
+        /// BUG: SHA256WithECDSA 名称指向 SHA224WithECDSA。使用 OID 名称可正确签名。
+        /// </summary>
+        internal const string SHA256_WITH_ECDSA = "1.2.840.10045.4.3.2";
+
         internal const string SHA256_WITH_RSA = "SHA256WithRSA";
         internal const string SHA384_WITH_ECDSA = "SHA384WithECDSA";
         internal const string SHA384_WITH_RSA = "SHA384WithRSA";
@@ -543,7 +571,7 @@ namespace LH.BouncyCastleHelpers
         /// 签名。
         /// </summary>
         /// <param name="privateKey">本地私钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量、PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers。根据私钥类型选择。如 SHA256WithRSA。</param>
+        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="data">要计算签名的数据。</param>
         /// <returns></returns>
         internal static byte[] Sign(AsymmetricKeyParameter privateKey, string signatureAlgorithmName, byte[] data)
@@ -555,7 +583,7 @@ namespace LH.BouncyCastleHelpers
         /// 签名。
         /// </summary>
         /// <param name="privateKey">本地私钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用预置常量、PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers。根据私钥类型选择。如 SHA256WithRSA。</param>
+        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="buffer">包含要计算签名的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
@@ -572,7 +600,7 @@ namespace LH.BouncyCastleHelpers
         /// 验证签名。
         /// </summary>
         /// <param name="publicKey">从对方证书中导出的公钥。</param>
-        /// <param name="signatureAlgorithmName">对方协商的签名算法。</param>
+        /// <param name="signatureAlgorithmName">对方协商的签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="data">要计算签名的数据。</param>
         /// <param name="signature">对方发送的签名。</param>
         /// <returns></returns>
@@ -585,7 +613,7 @@ namespace LH.BouncyCastleHelpers
         /// 验证签名。
         /// </summary>
         /// <param name="publicKey">从对方证书中导出的公钥。</param>
-        /// <param name="signatureAlgorithmName">对方协商的签名算法。</param>
+        /// <param name="signatureAlgorithmName">对方协商的签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="buffer">包含要计算签名的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>

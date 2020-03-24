@@ -99,8 +99,8 @@ namespace LH.BouncyCastleHelpers
             //
             // 使用者证书。
             //
-            var serverCert = CertificateHelper.GenerateSubjectCert(caKeyPair.Private, caCert, serverCsr, null, DateTime.UtcNow.AddDays(-1), 365);
-            var clientCert = CertificateHelper.GenerateSubjectCert(caKeyPair.Private, caCert, clientCsr, null, DateTime.UtcNow.AddDays(-1), 365);
+            var serverCert = CertificateHelper.GenerateSubjectCert(caKeyPair.Private, caCert.SigAlgOid, caCert, serverCsr, null, DateTime.UtcNow.AddDays(-1), 365);
+            var clientCert = CertificateHelper.GenerateSubjectCert(caKeyPair.Private, caCert.SigAlgOid, caCert, clientCsr, null, DateTime.UtcNow.AddDays(-1), 365);
             //
             // 证书读写测试。
             //
