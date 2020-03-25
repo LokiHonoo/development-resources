@@ -1,5 +1,4 @@
-﻿using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.X509;
+﻿using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.X509;
 using System;
@@ -24,9 +23,9 @@ namespace LH.BouncyCastleHelpers
             //
             // ===========================  密钥测试  ===========================
             //
-            var caKeyPair = CryptoHelper.GenerateEcdsaKeyPair(NamedCurves.SECP256R1);
-            var serverKeyPair = CryptoHelper.GenerateEcdsaKeyPair(NamedCurves.SECP256R1);
-            var clientKeyPair = CryptoHelper.GenerateEcdsaKeyPair(NamedCurves.SECP256R1);
+            var caKeyPair = CryptoHelper.GenerateEcdsaKeyPair(CommonCurves.SecP256r1);
+            var serverKeyPair = CryptoHelper.GenerateEcdsaKeyPair(CommonCurves.SecP256r1);
+            var clientKeyPair = CryptoHelper.GenerateEcdsaKeyPair(CommonCurves.SecP256r1);
             //
             // 密钥读写测试。
             //
@@ -40,29 +39,23 @@ namespace LH.BouncyCastleHelpers
             //
             // ===========================  证书测试  ===========================
             //
-            var caDN = CertificateHelper.GenerateDN(
-                new Dictionary<DerObjectIdentifier, string>(2)
-                {
-                    { X509Name.C, "CN" },
-                    { X509Name.CN, "LH.Net.Sockets TEST Root CA" }
-                });
-            var serverDN = CertificateHelper.GenerateDN(
-                new Dictionary<DerObjectIdentifier, string>(2)
-                {
-                    { X509Name.C, "CN" },
-                    { X509Name.CN, "LH.Net.Sockets TEST TCP Server" }
-                });
-            var clientDN = CertificateHelper.GenerateDN(
-                new Dictionary<DerObjectIdentifier, string>(2)
-                {
-                    { X509Name.C, "CN" },
-                    { X509Name.CN, "LH.Net.Sockets TEST TCP Client" }
-                });
+            X509NameGenerator x509NameGenerator = new X509NameGenerator();
+            x509NameGenerator.AddX509Name(X509Name.C, "CN");
+            x509NameGenerator.AddX509Name(X509Name.CN, "LH.Net.Sockets TEST Root CA");
+            var caDN = x509NameGenerator.Generate();
+            x509NameGenerator.Reset();
+            x509NameGenerator.AddX509Name(X509Name.C, "CN");
+            x509NameGenerator.AddX509Name(X509Name.CN, "LH.Net.Sockets TEST TCP Server");
+            var serverDN = x509NameGenerator.Generate();
+            x509NameGenerator.Reset();
+            x509NameGenerator.AddX509Name(X509Name.C, "CN");
+            x509NameGenerator.AddX509Name(X509Name.CN, "LH.Net.Sockets TEST TCP Client");
+            var clientDN = x509NameGenerator.Generate();
             //
             // 机构证书。
             //
-            var caCert = CertificateHelper.GenerateIssuerCert(caKeyPair,
-                                                              NamedSignatureAlgorithms.SHA256_WITH_ECDSA,
+            var caCert = CertificateHelper.GenerateIssuerCert(CommonSignatureAlgorithms.SHA256WithECDSA,
+                                                              caKeyPair,
                                                               caDN,
                                                               null,
                                                               DateTime.UtcNow.AddDays(-1),
@@ -74,21 +67,26 @@ namespace LH.BouncyCastleHelpers
             using (var stream = new MemoryStream())
             {
                 var namedCerts = new Dictionary<string, X509Certificate>() { { "CERT_1", caCert } };
-                CertificateHelper.GeneratePfx("CHAIN", caKeyPair.Private, namedCerts, "123456", stream);
+                CertificateHelper.GeneratePfx("KEY", caKeyPair.Private, namedCerts, "123456", stream);
                 //
                 stream.Seek(0, SeekOrigin.Begin);
                 //
                 var store = CertificateHelper.ReadPfx(stream, "123456");
                 var pub = store.GetCertificate("CERT_1").Certificate.GetPublicKey();
-                var pri = store.GetKey("CHAIN").Key;
-                _ = store.GetCertificateChain("CHAIN");
+                var pri = store.GetKey("KEY").Key;
+                _ = store.GetCertificateChain("KEY");
                 caKeyPair = new AsymmetricCipherKeyPair(pub, pri);
             }
             //
             // 使用者证书请求。
             //
-            var serverCsr = CertificateHelper.GenerateCsr(serverKeyPair, NamedSignatureAlgorithms.SHA256_WITH_ECDSA, serverDN, null);
-            var clientCsr = CertificateHelper.GenerateCsr(clientKeyPair, NamedSignatureAlgorithms.SHA256_WITH_ECDSA, clientDN, null);
+            X509ExtensionsGenerator extensionsGenerator = new X509ExtensionsGenerator();
+            extensionsGenerator.AddExtension(X509Extensions.BasicConstraints, true, new BasicConstraints(false));
+            extensionsGenerator.AddExtension(X509Extensions.KeyUsage, true, new KeyUsage(KeyUsage.KeyCertSign | KeyUsage.CrlSign));
+            var serverExtensions = extensionsGenerator.Generate();
+            var clientExtensions = serverExtensions;
+            var serverCsr = CertificateHelper.GenerateCsr(CommonSignatureAlgorithms.SHA256WithECDSA, serverKeyPair, serverDN, serverExtensions);
+            var clientCsr = CertificateHelper.GenerateCsr(CommonSignatureAlgorithms.SHA256WithECDSA, clientKeyPair, clientDN, clientExtensions);
             //
             // 证书请求读写测试。
             //
@@ -99,8 +97,24 @@ namespace LH.BouncyCastleHelpers
             //
             // 使用者证书。
             //
-            var serverCert = CertificateHelper.GenerateSubjectCert(caKeyPair.Private, caCert.SigAlgOid, caCert, serverCsr, null, DateTime.UtcNow.AddDays(-1), 365);
-            var clientCert = CertificateHelper.GenerateSubjectCert(caKeyPair.Private, caCert.SigAlgOid, caCert, clientCsr, null, DateTime.UtcNow.AddDays(-1), 365);
+            CertificateHelper.ExtractCsr(serverCsr, out serverDN, out AsymmetricKeyParameter serverPublicKey, out serverExtensions);
+            CertificateHelper.ExtractCsr(clientCsr, out clientDN, out AsymmetricKeyParameter clientPublicKey, out clientExtensions);
+            var serverCert = CertificateHelper.GenerateSubjectCert(caCert.CertificateStructure.SignatureAlgorithm.Algorithm,
+                                                                   caKeyPair.Private,
+                                                                   caCert,
+                                                                   serverDN,
+                                                                   serverPublicKey,
+                                                                   serverExtensions,
+                                                                   DateTime.UtcNow.AddDays(-1),
+                                                                   365);
+            var clientCert = CertificateHelper.GenerateSubjectCert(caCert.CertificateStructure.SignatureAlgorithm.Algorithm,
+                                                                   caKeyPair.Private,
+                                                                   caCert,
+                                                                   clientDN,
+                                                                   clientPublicKey,
+                                                                   clientExtensions,
+                                                                   DateTime.UtcNow.AddDays(-1),
+                                                                   365);
             //
             // 证书读写测试。
             //
@@ -167,11 +181,11 @@ namespace LH.BouncyCastleHelpers
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("==========================  Signature   =========================");
-            var signature = SignatureHelper.Sign(serverKeyPair.Private, NamedSignatureAlgorithms.SHA256_WITH_ECDSA, data);
-            validated = SignatureHelper.Verify(serverCert.GetPublicKey(), NamedSignatureAlgorithms.SHA256_WITH_ECDSA, data, signature);
+            var signature = SignatureHelper.Sign(CommonSignatureAlgorithms.SHA256WithECDSA, serverKeyPair.Private, data);
+            validated = SignatureHelper.Verify(CommonSignatureAlgorithms.SHA256WithECDSA, serverCert.GetPublicKey(), data, signature);
             Console.WriteLine("Server terminal verify signature - " + validated);
-            signature = SignatureHelper.Sign(clientKeyPair.Private, NamedSignatureAlgorithms.SHA256_WITH_ECDSA, data);
-            validated = SignatureHelper.Verify(clientCert.GetPublicKey(), NamedSignatureAlgorithms.SHA256_WITH_ECDSA, data, signature);
+            signature = SignatureHelper.Sign(CommonSignatureAlgorithms.SHA256WithECDSA, clientKeyPair.Private, data);
+            validated = SignatureHelper.Verify(CommonSignatureAlgorithms.SHA256WithECDSA, clientCert.GetPublicKey(), data, signature);
             Console.WriteLine("Client terminal verify signature - " + validated);
             //
             // ===========================  密钥交换  ===========================

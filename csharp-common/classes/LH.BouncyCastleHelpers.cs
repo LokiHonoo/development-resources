@@ -12,23 +12,26 @@
  */
 
 /*
- * 签名算法名称 signatureAlgorithmName 的补充说明
+ * 签名算法的补充说明
  *
- * 可使用 PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers 中的签名相关的算法 OID。
- * 也可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。
- * 名称根据签名私钥类型选择。如 RSA 密钥可使用 SHA256WithRSA、SHA512WithRSA。
+ * 可使用 PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers、GMObjectIdentifiers 中的签名相关的算法 oid。
+ * 也可使用 CommonSignatureAlgorithms 类中提供的常用算法。
+ * 根据签名私钥类型选择。如 RSA 密钥可使用 SHA256WithRSA、SHA512WithRSA。
  *
- * 部分算法名称不能被 Microsoft 证书链验证。如 SHA224WithRSA（1.2.840.113549.1.1.14）。参见 http://oidref.com 关于算法的 Description。
+ * 部分算法不能被 Microsoft 证书链验证。如 SHA224WithRSA（1.2.840.113549.1.1.14）。参见 http://oidref.com 关于算法的 Description。
  *
- * BUG: SHA256WithECDSA 指向 SHA224WithECDSA。传入 OID （1.2.840.10045.4.3.2）可使用正确的 SHA256WithECDSA 算法。BouncyCastle 1.8.6 尚未修正。
- *      此 BUG 影响“创建证书请求”、“创建证书”、“签名”、“验证签名”，已在方法内部修正。
+ * BUG: 使用签名算法查询类 DefaultSignatureAlgorithmIdentifierFinder 时 SHA256WithECDSA 指向 SHA224WithECDSA。
+ *      若使用此方法获取 oid 应注意修正。
+ *      BouncyCastle 1.8.6 尚未修复此 BUG。
  */
 
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.GM;
+using Org.BouncyCastle.Asn1.Nist;
+using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Cms;
+using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Operators;
@@ -41,7 +44,6 @@ using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 
 namespace LH.BouncyCastleHelpers
@@ -54,35 +56,69 @@ namespace LH.BouncyCastleHelpers
         #region 证书请求
 
         /// <summary>
+        /// 取出证书请求中的设置。
+        /// </summary>
+        /// <param name="csr">使用者证书请求。</param>
+        /// <param name="dn">使用者 DN。</param>
+        /// <param name="publicKey">使用者公钥。</param>
+        /// <param name="extensions">使用者扩展属性。</param>
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
+        [SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        internal static void ExtractCsr(Pkcs10CertificationRequest csr, out X509Name dn, out AsymmetricKeyParameter publicKey, out X509Extensions extensions)
+        {
+            var csrInfo = csr.GetCertificationRequestInfo();
+            publicKey = csr.GetPublicKey();
+            if (!csr.Verify(publicKey))
+            {
+                throw new ArgumentException("证书请求的签名异常。", nameof(csr));
+            }
+            //
+            dn = csrInfo.Subject;
+            //
+            var attributes = new Dictionary<DerObjectIdentifier, X509Extension>();
+            if (csrInfo.Attributes != null)
+            {
+                foreach (DerSequence attribute in csrInfo.Attributes)
+                {
+                    var oid = attribute[0] as DerObjectIdentifier;
+                    if (oid.Equals(PkcsObjectIdentifiers.Pkcs9AtExtensionRequest))
+                    {
+                        var set = attribute[1] as Asn1Set;
+                        foreach (DerSequence exts in set)
+                        {
+                            foreach (DerSequence ext in exts)
+                            {
+                                oid = ext[0] as DerObjectIdentifier;
+                                if (ext.Count == 3)
+                                {
+                                    attributes.Add(oid, new X509Extension(true, ext[2] as DerOctetString));
+                                }
+                                else
+                                {
+                                    attributes.Add(oid, new X509Extension(false, ext[1] as DerOctetString));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            extensions = attributes.Count > 0 ? new X509Extensions(attributes) : null;
+        }
+
+        /// <summary>
         /// 创建证书请求。
         /// </summary>
-        /// <param name="subjectPrivateKeyPair">使用者私钥密钥对。</param>
-        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
-        /// <param name="subjectDN">使用者 DN。</param>
-        /// <param name="attributes">附加属性。</param>
+        /// <param name="signatureAlgorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
+        /// <param name="keyPair">使用者密钥对。</param>
+        /// <param name="dn">使用者 DN。</param>
+        /// <param name="extensions">使用者扩展属性。</param>
         /// <returns></returns>
-        [SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
-        internal static Pkcs10CertificationRequest GenerateCsr(AsymmetricCipherKeyPair subjectPrivateKeyPair,
-                                                               string signatureAlgorithmName,
-                                                               X509Name subjectDN,
-                                                               Asn1Set attributes)
+        internal static Pkcs10CertificationRequest GenerateCsr(DerObjectIdentifier signatureAlgorithmOid, AsymmetricCipherKeyPair keyPair, X509Name dn, X509Extensions extensions)
         {
-            //BUG FIX
-            if (signatureAlgorithmName.ToUpper(CultureInfo.InvariantCulture) == "SHA256WITHECDSA")
-            {
-                signatureAlgorithmName = "1.2.840.10045.4.3.2";
-            }
-            ISignatureFactory signatureFactory;
-            try
-            {
-                var signatureAlgorithm = new DefaultSignatureAlgorithmIdentifierFinder().Find(signatureAlgorithmName);
-                signatureFactory = new Asn1SignatureFactory(signatureAlgorithm.Algorithm.Id, subjectPrivateKeyPair.Private, Common.SecureRandom);
-            }
-            catch
-            {
-                signatureFactory = new Asn1SignatureFactory(signatureAlgorithmName, subjectPrivateKeyPair.Private, Common.SecureRandom);
-            }
-            return new Pkcs10CertificationRequest(signatureFactory, subjectDN, subjectPrivateKeyPair.Public, attributes);
+            var signatureFactory = new Asn1SignatureFactory(signatureAlgorithmOid.Id, keyPair.Private, Common.SecureRandom);
+            var set = new DerSet(extensions);
+            var attribute = new DerSet(new AttributePkcs(PkcsObjectIdentifiers.Pkcs9AtExtensionRequest, set));
+            return new Pkcs10CertificationRequest(signatureFactory, dn, keyPair.Public, attribute);
         }
 
         /// <summary>
@@ -121,54 +157,44 @@ namespace LH.BouncyCastleHelpers
         #region 证书
 
         /// <summary>
-        /// 创建 DN。
-        /// </summary>
-        /// <param name="attributes">DN 属性集合。</param>
-        /// <returns></returns>
-        internal static X509Name GenerateDN(Dictionary<DerObjectIdentifier, string> attributes)
-        {
-            var ordering = new DerObjectIdentifier[attributes.Count];
-            attributes.Keys.CopyTo(ordering, 0);
-            return new X509Name(ordering, attributes);
-        }
-
-        /// <summary>
         /// 创建颁发机构自签名证书。
         /// </summary>
-        /// <param name="keyPair">密钥对。</param>
-        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
+        /// <param name="signatureAlgorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
+        /// <param name="keyPair">颁发机构密钥对。</param>
         /// <param name="dn">颁发机构 DN。</param>
         /// <param name="extensions">扩展属性。</param>
         /// <param name="start">启用时间。</param>
         /// <param name="days">从启用时间开始的有效天数。</param>
         /// <returns></returns>
-        internal static X509Certificate GenerateIssuerCert(AsymmetricCipherKeyPair keyPair,
-                                                           string signatureAlgorithmName,
+        internal static X509Certificate GenerateIssuerCert(DerObjectIdentifier signatureAlgorithmOid,
+                                                           AsymmetricCipherKeyPair keyPair,
                                                            X509Name dn,
                                                            X509Extensions extensions,
                                                            DateTime start,
                                                            int days)
         {
-            return GenerateCert(keyPair.Private, signatureAlgorithmName, dn, keyPair.Public, dn, extensions, start, days);
+            return GenerateCert(signatureAlgorithmOid, keyPair.Private, dn, dn, keyPair.Public, extensions, start, days);
         }
 
         /// <summary>
         /// 创建使用者证书。
         /// </summary>
+        /// <param name="signatureAlgorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="issuerPrivateKey">颁发机构的私钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="issuerCert">颁发机构的证书。</param>
-        /// <param name="subjectCsr">使用者证书请求。</param>
+        /// <param name="subjectDN">使用者 DN。</param>
+        /// <param name="subjectPublicKey">使用者公钥。</param>
         /// <param name="extensions">扩展属性。</param>
         /// <param name="start">启用时间。</param>
         /// <param name="days">从启用时间开始的有效天数。</param>
         /// <returns></returns>
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         [SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
-        internal static X509Certificate GenerateSubjectCert(AsymmetricKeyParameter issuerPrivateKey,
-                                                            string signatureAlgorithmName,
+        internal static X509Certificate GenerateSubjectCert(DerObjectIdentifier signatureAlgorithmOid,
+                                                            AsymmetricKeyParameter issuerPrivateKey,
                                                             X509Certificate issuerCert,
-                                                            Pkcs10CertificationRequest subjectCsr,
+                                                            X509Name subjectDN,
+                                                            AsymmetricKeyParameter subjectPublicKey,
                                                             X509Extensions extensions,
                                                             DateTime start,
                                                             int days)
@@ -189,13 +215,7 @@ namespace LH.BouncyCastleHelpers
             //{
             //    throw new ArgumentException("签署的有效期超出了颁发机构证书的有效期。", nameof(issuerCert));
             //}
-            var csrInfo = subjectCsr.GetCertificationRequestInfo();
-            var subjectPublicKey = subjectCsr.GetPublicKey();
-            if (!SignatureHelper.Verify(subjectPublicKey, subjectCsr.SignatureAlgorithm.Algorithm.Id, csrInfo.GetEncoded(), subjectCsr.GetSignatureOctets()))
-            {
-                throw new ArgumentException("证书请求的签名异常。", nameof(subjectCsr));
-            }
-            return GenerateCert(issuerPrivateKey, signatureAlgorithmName, issuerCert.SubjectDN, subjectPublicKey, csrInfo.Subject, extensions, start, days);
+            return GenerateCert(signatureAlgorithmOid, issuerPrivateKey, issuerCert.SubjectDN, subjectDN, subjectPublicKey, extensions, start, days);
         }
 
         /// <summary>
@@ -229,32 +249,17 @@ namespace LH.BouncyCastleHelpers
             }
         }
 
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<挂起>")]
-        private static X509Certificate GenerateCert(AsymmetricKeyParameter issuerPrivateKey,
-                                                    string signatureAlgorithmName,
+        private static X509Certificate GenerateCert(DerObjectIdentifier signatureAlgorithmOid,
+                                                    AsymmetricKeyParameter issuerPrivateKey,
                                                     X509Name issuerDN,
-                                                    AsymmetricKeyParameter subjectPublicKey,
                                                     X509Name subjectDN,
+                                                    AsymmetricKeyParameter subjectPublicKey,
                                                     X509Extensions extensions,
                                                     DateTime start,
                                                     int days)
         {
-            //BUG FIX
-            if (signatureAlgorithmName.ToUpper(CultureInfo.InvariantCulture) == "SHA256WITHECDSA")
-            {
-                signatureAlgorithmName = "1.2.840.10045.4.3.2";
-            }
             var sn = new BigInteger(128, Common.SecureRandom);
-            ISignatureFactory signatureFactory;
-            try
-            {
-                var signatureAlgorithm = new DefaultSignatureAlgorithmIdentifierFinder().Find(signatureAlgorithmName);
-                signatureFactory = new Asn1SignatureFactory(signatureAlgorithm.Algorithm.Id, issuerPrivateKey, Common.SecureRandom);
-            }
-            catch
-            {
-                signatureFactory = new Asn1SignatureFactory(signatureAlgorithmName, issuerPrivateKey, Common.SecureRandom);
-            }
+            var signatureFactory = new Asn1SignatureFactory(signatureAlgorithmOid.Id, issuerPrivateKey, Common.SecureRandom);
             var generator = new X509V3CertificateGenerator();
             generator.SetSerialNumber(sn);
             generator.SetIssuerDN(issuerDN);
@@ -267,7 +272,7 @@ namespace LH.BouncyCastleHelpers
                 foreach (DerObjectIdentifier oid in extensions.ExtensionOids)
                 {
                     X509Extension extension = extensions.GetExtension(oid);
-                    generator.AddExtension(oid, extension.IsCritical, extension.Value);
+                    generator.AddExtension(oid, extension.IsCritical, extension.GetParsedValue());
                 }
             }
             return generator.Generate(signatureFactory);
@@ -280,14 +285,14 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建 P12 证书。
         /// </summary>
-        /// <param name="chainAlias">证书链和私钥的别名。</param>
+        /// <param name="chainAlias">私钥的别名。</param>
         /// <param name="privateKey">私钥。</param>
         /// <param name="namedCerts">设置了别名的证书集合。</param>
         /// <param name="password">设置密码。</param>
         /// <param name="output">输出到流。</param>
-        internal static void GeneratePfx(string chainAlias,
+        internal static void GeneratePfx(string keyAlias,
                                          AsymmetricKeyParameter privateKey,
-                                         IDictionary<string, X509Certificate> namedCerts,
+                                         Dictionary<string, X509Certificate> namedCerts,
                                          string password,
                                          Stream output)
         {
@@ -299,7 +304,7 @@ namespace LH.BouncyCastleHelpers
                 store.SetCertificateEntry(namedCert.Key, certEntry);
                 certEntries.Add(certEntry);
             }
-            store.SetKeyEntry(chainAlias, new AsymmetricKeyEntry(privateKey), certEntries.ToArray());
+            store.SetKeyEntry(keyAlias, new AsymmetricKeyEntry(privateKey), certEntries.ToArray());
             var pass = string.IsNullOrEmpty(password) ? null : password.ToCharArray();
             store.Save(output, pass, Common.SecureRandom);
             output.Flush();
@@ -331,6 +336,33 @@ namespace LH.BouncyCastleHelpers
     }
 
     /// <summary>
+    /// 常用曲线。
+    /// </summary>
+    internal static class CommonCurves
+    {
+        internal static DerObjectIdentifier SecP256r1 { get; } = SecObjectIdentifiers.SecP256r1;
+        internal static DerObjectIdentifier SecP384r1 { get; } = SecObjectIdentifiers.SecP384r1;
+        internal static DerObjectIdentifier SecP521r1 { get; } = SecObjectIdentifiers.SecP521r1;
+    }
+
+    /// <summary>
+    /// 常用签名算法。
+    /// </summary>
+    internal static class CommonSignatureAlgorithms
+    {
+        internal static DerObjectIdentifier SHA256WithDSA { get; } = NistObjectIdentifiers.DsaWithSha256;
+        internal static DerObjectIdentifier SHA256WithECDSA { get; } = X9ObjectIdentifiers.ECDsaWithSha256;
+        internal static DerObjectIdentifier SHA256WithRSA { get; } = PkcsObjectIdentifiers.Sha256WithRsaEncryption;
+        internal static DerObjectIdentifier SHA384WithDSA { get; } = NistObjectIdentifiers.DsaWithSha384;
+        internal static DerObjectIdentifier SHA384WithECDSA { get; } = X9ObjectIdentifiers.ECDsaWithSha384;
+        internal static DerObjectIdentifier SHA384WithRSA { get; } = PkcsObjectIdentifiers.Sha384WithRsaEncryption;
+        internal static DerObjectIdentifier SHA512WithDSA { get; } = NistObjectIdentifiers.DsaWithSha512;
+        internal static DerObjectIdentifier SHA512WithECDSA { get; } = X9ObjectIdentifiers.ECDsaWithSha512;
+        internal static DerObjectIdentifier SHA512WithRSA { get; } = PkcsObjectIdentifiers.Sha512WithRsaEncryption;
+        internal static DerObjectIdentifier SM3WithSM2 { get; } = GMObjectIdentifiers.sm2sign_with_sm3;
+    }
+
+    /// <summary>
     /// 密钥辅助。
     /// </summary>
     internal static class CryptoHelper
@@ -338,12 +370,12 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建 ECDSA 密钥对。
         /// </summary>
-        /// <param name="curveName">使用的曲线名称。可使用 NamedCurves 类中提供的常用算法名称。或 SecObjectIdentifiers 中的命名曲线。</param>
+        /// <param name="curveOid">曲线 oid。可使用 CommonCurves 类中提供的常用曲线。或 SecObjectIdentifiers 中的命名曲线。</param>
         /// <returns></returns>
-        internal static AsymmetricCipherKeyPair GenerateEcdsaKeyPair(string curveName)
+        internal static AsymmetricCipherKeyPair GenerateEcdsaKeyPair(DerObjectIdentifier curveOid)
         {
-            var x9 = SecNamedCurves.GetByName(curveName);
-            var domain = new ECDomainParameters(x9.Curve, x9.G, x9.N, x9.H);
+            var ec = SecNamedCurves.GetByOid(curveOid);
+            var domain = new ECDomainParameters(ec.Curve, ec.G, ec.N, ec.H);
             var kgp = new ECKeyGenerationParameters(domain, Common.SecureRandom);
             var generator = new ECKeyPairGenerator();
             generator.Init(kgp);
@@ -378,8 +410,8 @@ namespace LH.BouncyCastleHelpers
         /// <returns></returns>
         internal static AsymmetricCipherKeyPair GenerateSM2KeyPair()
         {
-            var x9 = GMNamedCurves.GetByName("sm2p256v1");
-            var domain = new ECDomainParameters(x9.Curve, x9.G, x9.N, x9.H);
+            var ec = GMNamedCurves.GetByOid(GMObjectIdentifiers.sm2p256v1);
+            var domain = new ECDomainParameters(ec.Curve, ec.G, ec.N, ec.H);
             var kgp = new ECKeyGenerationParameters(domain, Common.SecureRandom);
             var generator = new ECKeyPairGenerator();
             generator.Init(kgp);
@@ -524,16 +556,6 @@ namespace LH.BouncyCastleHelpers
     }
 
     /// <summary>
-    /// 已命名曲线。
-    /// </summary>
-    internal static class NamedCurves
-    {
-        internal const string SECP256R1 = "secp256r1";
-        internal const string SECP384R1 = "secp384r1";
-        internal const string SECP521R1 = "secp521r1";
-    }
-
-    /// <summary>
     /// 已命名 PEM 加密算法。OpenSSL 定义的 DEK 格式。
     /// </summary>
     internal static class NamedPemEncryptionAlgorithms
@@ -549,24 +571,6 @@ namespace LH.BouncyCastleHelpers
     }
 
     /// <summary>
-    /// 已命名签名算法。
-    /// </summary>
-    internal static class NamedSignatureAlgorithms
-    {
-        /// <summary>
-        /// BUG: SHA256WithECDSA 名称指向 SHA224WithECDSA。使用 OID 名称可使用正确的 SHA256WithECDSA 算法。
-        /// </summary>
-        internal const string SHA256_WITH_ECDSA = "1.2.840.10045.4.3.2";
-
-        internal const string SHA256_WITH_RSA = "SHA256WithRSA";
-        internal const string SHA384_WITH_ECDSA = "SHA384WithECDSA";
-        internal const string SHA384_WITH_RSA = "SHA384WithRSA";
-        internal const string SHA512_WITH_ECDSA = "SHA512WithECDSA";
-        internal const string SHA512_WITH_RSA = "SHA512WithRSA";
-        internal const string SM3_WITH_SM2 = "SM3WithSM2";
-    }
-
-    /// <summary>
     /// 签名辅助。
     /// </summary>
     internal static class SignatureHelper
@@ -574,32 +578,27 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 签名。
         /// </summary>
+        /// <param name="algorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="privateKey">本地私钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="data">要计算签名的数据。</param>
         /// <returns></returns>
-        internal static byte[] Sign(AsymmetricKeyParameter privateKey, string signatureAlgorithmName, byte[] data)
+        internal static byte[] Sign(DerObjectIdentifier algorithmOid, AsymmetricKeyParameter privateKey, byte[] data)
         {
-            return Sign(privateKey, signatureAlgorithmName, data, 0, data.Length);
+            return Sign(algorithmOid, privateKey, data, 0, data.Length);
         }
 
         /// <summary>
         /// 签名。
         /// </summary>
+        /// <param name="algorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="privateKey">本地私钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="buffer">包含要计算签名的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
-        internal static byte[] Sign(AsymmetricKeyParameter privateKey, string signatureAlgorithmName, byte[] buffer, int offset, int count)
+        internal static byte[] Sign(DerObjectIdentifier algorithmOid, AsymmetricKeyParameter privateKey, byte[] buffer, int offset, int count)
         {
-            //BUG FIX
-            if (signatureAlgorithmName.ToUpper(CultureInfo.InvariantCulture) == "SHA256WITHECDSA")
-            {
-                signatureAlgorithmName = "1.2.840.10045.4.3.2";
-            }
-            var signer = SignerUtilities.GetSigner(signatureAlgorithmName);
+            var signer = SignerUtilities.GetSigner(algorithmOid);
             signer.Init(true, privateKey);
             signer.BlockUpdate(buffer, offset, count);
             return signer.GenerateSignature();
@@ -608,41 +607,35 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 验证签名。
         /// </summary>
+        /// <param name="algorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="publicKey">对方发送的公钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="data">要计算签名的数据。</param>
         /// <param name="signature">对方发送的签名。</param>
         /// <returns></returns>
-        internal static bool Verify(AsymmetricKeyParameter publicKey, string signatureAlgorithmName, byte[] data, byte[] signature)
+        internal static bool Verify(DerObjectIdentifier algorithmOid, AsymmetricKeyParameter publicKey, byte[] data, byte[] signature)
         {
-            return Verify(publicKey, signatureAlgorithmName, data, 0, data.Length, signature);
+            return Verify(algorithmOid, publicKey, data, 0, data.Length, signature);
         }
 
         /// <summary>
         /// 验证签名。
         /// </summary>
+        /// <param name="algorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="publicKey">对方发送的公钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="buffer">包含要计算签名的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <param name="signature">对方发送的签名。</param>
         /// <returns></returns>
-        internal static bool Verify(AsymmetricKeyParameter publicKey, string signatureAlgorithmName, byte[] buffer, int offset, int count, byte[] signature)
+        internal static bool Verify(DerObjectIdentifier algorithmOid, AsymmetricKeyParameter publicKey, byte[] buffer, int offset, int count, byte[] signature)
         {
-            //BUG FIX
-            if (signatureAlgorithmName.ToUpper(CultureInfo.InvariantCulture) == "SHA256WITHECDSA")
-            {
-                signatureAlgorithmName = "1.2.840.10045.4.3.2";
-            }
-            var verifier = SignerUtilities.GetSigner(signatureAlgorithmName);
+            var verifier = SignerUtilities.GetSigner(algorithmOid);
             verifier.Init(false, publicKey);
             verifier.BlockUpdate(buffer, offset, count);
             return verifier.VerifySignature(signature);
         }
     }
 
-    /// <summary></summary>
     internal sealed class Password : IPasswordFinder
     {
         private readonly char[] _chars;
@@ -652,11 +645,36 @@ namespace LH.BouncyCastleHelpers
             _chars = password.ToCharArray();
         }
 
-        /// <summary></summary>
-        /// <returns></returns>
         public char[] GetPassword()
         {
             return _chars;
+        }
+    }
+
+    /// <summary>
+    /// X509Name 创建器。
+    /// </summary>
+    internal sealed class X509NameGenerator
+    {
+        private readonly Dictionary<DerObjectIdentifier, string> _attributes = new Dictionary<DerObjectIdentifier, string>();
+
+        internal bool IsEmpty => _attributes.Count == 0;
+
+        internal void AddX509Name(DerObjectIdentifier oid, string value)
+        {
+            _attributes.Add(oid, value);
+        }
+
+        internal X509Name Generate()
+        {
+            var ordering = new DerObjectIdentifier[_attributes.Count];
+            _attributes.Keys.CopyTo(ordering, 0);
+            return new X509Name(ordering, _attributes);
+        }
+
+        internal void Reset()
+        {
+            _attributes.Clear();
         }
     }
 }
