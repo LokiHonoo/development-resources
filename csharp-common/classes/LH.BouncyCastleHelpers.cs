@@ -20,7 +20,7 @@
  *
  * 部分算法名称不能被 Microsoft 证书链验证。如 SHA224WithRSA（1.2.840.113549.1.1.14）。参见 http://oidref.com 关于算法的 Description。
  *
- * BUG: 至 BouncyCastle 1.8.6， SHA256WithECDSA 指向 SHA224WithECDSA。传入 OID （1.2.840.10045.4.3.2）可使用正确的 SHA256WithECDSA 算法。
+ * BUG: SHA256WithECDSA 指向 SHA224WithECDSA。传入 OID （1.2.840.10045.4.3.2）可使用正确的 SHA256WithECDSA 算法。BouncyCastle 1.8.6 尚未修正。
  */
 
 using Org.BouncyCastle.Asn1;
@@ -550,7 +550,7 @@ namespace LH.BouncyCastleHelpers
     internal static class NamedSignatureAlgorithms
     {
         /// <summary>
-        /// BUG: SHA256WithECDSA 名称指向 SHA224WithECDSA。使用 OID 名称可正确签名。
+        /// BUG: SHA256WithECDSA 名称指向 SHA224WithECDSA。使用 OID 名称可使用正确的 SHA256WithECDSA 算法。
         /// </summary>
         internal const string SHA256_WITH_ECDSA = "1.2.840.10045.4.3.2";
 
