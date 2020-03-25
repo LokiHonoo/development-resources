@@ -599,8 +599,8 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 验证签名。
         /// </summary>
-        /// <param name="publicKey">从对方证书中导出的公钥。</param>
-        /// <param name="signatureAlgorithmName">对方协商的签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
+        /// <param name="publicKey">对方发送的公钥。</param>
+        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="data">要计算签名的数据。</param>
         /// <param name="signature">对方发送的签名。</param>
         /// <returns></returns>
@@ -612,8 +612,8 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 验证签名。
         /// </summary>
-        /// <param name="publicKey">从对方证书中导出的公钥。</param>
-        /// <param name="signatureAlgorithmName">对方协商的签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
+        /// <param name="publicKey">对方发送的公钥。</param>
+        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="buffer">包含要计算签名的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
