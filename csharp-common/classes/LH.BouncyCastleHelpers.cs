@@ -21,6 +21,7 @@
  * 部分算法名称不能被 Microsoft 证书链验证。如 SHA224WithRSA（1.2.840.113549.1.1.14）。参见 http://oidref.com 关于算法的 Description。
  *
  * BUG: SHA256WithECDSA 指向 SHA224WithECDSA。传入 OID （1.2.840.10045.4.3.2）可使用正确的 SHA256WithECDSA 算法。BouncyCastle 1.8.6 尚未修正。
+ *      此 BUG 影响“创建证书请求”、“创建证书”、“签名”、“验证签名”，已在方法内部修正。
  */
 
 using Org.BouncyCastle.Asn1;
@@ -40,6 +41,7 @@ using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 
 namespace LH.BouncyCastleHelpers
@@ -55,7 +57,7 @@ namespace LH.BouncyCastleHelpers
         /// 创建证书请求。
         /// </summary>
         /// <param name="subjectPrivateKeyPair">使用者私钥密钥对。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
+        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="subjectDN">使用者 DN。</param>
         /// <param name="attributes">附加属性。</param>
         /// <returns></returns>
@@ -65,6 +67,11 @@ namespace LH.BouncyCastleHelpers
                                                                X509Name subjectDN,
                                                                Asn1Set attributes)
         {
+            //BUG FIX
+            if (signatureAlgorithmName.ToUpper(CultureInfo.InvariantCulture) == "SHA256WITHECDSA")
+            {
+                signatureAlgorithmName = "1.2.840.10045.4.3.2";
+            }
             ISignatureFactory signatureFactory;
             try
             {
@@ -129,7 +136,7 @@ namespace LH.BouncyCastleHelpers
         /// 创建颁发机构自签名证书。
         /// </summary>
         /// <param name="keyPair">密钥对。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
+        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="dn">颁发机构 DN。</param>
         /// <param name="extensions">扩展属性。</param>
         /// <param name="start">启用时间。</param>
@@ -149,7 +156,7 @@ namespace LH.BouncyCastleHelpers
         /// 创建使用者证书。
         /// </summary>
         /// <param name="issuerPrivateKey">颁发机构的私钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
+        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="issuerCert">颁发机构的证书。</param>
         /// <param name="subjectCsr">使用者证书请求。</param>
         /// <param name="extensions">扩展属性。</param>
@@ -232,14 +239,11 @@ namespace LH.BouncyCastleHelpers
                                                     DateTime start,
                                                     int days)
         {
-            //var issuerPrivateKeyKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(issuerPrivateKey);
-            //var issuerPrivateKeyAlgorithm = issuerPrivateKeyKeyInfo.PrivateKeyAlgorithm;
-            //var subjectPublicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(subjectPublicKey);
-            //var subjectPublicKeyAlgorithm = issuerPrivateKeyKeyInfo.PrivateKeyAlgorithm;
-            //if (issuerPrivateKeyAlgorithm.Parameters.Equals(GMObjectIdentifiers.sm2p256v1))
-            //{
-            //    signatureAlgorithmName = "SM3WithSM2";
-            //}
+            //BUG FIX
+            if (signatureAlgorithmName.ToUpper(CultureInfo.InvariantCulture) == "SHA256WITHECDSA")
+            {
+                signatureAlgorithmName = "1.2.840.10045.4.3.2";
+            }
             var sn = new BigInteger(128, Common.SecureRandom);
             ISignatureFactory signatureFactory;
             try
@@ -571,7 +575,7 @@ namespace LH.BouncyCastleHelpers
         /// 签名。
         /// </summary>
         /// <param name="privateKey">本地私钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
+        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="data">要计算签名的数据。</param>
         /// <returns></returns>
         internal static byte[] Sign(AsymmetricKeyParameter privateKey, string signatureAlgorithmName, byte[] data)
@@ -583,13 +587,18 @@ namespace LH.BouncyCastleHelpers
         /// 签名。
         /// </summary>
         /// <param name="privateKey">本地私钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
+        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="buffer">包含要计算签名的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
         internal static byte[] Sign(AsymmetricKeyParameter privateKey, string signatureAlgorithmName, byte[] buffer, int offset, int count)
         {
+            //BUG FIX
+            if (signatureAlgorithmName.ToUpper(CultureInfo.InvariantCulture) == "SHA256WITHECDSA")
+            {
+                signatureAlgorithmName = "1.2.840.10045.4.3.2";
+            }
             var signer = SignerUtilities.GetSigner(signatureAlgorithmName);
             signer.Init(true, privateKey);
             signer.BlockUpdate(buffer, offset, count);
@@ -600,7 +609,7 @@ namespace LH.BouncyCastleHelpers
         /// 验证签名。
         /// </summary>
         /// <param name="publicKey">对方发送的公钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
+        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="data">要计算签名的数据。</param>
         /// <param name="signature">对方发送的签名。</param>
         /// <returns></returns>
@@ -613,7 +622,7 @@ namespace LH.BouncyCastleHelpers
         /// 验证签名。
         /// </summary>
         /// <param name="publicKey">对方发送的公钥。</param>
-        /// <param name="signatureAlgorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
+        /// <param name="signatureAlgorithmName">签名算法名称或 oid。可使用 NamedSignatureAlgorithms 类中提供的常用算法名称。参见注释中的补充说明。</param>
         /// <param name="buffer">包含要计算签名的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
@@ -621,6 +630,11 @@ namespace LH.BouncyCastleHelpers
         /// <returns></returns>
         internal static bool Verify(AsymmetricKeyParameter publicKey, string signatureAlgorithmName, byte[] buffer, int offset, int count, byte[] signature)
         {
+            //BUG FIX
+            if (signatureAlgorithmName.ToUpper(CultureInfo.InvariantCulture) == "SHA256WITHECDSA")
+            {
+                signatureAlgorithmName = "1.2.840.10045.4.3.2";
+            }
             var verifier = SignerUtilities.GetSigner(signatureAlgorithmName);
             verifier.Init(false, publicKey);
             verifier.BlockUpdate(buffer, offset, count);
