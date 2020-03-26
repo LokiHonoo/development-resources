@@ -3,7 +3,6 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using MicrosoftX509 = System.Security.Cryptography.X509Certificates;
 
 namespace LH.BouncyCastleHelpers
@@ -39,18 +38,18 @@ namespace LH.BouncyCastleHelpers
             //
             // ===========================  证书测试  ===========================
             //
-            X509NameGenerator x509NameGenerator = new X509NameGenerator();
-            x509NameGenerator.AddX509Name(X509Name.C, "CN");
-            x509NameGenerator.AddX509Name(X509Name.CN, "LH.Net.Sockets TEST Root CA");
-            var caDN = x509NameGenerator.Generate();
-            x509NameGenerator.Reset();
-            x509NameGenerator.AddX509Name(X509Name.C, "CN");
-            x509NameGenerator.AddX509Name(X509Name.CN, "LH.Net.Sockets TEST TCP Server");
-            var serverDN = x509NameGenerator.Generate();
-            x509NameGenerator.Reset();
-            x509NameGenerator.AddX509Name(X509Name.C, "CN");
-            x509NameGenerator.AddX509Name(X509Name.CN, "LH.Net.Sockets TEST TCP Client");
-            var clientDN = x509NameGenerator.Generate();
+            X509NameGenerator nameGenerator = new X509NameGenerator();
+            nameGenerator.AddX509Name(X509Name.C, "CN");
+            nameGenerator.AddX509Name(X509Name.CN, "LH.Net.Sockets TEST Root CA");
+            var caDN = nameGenerator.Generate();
+            nameGenerator.Reset();
+            nameGenerator.AddX509Name(X509Name.C, "CN");
+            nameGenerator.AddX509Name(X509Name.CN, "LH.Net.Sockets TEST TCP Server");
+            var serverDN = nameGenerator.Generate();
+            nameGenerator.Reset();
+            nameGenerator.AddX509Name(X509Name.C, "CN");
+            nameGenerator.AddX509Name(X509Name.CN, "LH.Net.Sockets TEST TCP Client");
+            var clientDN = nameGenerator.Generate();
             //
             // 机构证书。
             //
@@ -64,19 +63,13 @@ namespace LH.BouncyCastleHelpers
             // P12 证书。
             //
             //
-            using (var stream = new MemoryStream())
-            {
-                var namedCerts = new Dictionary<string, X509Certificate>() { { "CERT_1", caCert } };
-                CertificateHelper.GeneratePfx("KEY", caKeyPair.Private, namedCerts, "123456", stream);
-                //
-                stream.Seek(0, SeekOrigin.Begin);
-                //
-                var store = CertificateHelper.ReadPfx(stream, "123456");
-                var pub = store.GetCertificate("CERT_1").Certificate.GetPublicKey();
-                var pri = store.GetKey("KEY").Key;
-                _ = store.GetCertificateChain("KEY");
-                caKeyPair = new AsymmetricCipherKeyPair(pub, pri);
-            }
+            var namedCerts = new Dictionary<string, X509Certificate>() { { "CERT_1", caCert } };
+            byte[] p12Raw = CertificateHelper.GeneratePfx("KEY", caKeyPair.Private, namedCerts, "123456");
+            var store = CertificateHelper.ReadPfx(p12Raw, "123456");
+            var pub = store.GetCertificate("CERT_1").Certificate.GetPublicKey();
+            var pri = store.GetKey("KEY").Key;
+            _ = store.GetCertificateChain("KEY");
+            caKeyPair = new AsymmetricCipherKeyPair(pub, pri);
             //
             // 使用者证书请求。
             //

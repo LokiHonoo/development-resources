@@ -285,16 +285,12 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建 P12 证书。
         /// </summary>
-        /// <param name="chainAlias">私钥的别名。</param>
+        /// <param name="keyAlias">私钥的别名。</param>
         /// <param name="privateKey">私钥。</param>
         /// <param name="namedCerts">设置了别名的证书集合。</param>
         /// <param name="password">设置密码。</param>
         /// <param name="output">输出到流。</param>
-        internal static void GeneratePfx(string keyAlias,
-                                         AsymmetricKeyParameter privateKey,
-                                         Dictionary<string, X509Certificate> namedCerts,
-                                         string password,
-                                         Stream output)
+        internal static void GeneratePfx(string keyAlias, AsymmetricKeyParameter privateKey, Dictionary<string, X509Certificate> namedCerts, string password, Stream output)
         {
             var store = new Pkcs12StoreBuilder().Build();
             var certEntries = new List<X509CertificateEntry>();
@@ -311,6 +307,24 @@ namespace LH.BouncyCastleHelpers
         }
 
         /// <summary>
+        /// 创建 P12 证书。
+        /// </summary>
+        /// <param name="keyAlias">私钥的别名。</param>
+        /// <param name="privateKey">私钥。</param>
+        /// <param name="namedCerts">设置了别名的证书集合。</param>
+        /// <param name="password">设置密码。</param>
+        /// <returns></returns>
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static byte[] GeneratePfx(string keyAlias, AsymmetricKeyParameter privateKey, Dictionary<string, X509Certificate> namedCerts, string password)
+        {
+            using (var ms = new MemoryStream())
+            {
+                GeneratePfx(keyAlias, privateKey, namedCerts, password, ms);
+                return ms.ToArray();
+            }
+        }
+
+        /// <summary>
         /// 读取 P12 证书。
         /// </summary>
         /// <param name="input">从流中读取。</param>
@@ -319,6 +333,21 @@ namespace LH.BouncyCastleHelpers
         {
             var pass = string.IsNullOrEmpty(password) ? null : password.ToCharArray();
             return new Pkcs12Store(input, pass);
+        }
+
+        /// <summary>
+        /// 读取 P12 证书。
+        /// </summary>
+        /// <param name="raw">二进制对象。</param>
+        /// <param name="password">设置密码。</param>
+        /// <returns></returns>
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static Pkcs12Store ReadPfx(byte[] raw, string password)
+        {
+            using (var ms = new MemoryStream(raw))
+            {
+                return ReadPfx(ms, password);
+            }
         }
 
         #endregion P12 证书
@@ -656,15 +685,31 @@ namespace LH.BouncyCastleHelpers
     /// </summary>
     internal sealed class X509NameGenerator
     {
+        #region 成员
+
         private readonly Dictionary<DerObjectIdentifier, string> _attributes = new Dictionary<DerObjectIdentifier, string>();
 
+        /// <summary>
+        /// 创建器中是否有值。
+        /// </summary>
         internal bool IsEmpty => _attributes.Count == 0;
 
+        #endregion 成员
+
+        /// <summary>
+        /// 增加 X509Name 属性。
+        /// </summary>
+        /// <param name="oid">属性 oid。</param>
+        /// <param name="value">属性值。</param>
         internal void AddX509Name(DerObjectIdentifier oid, string value)
         {
             _attributes.Add(oid, value);
         }
 
+        /// <summary>
+        /// 创建 X509Name。
+        /// </summary>
+        /// <returns></returns>
         internal X509Name Generate()
         {
             var ordering = new DerObjectIdentifier[_attributes.Count];
@@ -672,6 +717,9 @@ namespace LH.BouncyCastleHelpers
             return new X509Name(ordering, _attributes);
         }
 
+        /// <summary>
+        /// 清除所有值。
+        /// </summary>
         internal void Reset()
         {
             _attributes.Clear();
