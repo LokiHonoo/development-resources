@@ -354,14 +354,14 @@ namespace LH.BouncyCastleHelpers
     }
 
     /// <summary>
-    /// 全局对象。
+    /// 公共对象。
     /// </summary>
     internal static class Common
     {
         /// <summary>
         /// 随机数生成器。
         /// </summary>
-        internal static SecureRandom SecureRandom { get; } = new SecureRandom();
+        internal readonly static SecureRandom SecureRandom = new SecureRandom();
     }
 
     /// <summary>
@@ -369,9 +369,9 @@ namespace LH.BouncyCastleHelpers
     /// </summary>
     internal static class CommonCurves
     {
-        internal static DerObjectIdentifier SecP256r1 { get; } = SecObjectIdentifiers.SecP256r1;
-        internal static DerObjectIdentifier SecP384r1 { get; } = SecObjectIdentifiers.SecP384r1;
-        internal static DerObjectIdentifier SecP521r1 { get; } = SecObjectIdentifiers.SecP521r1;
+        internal readonly static DerObjectIdentifier SecP256r1 = SecObjectIdentifiers.SecP256r1;
+        internal readonly static DerObjectIdentifier SecP384r1 = SecObjectIdentifiers.SecP384r1;
+        internal readonly static DerObjectIdentifier SecP521r1 = SecObjectIdentifiers.SecP521r1;
     }
 
     /// <summary>
@@ -379,16 +379,16 @@ namespace LH.BouncyCastleHelpers
     /// </summary>
     internal static class CommonSignatureAlgorithms
     {
-        internal static DerObjectIdentifier SHA256WithDSA { get; } = NistObjectIdentifiers.DsaWithSha256;
-        internal static DerObjectIdentifier SHA256WithECDSA { get; } = X9ObjectIdentifiers.ECDsaWithSha256;
-        internal static DerObjectIdentifier SHA256WithRSA { get; } = PkcsObjectIdentifiers.Sha256WithRsaEncryption;
-        internal static DerObjectIdentifier SHA384WithDSA { get; } = NistObjectIdentifiers.DsaWithSha384;
-        internal static DerObjectIdentifier SHA384WithECDSA { get; } = X9ObjectIdentifiers.ECDsaWithSha384;
-        internal static DerObjectIdentifier SHA384WithRSA { get; } = PkcsObjectIdentifiers.Sha384WithRsaEncryption;
-        internal static DerObjectIdentifier SHA512WithDSA { get; } = NistObjectIdentifiers.DsaWithSha512;
-        internal static DerObjectIdentifier SHA512WithECDSA { get; } = X9ObjectIdentifiers.ECDsaWithSha512;
-        internal static DerObjectIdentifier SHA512WithRSA { get; } = PkcsObjectIdentifiers.Sha512WithRsaEncryption;
-        internal static DerObjectIdentifier SM3WithSM2 { get; } = GMObjectIdentifiers.sm2sign_with_sm3;
+        internal readonly static DerObjectIdentifier SHA256WithDSA = NistObjectIdentifiers.DsaWithSha256;
+        internal readonly static DerObjectIdentifier SHA256WithECDSA = X9ObjectIdentifiers.ECDsaWithSha256;
+        internal readonly static DerObjectIdentifier SHA256WithRSA = PkcsObjectIdentifiers.Sha256WithRsaEncryption;
+        internal readonly static DerObjectIdentifier SHA384WithDSA = NistObjectIdentifiers.DsaWithSha384;
+        internal readonly static DerObjectIdentifier SHA384WithECDSA = X9ObjectIdentifiers.ECDsaWithSha384;
+        internal readonly static DerObjectIdentifier SHA384WithRSA = PkcsObjectIdentifiers.Sha384WithRsaEncryption;
+        internal readonly static DerObjectIdentifier SHA512WithDSA = NistObjectIdentifiers.DsaWithSha512;
+        internal readonly static DerObjectIdentifier SHA512WithECDSA = X9ObjectIdentifiers.ECDsaWithSha512;
+        internal readonly static DerObjectIdentifier SHA512WithRSA = PkcsObjectIdentifiers.Sha512WithRsaEncryption;
+        internal readonly static DerObjectIdentifier SM3WithSM2 = GMObjectIdentifiers.sm2sign_with_sm3;
     }
 
     /// <summary>

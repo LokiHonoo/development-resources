@@ -182,7 +182,6 @@ namespace LH.Collections
         }
     }
 
-
     /// <summary>
     /// 求数组排列。
     /// </summary>
@@ -293,8 +292,8 @@ namespace LH.Collections
                 Combination<T> combination = new Combination<T>(_array, _m);
                 combination.Output((cr, cs) =>
                 {
-                    Permutate(new ArraySegment<T>(cr), 0, created, userState);
-                }, null);
+                    Permutate(new ArraySegment<T>(cr), 0, created, cs);
+                }, userState);
             }
         }
 
