@@ -128,7 +128,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText) => FillDataSet(dataSet, connection, selectCommandText, null);
+        internal static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText)
+        {
+            return FillDataSet(dataSet, connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Append the fill DataSet with records and schemas. Returns the number of populated data rows.
@@ -165,7 +168,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText) => FillDataTable(dataTable, connection, selectCommandText, null);
+        internal static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText)
+        {
+            return FillDataTable(dataTable, connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Append the fill DataTable with records and schemas. Returns the number of populated data rows.
@@ -202,7 +208,10 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText) => new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+        internal static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText)
+        {
+            return new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+        }
 
         /// <summary>
         /// Get DataAdapter.
@@ -225,7 +234,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText) => GetDataSet(connection, selectCommandText, null);
+        internal static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText)
+        {
+            return GetDataSet(connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Create a new DataSet with records and schemas.
@@ -260,7 +272,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText) => GetDataTable(connection, selectCommandText, null);
+        internal static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText)
+        {
+            return GetDataTable(connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Create a new DataTable with records and schemas.
@@ -299,7 +314,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText) => GetDataReader(connection, commandText, null);
+        internal static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText)
+        {
+            return GetDataReader(connection, commandText, null);
+        }
 
         /// <summary>
         /// Get DataReader.
@@ -351,7 +369,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int ExecuteNonQuery(SQLiteConnection connection, string commandText) => ExecuteNonQuery(connection, commandText, null);
+        internal static int ExecuteNonQuery(SQLiteConnection connection, string commandText)
+        {
+            return ExecuteNonQuery(connection, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command. Returns the number of rows affected.
@@ -389,7 +410,10 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql query.</param>
-        internal static void ExecuteProcedure(SQLiteConnection connection, string procedure) => ExecuteProcedure(connection, procedure, null);
+        internal static void ExecuteProcedure(SQLiteConnection connection, string procedure)
+        {
+            ExecuteProcedure(connection, procedure, null);
+        }
 
         /// <summary>
         /// Executing stored procedure.
@@ -425,7 +449,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object ExecuteScalar(SQLiteConnection connection, string commandText) => ExecuteScalar(connection, commandText, null);
+        internal static object ExecuteScalar(SQLiteConnection connection, string commandText)
+        {
+            return ExecuteScalar(connection, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command. Returns the first column of the first row in the query result set.
@@ -468,8 +495,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText) =>
-            TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, null);
+        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText)
+        {
+            return TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the number of rows affected.
@@ -478,8 +507,10 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters) =>
-            TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, parameters);
+        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
+        {
+            return TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, parameters);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the number of rows affected.
@@ -488,8 +519,10 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, IsolationLevel iso, string commandText) =>
-            TransactionExecuteNonQuery(connection, iso, commandText, null);
+        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, IsolationLevel iso, string commandText)
+        {
+            return TransactionExecuteNonQuery(connection, iso, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the number of rows affected.
@@ -550,8 +583,10 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure) =>
+        internal static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure)
+        {
             TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, null);
+        }
 
         /// <summary>
         /// Executing stored procedure by transaction.
@@ -559,8 +594,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        internal static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters) =>
+        internal static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters)
+        {
             TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, parameters);
+        }
 
         /// <summary>
         /// Executing stored procedure by transaction.
@@ -568,8 +605,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void TransactionExecuteProcedure(SQLiteConnection connection, IsolationLevel iso, string procedure) =>
+        internal static void TransactionExecuteProcedure(SQLiteConnection connection, IsolationLevel iso, string procedure)
+        {
             TransactionExecuteProcedure(connection, iso, procedure, null);
+        }
 
         /// <summary>
         /// Executing stored procedure by transaction.
@@ -625,8 +664,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(SQLiteConnection connection, string commandText) =>
-            TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, null);
+        internal static object TransactionExecuteScalar(SQLiteConnection connection, string commandText)
+        {
+            return TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
@@ -635,8 +676,10 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters) =>
-            TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, parameters);
+        internal static object TransactionExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
+        {
+            return TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, parameters);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
@@ -645,8 +688,10 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(SQLiteConnection connection, IsolationLevel iso, string commandText) =>
-            TransactionExecuteScalar(connection, iso, commandText, null);
+        internal static object TransactionExecuteScalar(SQLiteConnection connection, IsolationLevel iso, string commandText)
+        {
+            return TransactionExecuteScalar(connection, iso, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
@@ -725,11 +770,10 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="textWriter">TextWriter.</param>
-        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        internal static void Dump(SQLiteConnection connection, TextWriter textWriter, out bool cancelled)
+        internal static void Dump(SQLiteConnection connection, TextWriter textWriter)
         {
             SQLiteDumpSetting setting = GetDumpSetting(connection);
-            Dump(connection, setting, textWriter, out cancelled, null, null);
+            Dump(connection, setting, textWriter, null, null, out _);
         }
 
         /// <summary>
@@ -737,13 +781,13 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="textWriter">TextWriter.</param>
-        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
-        internal static void Dump(SQLiteConnection connection, TextWriter textWriter, out bool cancelled, SQLiteWrittenCallback written, object userState)
+        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
+        internal static void Dump(SQLiteConnection connection, TextWriter textWriter, SQLiteWrittenCallback written, object userState, out bool cancelled)
         {
             SQLiteDumpSetting setting = GetDumpSetting(connection);
-            Dump(connection, setting, textWriter, out cancelled, written, userState);
+            Dump(connection, setting, textWriter, written, userState, out cancelled);
         }
 
         /// <summary>
@@ -752,10 +796,9 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="setting">Dump setting.</param>
         /// <param name="textWriter">TextWriter.</param>
-        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        internal static void Dump(SQLiteConnection connection, SQLiteDumpSetting setting, TextWriter textWriter, out bool cancelled)
+        internal static void Dump(SQLiteConnection connection, SQLiteDumpSetting setting, TextWriter textWriter)
         {
-            Dump(connection, setting, textWriter, out cancelled, null, null);
+            Dump(connection, setting, textWriter, null, null, out _);
         }
 
         /// <summary>
@@ -764,11 +807,17 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="setting">Dump setting.</param>
         /// <param name="textWriter">TextWriter.</param>
-        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
+        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        internal static void Dump(SQLiteConnection connection, SQLiteDumpSetting setting, TextWriter textWriter, out bool cancelled, SQLiteWrittenCallback written, object userState)
+        [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
+        internal static void Dump(SQLiteConnection connection,
+                                  SQLiteDumpSetting setting,
+                                  TextWriter textWriter,
+                                  SQLiteWrittenCallback written,
+                                  object userState,
+                                  out bool cancelled)
         {
             if (connection == null)
             {
@@ -810,7 +859,7 @@ namespace LH.Data
             //
             bool cancel = false;
             StringBuilder tmp = new StringBuilder();
-            written?.Invoke(index, total, SQLiteDumpType.Summary, string.Empty, ref cancel, userState);
+            written?.Invoke(index, total, SQLiteDumpType.Summary, string.Empty, userState, ref cancel);
             if (cancel) { goto end; }
             //
             tmp.AppendLine("/*");
@@ -848,7 +897,7 @@ namespace LH.Data
                     textWriter.Write(tmp.ToString());
                     tmp.Clear();
                     index++;
-                    written?.Invoke(index, total, SQLiteDumpType.Table, table.TableName, ref cancel, userState);
+                    written?.Invoke(index, total, SQLiteDumpType.Table, table.TableName, userState, ref cancel);
                     if (cancel) { goto end; }
                 }
                 foreach (string trigger in setting.Triggers)
@@ -865,7 +914,7 @@ namespace LH.Data
                     textWriter.Write(tmp.ToString());
                     tmp.Clear();
                     index++;
-                    written?.Invoke(index, total, SQLiteDumpType.Trigger, trigger, ref cancel, userState);
+                    written?.Invoke(index, total, SQLiteDumpType.Trigger, trigger, userState, ref cancel);
                     if (cancel) { goto end; }
                 }
                 foreach (string view in setting.Views)
@@ -880,7 +929,7 @@ namespace LH.Data
                     textWriter.Write(tmp.ToString());
                     tmp.Clear();
                     index++;
-                    written?.Invoke(index, total, SQLiteDumpType.View, view, ref cancel, userState);
+                    written?.Invoke(index, total, SQLiteDumpType.View, view, userState, ref cancel);
                     if (cancel) { goto end; }
                 }
             }
@@ -931,7 +980,7 @@ namespace LH.Data
                                                 textWriter.Write(tmp.ToString());
                                                 tmp.Clear();
                                                 index++;
-                                                written?.Invoke(index, total, SQLiteDumpType.Record, table.TableName, ref cancel, userState);
+                                                written?.Invoke(index, total, SQLiteDumpType.Record, table.TableName, userState, ref cancel);
                                                 if (cancel) { goto recordEnd; }
                                             }
                                         }
@@ -964,7 +1013,7 @@ namespace LH.Data
                                             {
                                                 switch (val)
                                                 {
-                                                    case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty, StringComparison.InvariantCulture) + "'"); break;
+                                                    case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
                                                     case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                                                     case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                                                     default: tmp.Append("'" + val.ToString() + "'"); break;
@@ -979,7 +1028,7 @@ namespace LH.Data
                                         textWriter.Write(tmp.ToString());
                                         tmp.Clear();
                                         index++;
-                                        written?.Invoke(index, total, SQLiteDumpType.Record, table.TableName, ref cancel, userState);
+                                        written?.Invoke(index, total, SQLiteDumpType.Record, table.TableName, userState, ref cancel);
                                         if (cancel) { goto recordEnd; }
                                     }
                                 }
@@ -1060,9 +1109,9 @@ namespace LH.Data
     /// <param name="total">The amount of dumping block.</param>
     /// <param name="dumpType">The type of dumping.</param>
     /// <param name="name">The name associated with dumping.</param>
-    /// <param name="cancel">Cancel dump.</param>
     /// <param name="userState">User state.</param>
-    internal delegate void SQLiteWrittenCallback(long written, long total, SQLiteDumpType dumpType, string name, ref bool cancel, object userState);
+    /// <param name="cancel">Cancel dump.</param>
+    internal delegate void SQLiteWrittenCallback(long written, long total, SQLiteDumpType dumpType, string name, object userState, ref bool cancel);
 
     /// <summary>
     /// Note the type of dumping in the progress report.
@@ -1159,27 +1208,39 @@ namespace LH.Data
         /// Displays tables in the current database.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowTables() => "SELECT * FROM `sqlite_master` WHERE `type` = 'table';";
+        internal static string ShowTables()
+        {
+            return "SELECT * FROM `sqlite_master` WHERE `type` = 'table';";
+        }
 
         /// <summary>
         /// Displays tables in the current database.
         /// </summary>
         /// <param name="like">Part of the table name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        internal static string ShowTables(string like) => "SELECT * FROM `sqlite_master` WHERE `type` = 'table' AND `name` LIKE '" + like + "';";
+        internal static string ShowTables(string like)
+        {
+            return "SELECT * FROM `sqlite_master` WHERE `type` = 'table' AND `name` LIKE '" + like + "';";
+        }
 
         /// <summary>
         /// Displays triggers in the current database.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowTriggers() => "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger';";
+        internal static string ShowTriggers()
+        {
+            return "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger';";
+        }
 
         /// <summary>
         /// Displays triggers in the current database.
         /// </summary>
         /// <param name="like">Part of the trigger name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        internal static string ShowTriggers(string like) => "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger' AND `name` LIKE '" + like + "';";
+        internal static string ShowTriggers(string like)
+        {
+            return "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger' AND `name` LIKE '" + like + "';";
+        }
 
         /// <summary>
         /// Displays triggers in the current database.
@@ -1187,26 +1248,38 @@ namespace LH.Data
         /// <param name="like">Part of the trigger name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        internal static string ShowTriggers(string like, string table) => "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger' AND `tbl_name` = '" + table + "' AND `name` LIKE '" + like + "';";
+        internal static string ShowTriggers(string like, string table)
+        {
+            return "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger' AND `tbl_name` = '" + table + "' AND `name` LIKE '" + like + "';";
+        }
 
         /// <summary>
         /// Displays views in the current database.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowViews() => "SELECT * FROM `sqlite_master` WHERE `type` = 'view';";
+        internal static string ShowViews()
+        {
+            return "SELECT * FROM `sqlite_master` WHERE `type` = 'view';";
+        }
 
         /// <summary>
         /// Displays views in the current database.
         /// </summary>
         /// <param name="like">Part of the view name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        internal static string ShowViews(string like) => "SELECT * FROM `sqlite_master` WHERE `type` = 'view' AND `name` LIKE '" + like + "';";
+        internal static string ShowViews(string like)
+        {
+            return "SELECT * FROM `sqlite_master` WHERE `type` = 'view' AND `name` LIKE '" + like + "';";
+        }
 
         /// <summary>
         /// Compress database files to recycle wasted space in the database.
         /// </summary>
         /// <returns></returns>
-        internal static string Vacuum() => "VACUUM";
+        internal static string Vacuum()
+        {
+            return "VACUUM";
+        }
 
         #endregion Table
     }

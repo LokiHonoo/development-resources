@@ -221,6 +221,7 @@ namespace LH.Net.UPnP
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
+        [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
         internal static RootDevice[] Discover(AddressFamily addressFamilyFilter, int mx)
         {
             List<RootDevice> dis = new List<RootDevice>();
@@ -263,7 +264,7 @@ namespace LH.Net.UPnP
                 {
                     foreach (string response in responses)
                     {
-                        if (response.Contains("200 OK", StringComparison.InvariantCulture))
+                        if (response.Contains("200 OK"))
                         {
                             string descriptionUrl;
                             string find;
@@ -533,6 +534,7 @@ namespace LH.Net.UPnP
         /// <param name="deviceNode">Device XmlNode.</param>
         /// <param name="nm">XmlNamespaceManager.</param>
         /// <exception cref="Exception"/>
+        [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
         internal Device(Uri uri, RootDevice root, Device parent, XmlNode deviceNode, XmlNamespaceManager nm)
         {
             if (deviceNode == null)
@@ -553,7 +555,7 @@ namespace LH.Net.UPnP
             this.ModelNumber = deviceNode.SelectSingleNode("ns:modelNumber", nm).InnerText.Trim();
             this.ModelUrl = deviceNode.SelectSingleNode("ns:modelURL", nm).InnerText.Trim();
             this.SerialNumber = deviceNode.SelectSingleNode("ns:serialNumber", nm).InnerText.Trim();
-            this.Udn = deviceNode.SelectSingleNode("ns:UDN", nm).InnerText.Replace("uuid:", string.Empty, StringComparison.InvariantCulture).Trim();
+            this.Udn = deviceNode.SelectSingleNode("ns:UDN", nm).InnerText.Replace("uuid:", string.Empty).Trim();
             XmlNodeList childDeviceNodes = deviceNode.SelectNodes("ns:deviceList/ns:device", nm);
             //
             foreach (XmlNode childDeviceNode in childDeviceNodes)
@@ -569,6 +571,15 @@ namespace LH.Net.UPnP
             //
             this.Devices = childDevices.ToArray();
             this.Services = services.ToArray();
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.FriendlyName, this.DeviceType);
         }
 
         /// <summary>
@@ -610,15 +621,6 @@ namespace LH.Net.UPnP
                 services.AddRange(childDevice.FindServices(serviceType));
             }
             return services.ToArray();
-        }
-
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.FriendlyName, this.DeviceType);
         }
     }
 
@@ -757,6 +759,15 @@ namespace LH.Net.UPnP
         }
 
         /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.Device.FriendlyName, this.Device.DeviceType);
+        }
+
+        /// <summary>
         /// Find the specified type of device.
         /// </summary>
         /// <param name="deviceType">Device type.</param>
@@ -774,15 +785,6 @@ namespace LH.Net.UPnP
         internal Service[] FindServices(string serviceType)
         {
             return this.Device.FindServices(serviceType);
-        }
-
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.Device.FriendlyName, this.Device.DeviceType);
         }
     }
 

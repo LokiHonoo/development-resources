@@ -96,7 +96,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText) => FillDataSet(dataSet, connection, selectCommandText, null);
+        internal static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText)
+        {
+            return FillDataSet(dataSet, connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Append the fill DataSet with records and schemas. Returns the number of populated data rows.
@@ -134,7 +137,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText) => FillDataTable(dataTable, connection, selectCommandText, null);
+        internal static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText)
+        {
+            return FillDataTable(dataTable, connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Append the fill DataTable with records and schemas. Returns the number of populated data rows.
@@ -172,7 +178,10 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText) => new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+        internal static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText)
+        {
+            return new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+        }
 
         /// <summary>
         /// Get DataAdapter.
@@ -195,7 +204,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataSet GetDataSet(OleDbConnection connection, string selectCommandText) => GetDataSet(connection, selectCommandText, null);
+        internal static DataSet GetDataSet(OleDbConnection connection, string selectCommandText)
+        {
+            return GetDataSet(connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Create a new DataSet with records and schemas.
@@ -231,7 +243,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataTable GetDataTable(OleDbConnection connection, string selectCommandText) => GetDataTable(connection, selectCommandText, null);
+        internal static DataTable GetDataTable(OleDbConnection connection, string selectCommandText)
+        {
+            return GetDataTable(connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Create a new DataTable with records and schemas.
@@ -271,7 +286,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText) => GetDataReader(connection, commandText, null);
+        internal static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText)
+        {
+            return GetDataReader(connection, commandText, null);
+        }
 
         /// <summary>
         /// Get DataReader.
@@ -324,7 +342,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int ExecuteNonQuery(OleDbConnection connection, string commandText) => ExecuteNonQuery(connection, commandText, null);
+        internal static int ExecuteNonQuery(OleDbConnection connection, string commandText)
+        {
+            return ExecuteNonQuery(connection, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command. Returns the number of rows affected.
@@ -363,7 +384,10 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void ExecuteProcedure(OleDbConnection connection, string procedure) => ExecuteProcedure(connection, procedure, null);
+        internal static void ExecuteProcedure(OleDbConnection connection, string procedure)
+        {
+            ExecuteProcedure(connection, procedure, null);
+        }
 
         /// <summary>
         /// Executing stored procedure.
@@ -400,7 +424,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object ExecuteScalar(OleDbConnection connection, string commandText) => ExecuteScalar(connection, commandText, null);
+        internal static object ExecuteScalar(OleDbConnection connection, string commandText)
+        {
+            return ExecuteScalar(connection, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command. Returns the first column of the first row in the query result set.
@@ -444,8 +471,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText) =>
-            TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, null);
+        internal static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText)
+        {
+            return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the number of rows affected.
@@ -454,8 +483,10 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters) =>
-            TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+        internal static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
+        {
+            return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the number of rows affected.
@@ -464,8 +495,10 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText) =>
-            TransactionExecuteNonQuery(connection, iso, commandText, null);
+        internal static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText)
+        {
+            return TransactionExecuteNonQuery(connection, iso, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the number of rows affected.
@@ -527,8 +560,10 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void TransactionExecuteProcedure(OleDbConnection connection, string procedure) =>
+        internal static void TransactionExecuteProcedure(OleDbConnection connection, string procedure)
+        {
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, null);
+        }
 
         /// <summary>
         /// Executing stored procedure by transaction.
@@ -536,8 +571,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        internal static void TransactionExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters) =>
+        internal static void TransactionExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters)
+        {
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, parameters);
+        }
 
         /// <summary>
         /// Executing stored procedure by transaction.
@@ -545,8 +582,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure) =>
+        internal static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure)
+        {
             TransactionExecuteProcedure(connection, iso, procedure, null);
+        }
 
         /// <summary>
         /// Executing stored procedure by transaction.
@@ -602,8 +641,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(OleDbConnection connection, string commandText) =>
-            TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, null);
+        internal static object TransactionExecuteScalar(OleDbConnection connection, string commandText)
+        {
+            return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
@@ -612,8 +653,10 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters) =>
-            TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+        internal static object TransactionExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
+        {
+            return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
@@ -622,8 +665,10 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText) =>
-            TransactionExecuteScalar(connection, iso, commandText, null);
+        internal static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText)
+        {
+            return TransactionExecuteScalar(connection, iso, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the first column of the first row in the query result set.

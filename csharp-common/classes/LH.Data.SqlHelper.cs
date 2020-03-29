@@ -190,7 +190,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText) => FillDataSet(dataSet, connection, selectCommandText, null);
+        internal static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText)
+        {
+            return FillDataSet(dataSet, connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Append the fill DataSet with records and schemas. Returns the number of populated data rows.
@@ -228,7 +231,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText) => FillDataTable(dataTable, connection, selectCommandText, null);
+        internal static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText)
+        {
+            return FillDataTable(dataTable, connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Append the fill DataTable with records and schemas. Returns the number of populated data rows.
@@ -266,7 +272,10 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText) => new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+        internal static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText)
+        {
+            return new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+        }
 
         /// <summary>
         /// Get DataAdapter.
@@ -289,7 +298,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataSet GetDataSet(SqlConnection connection, string selectCommandText) => GetDataSet(connection, selectCommandText, null);
+        internal static DataSet GetDataSet(SqlConnection connection, string selectCommandText)
+        {
+            return GetDataSet(connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Create a new DataSet with records and schemas.
@@ -325,7 +337,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataTable GetDataTable(SqlConnection connection, string selectCommandText) => GetDataTable(connection, selectCommandText, null);
+        internal static DataTable GetDataTable(SqlConnection connection, string selectCommandText)
+        {
+            return GetDataTable(connection, selectCommandText, null);
+        }
 
         /// <summary>
         /// Create a new DataTable with records and schemas.
@@ -365,7 +380,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static SqlDataReader GetDataReader(SqlConnection connection, string commandText) => GetDataReader(connection, commandText, null);
+        internal static SqlDataReader GetDataReader(SqlConnection connection, string commandText)
+        {
+            return GetDataReader(connection, commandText, null);
+        }
 
         /// <summary>
         /// Get DataReader.
@@ -418,7 +436,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static XmlReader GetXmlReader(SqlConnection connection, string commandText) => GetXmlReader(connection, commandText, null);
+        internal static XmlReader GetXmlReader(SqlConnection connection, string commandText)
+        {
+            return GetXmlReader(connection, commandText, null);
+        }
 
         /// <summary>
         /// Get XmlReader.
@@ -462,7 +483,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int ExecuteNonQuery(SqlConnection connection, string commandText) => ExecuteNonQuery(connection, commandText, null);
+        internal static int ExecuteNonQuery(SqlConnection connection, string commandText)
+        {
+            return ExecuteNonQuery(connection, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command. Returns the number of rows affected.
@@ -501,7 +525,10 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void ExecuteProcedure(SqlConnection connection, string procedure) => ExecuteProcedure(connection, procedure, null);
+        internal static void ExecuteProcedure(SqlConnection connection, string procedure)
+        {
+            ExecuteProcedure(connection, procedure, null);
+        }
 
         /// <summary>
         /// Executing stored procedure.
@@ -538,7 +565,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object ExecuteScalar(SqlConnection connection, string commandText) => ExecuteScalar(connection, commandText, null);
+        internal static object ExecuteScalar(SqlConnection connection, string commandText)
+        {
+            return ExecuteScalar(connection, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command. Returns the first column of the first row in the query result set.
@@ -582,8 +612,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(SqlConnection connection, string commandText) =>
-            TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, null);
+        internal static int TransactionExecuteNonQuery(SqlConnection connection, string commandText)
+        {
+            return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the number of rows affected.
@@ -592,8 +624,10 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(SqlConnection connection, string commandText, params SqlParameter[] parameters) =>
-            TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+        internal static int TransactionExecuteNonQuery(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        {
+            return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the number of rows affected.
@@ -602,8 +636,10 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(SqlConnection connection, IsolationLevel iso, string commandText) =>
-            TransactionExecuteNonQuery(connection, iso, commandText, null);
+        internal static int TransactionExecuteNonQuery(SqlConnection connection, IsolationLevel iso, string commandText)
+        {
+            return TransactionExecuteNonQuery(connection, iso, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the number of rows affected.
@@ -665,8 +701,10 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void TransactionExecuteProcedure(SqlConnection connection, string procedure) =>
+        internal static void TransactionExecuteProcedure(SqlConnection connection, string procedure)
+        {
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, null);
+        }
 
         /// <summary>
         /// Executing stored procedure by transaction.
@@ -674,8 +712,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        internal static void TransactionExecuteProcedure(SqlConnection connection, string procedure, params SqlParameter[] parameters) =>
+        internal static void TransactionExecuteProcedure(SqlConnection connection, string procedure, params SqlParameter[] parameters)
+        {
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, parameters);
+        }
 
         /// <summary>
         /// Executing stored procedure by transaction.
@@ -683,8 +723,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void TransactionExecuteProcedure(SqlConnection connection, IsolationLevel iso, string procedure) =>
+        internal static void TransactionExecuteProcedure(SqlConnection connection, IsolationLevel iso, string procedure)
+        {
             TransactionExecuteProcedure(connection, iso, procedure, null);
+        }
 
         /// <summary>
         /// Executing stored procedure by transaction.
@@ -740,8 +782,10 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(SqlConnection connection, string commandText) =>
-            TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, null);
+        internal static object TransactionExecuteScalar(SqlConnection connection, string commandText)
+        {
+            return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
@@ -750,8 +794,10 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(SqlConnection connection, string commandText, params SqlParameter[] parameters) =>
-            TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+        internal static object TransactionExecuteScalar(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        {
+            return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
@@ -760,8 +806,10 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(SqlConnection connection, IsolationLevel iso, string commandText) =>
-            TransactionExecuteScalar(connection, iso, commandText, null);
+        internal static object TransactionExecuteScalar(SqlConnection connection, IsolationLevel iso, string commandText)
+        {
+            return TransactionExecuteScalar(connection, iso, commandText, null);
+        }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
@@ -849,77 +897,122 @@ namespace LH.Data
         /// <summary>
         /// Displays database files.
         /// </summary>
-        internal static string ShowAltFiles() => "SELECT * FROM sysaltfiles";
+        internal static string ShowAltFiles()
+        {
+            return "SELECT * FROM sysaltfiles";
+        }
 
         /// <summary>
         /// Displays character set and collation.
         /// </summary>
-        internal static string ShowCharsets() => "SELECT * FROM syscharsets";
+        internal static string ShowCharsets()
+        {
+            return "SELECT * FROM syscharsets";
+        }
 
         /// <summary>
         /// Displays configuration options.
         /// </summary>
-        internal static string ShowConfigures() => "SELECT * FROM sysconfigures";
+        internal static string ShowConfigures()
+        {
+            return "SELECT * FROM sysconfigures";
+        }
 
         /// <summary>
         /// Displays current config options.
         /// </summary>
-        internal static string ShowCurConfigs() => "SELECT * FROM syscurconfigs";
+        internal static string ShowCurConfigs()
+        {
+            return "SELECT * FROM syscurconfigs";
+        }
 
         /// <summary>
         /// Displays file groups.
         /// </summary>
-        internal static string ShowFileGroups() => "SELECT * FROM sysfilegroups";
+        internal static string ShowFileGroups()
+        {
+            return "SELECT * FROM sysfilegroups";
+        }
 
         /// <summary>
         /// Displays file, sysfiles is a virtual table.
         /// </summary>
-        internal static string ShowFiles() => "SELECT * FROM sysfiles";
+        internal static string ShowFiles()
+        {
+            return "SELECT * FROM sysfiles";
+        }
 
         /// <summary>
         /// Displays external Keywords.
         /// </summary>
-        internal static string ShowForeignKeys() => "SELECT * FROM sysforeignkeys";
+        internal static string ShowForeignKeys()
+        {
+            return "SELECT * FROM sysforeignkeys";
+        }
 
         /// <summary>
         /// Displays languages.
         /// </summary>
-        internal static string ShowLanguages() => "SELECT * FROM syslanguages";
+        internal static string ShowLanguages()
+        {
+            return "SELECT * FROM syslanguages";
+        }
 
         /// <summary>
         /// Displays login account information.
         /// </summary>
-        internal static string ShowLogins() => "SELECT * FROM syslogins";
+        internal static string ShowLogins()
+        {
+            return "SELECT * FROM syslogins";
+        }
 
         /// <summary>
         /// Displays members.
         /// </summary>
-        internal static string ShowMembers() => "SELECT * FROM sysmembers";
+        internal static string ShowMembers()
+        {
+            return "SELECT * FROM sysmembers";
+        }
 
         /// <summary>
         /// Displays objects of all types.
         /// </summary>
-        internal static string ShowObjects() => "SELECT * FROM sysobjects;";
+        internal static string ShowObjects()
+        {
+            return "SELECT * FROM sysobjects;";
+        }
 
         /// <summary>
         /// Displays server login information.
         /// </summary>
-        internal static string ShowOleDbUsers() => "SELECT * FROM sysoledbusers";
+        internal static string ShowOleDbUsers()
+        {
+            return "SELECT * FROM sysoledbusers";
+        }
 
         /// <summary>
         /// Displays permissions.
         /// </summary>
-        internal static string ShowPermissions() => "SELECT * FROM syspermissions;";
+        internal static string ShowPermissions()
+        {
+            return "SELECT * FROM syspermissions;";
+        }
 
         /// <summary>
         /// Displays processes.
         /// </summary>
-        internal static string ShowProcesses() => "SELECT * FROM sysprocesses;";
+        internal static string ShowProcesses()
+        {
+            return "SELECT * FROM sysprocesses;";
+        }
 
         /// <summary>
         /// Displays Remote login account.
         /// </summary>
-        internal static string ShowRemoteLogins() => "SELECT * FROM sysremotelogins;";
+        internal static string ShowRemoteLogins()
+        {
+            return "SELECT * FROM sysremotelogins;";
+        }
 
         /// <summary>
         /// Displays objects of the specified type.
@@ -930,17 +1023,26 @@ namespace LH.Data
         /// <para>RF = Replication filter stored procedure. S = System table. TF = table function. TR = Trigger.</para>
         /// <para>U = User table. UQ = UNIQUE .V = View. X = Extended stored procedure.</para>
         /// </param>
-        internal static string ShowSysObject(string xType) => "SELECT * FROM sysobjects WHERE xtype = N'" + xType + "';";
+        internal static string ShowSysObject(string xType)
+        {
+            return "SELECT * FROM sysobjects WHERE xtype = N'" + xType + "';";
+        }
 
         /// <summary>
         /// Displays system data types and user defined data types.
         /// </summary>
-        internal static string ShowTypes() => "SELECT * FROM systypes;";
+        internal static string ShowTypes()
+        {
+            return "SELECT * FROM systypes;";
+        }
 
         /// <summary>
         /// Displays users.
         /// </summary>
-        internal static string ShowUsers() => "SELECT * FROM sysusers;";
+        internal static string ShowUsers()
+        {
+            return "SELECT * FROM sysusers;";
+        }
 
         #endregion Engine
 
@@ -951,20 +1053,29 @@ namespace LH.Data
         /// </summary>
         /// <param name="database">The name of the database to create.</param>
         /// <returns></returns>
-        internal static string CreateDatabase(string database) => "CREATE DATABASE [" + database + "];";
+        internal static string CreateDatabase(string database)
+        {
+            return "CREATE DATABASE [" + database + "];";
+        }
 
         /// <summary>
         /// Deletes the database using the current connection.
         /// </summary>
         /// <param name="database">The name of the database to delete.</param>
         /// <returns></returns>
-        internal static string DropDatabase(string database) => "IF EXISTS (SELECT name FROM sysdatabases WHERE name = N'" + database + "') DROP DATABASE [" + database + "];";
+        internal static string DropDatabase(string database)
+        {
+            return "IF EXISTS (SELECT name FROM sysdatabases WHERE name = N'" + database + "') DROP DATABASE [" + database + "];";
+        }
 
         /// <summary>
         /// Displays all visible database names.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowDatabases() => "SELECT * FROM sysdatabases;";
+        internal static string ShowDatabases()
+        {
+            return "SELECT * FROM sysdatabases;";
+        }
 
         #endregion Database
 
@@ -973,33 +1084,48 @@ namespace LH.Data
         /// <summary>
         /// Displays all types of columns.
         /// </summary>
-        internal static string ShowColumns() => "SELECT * FROM syscolumns;";
+        internal static string ShowColumns()
+        {
+            return "SELECT * FROM syscolumns;";
+        }
 
         /// <summary>
         /// Displays the columns of the specified type, and the data types provided by the current data server or data source can be queried through the systypes table.
         /// </summary>
         /// <param name="xType">syscolumns xtype。</param>
-        internal static string ShowColumns(int xType) => "SELECT * FROM syscolumns WHERE xtype = " + xType + ";";
+        internal static string ShowColumns(int xType)
+        {
+            return "SELECT * FROM syscolumns WHERE xtype = " + xType + ";";
+        }
 
         /// <summary>
         /// Displays the creation script for the stored procedure with the specified name.
         /// </summary>
         /// <param name="procedure">The name of the stored procedure.</param>
         /// <returns></returns>
-        internal static string ShowCreateProcedure(string procedure) => "EXEC sp_helptext N'" + procedure + "';";
+        internal static string ShowCreateProcedure(string procedure)
+        {
+            return "EXEC sp_helptext N'" + procedure + "';";
+        }
 
         /// <summary>
         /// Displays basic information about the specified kind of stored procedure.
         /// </summary>
         /// <returns></returns>
         /// <param name="category">Set to 0 to represent the user stored procedure.</param>
-        internal static string ShowProcedures(int category) => "SELECT * FROM sysobjects WHERE xtype= N'P' AND category = " + category + ";";
+        internal static string ShowProcedures(int category)
+        {
+            return "SELECT * FROM sysobjects WHERE xtype= N'P' AND category = " + category + ";";
+        }
 
         /// <summary>
         /// Display basic information for all stored procedures.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowProcedures() => "SELECT * FROM sysobjects WHERE xtype= N'P';";
+        internal static string ShowProcedures()
+        {
+            return "SELECT * FROM sysobjects WHERE xtype= N'P';";
+        }
 
         #endregion Table
     }
