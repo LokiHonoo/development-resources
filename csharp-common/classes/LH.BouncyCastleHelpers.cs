@@ -354,7 +354,7 @@ namespace LH.BouncyCastleHelpers
     }
 
     /// <summary>
-    /// 全局对象。
+    /// 公共对象。
     /// </summary>
     internal static class Common
     {
