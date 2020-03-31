@@ -29,31 +29,31 @@
  */
 
 /*
-* 对称加密算法的补充说明
-*
-* 部分对称加密算法没有独立的 oid。如果传入 oid.Id， BouncyCastle 忽略模式版本创建算法对象。
-*
-* KEY 大小根据算法有可选值和固定值。
-* 64  - DES
-* 128 - AES128, CAMELLIA128, DESEDE, CAST5, BLOWFISH, SAFER-SK128
-* 192 - AES192, CAMELLIA192, DESEDE3, TDEA
-* 256 - AES256, CAMELLIA256
-*
-* IV 大小在 CBC 模式下根据算法为固定值。其他情况则为 0。
-* 64  - BLOWFISH, CHACHA, DES, DESEDE, DESEDE3, SALSA20
-* 96  - CHACHA7539
-* 128 - AES, AES128, AES192, AES256, CAMELLIA, CAMELLIA128, CAMELLIA192, CAMELLIA256, NOEKEON, SEED, SM4
-*/
+ * 对称加密算法的补充说明
+ *
+ * 部分对称加密算法没有独立的 oid。如果传入 oid.Id， BouncyCastle 忽略模式版本创建算法对象。
+ *
+ * KEY 大小根据算法有可选值和固定值。
+ * 64  - DES
+ * 128 - AES128, CAMELLIA128, DESEDE, CAST5, BLOWFISH, SAFER-SK128
+ * 192 - AES192, CAMELLIA192, DESEDE3, TDEA
+ * 256 - AES256, CAMELLIA256
+ *
+ * IV 大小在 CBC 模式下根据算法为固定值。其他情况则为 0。
+ * 64  - BLOWFISH, CHACHA, DES, DESEDE, DESEDE3, SALSA20
+ * 96  - CHACHA7539
+ * 128 - AES, AES128, AES192, AES256, CAMELLIA, CAMELLIA128, CAMELLIA192, CAMELLIA256, NOEKEON, SEED, SM4
+ */
 
 /*
-* 校验算法的补充说明
-*
-* 可使用 PkcsObjectIdentifiers、OiwObjectIdentifiers、NistObjectIdentifiers、TeleTrusTObjectIdentifiers、
-*     CryptoProObjectIdentifiers、MiscObjectIdentifiers、RosstandartObjectIdentifiers、UAObjectIdentifiers、GMObjectIdentifiers 中的校验相关的算法 oid。
-* 也可使用 CommonHashAlgorithms 类中提供的常用算法。
-*
-* 使用 DigestUtilities.Algorithms 获取可用算法的别名。
-*/
+ * 校验算法的补充说明
+ *
+ * 可使用 PkcsObjectIdentifiers、OiwObjectIdentifiers、NistObjectIdentifiers、TeleTrusTObjectIdentifiers、
+ *     CryptoProObjectIdentifiers、MiscObjectIdentifiers、RosstandartObjectIdentifiers、UAObjectIdentifiers、GMObjectIdentifiers 中的校验相关的算法 oid。
+ * 也可使用 CommonHashAlgorithms 类中提供的常用算法。
+ *
+ * 使用 DigestUtilities.Algorithms 获取可用算法的别名。
+ */
 
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.GM;
@@ -570,7 +570,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="pms">通过密钥交换协商的数组或传入随机数组。从中截取 KEY 和 IV。</param>
         /// <param name="useIV">指定是否使用 IV。CBC 模式以外设置为 false。</param>
         /// <returns></returns>
-        internal static ICipherParameters GenerateDesEdeKey(byte[] pms, bool useIV)
+        internal static ICipherParameters GenerateDesEde3Key(byte[] pms, bool useIV)
         {
             return GenerateSymmetricKey("DESEDE", pms, 192, useIV ? 64 : 0);
         }
@@ -594,7 +594,7 @@ namespace LH.BouncyCastleHelpers
         /// <returns></returns>
         internal static ICipherParameters GenerateSM4Key(byte[] pms, bool useIV)
         {
-            return GenerateSymmetricKey("DES", pms, 128, useIV ? 128 : 0);
+            return GenerateSymmetricKey("SM4", pms, 128, useIV ? 128 : 0);
         }
 
         /// <summary>
@@ -660,13 +660,13 @@ namespace LH.BouncyCastleHelpers
             else
             {
                 var block = Math.DivRem(count, inLen, out int mod);
-                var outLen = algorithm.GetOutputSize(0);
                 if (mod > 0)
                 {
                     throw new Exception("密文长度错误。");
                 }
                 else
                 {
+                    var outLen = algorithm.GetOutputSize(0);
                     var result = new List<byte>(outLen * block);
                     for (int i = 0; i < block; i++)
                     {
@@ -977,7 +977,7 @@ namespace LH.BouncyCastleHelpers
 
     #endregion Helper
 
-    #region 扩展实例
+    #region 扩展
 
     /// <summary>
     /// X509Name 创建器。
@@ -1025,7 +1025,7 @@ namespace LH.BouncyCastleHelpers
         }
     }
 
-    #endregion 扩展实例
+    #endregion 扩展
 
     #region Common
 
