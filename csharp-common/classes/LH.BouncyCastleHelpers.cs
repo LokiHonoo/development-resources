@@ -39,10 +39,14 @@
  * 192 - AES192, CAMELLIA192, DESEDE3, TDEA
  * 256 - AES256, CAMELLIA256
  *
- * IV 大小在 CBC 模式下根据算法为固定值。其他情况则为 0。
+ * IV 大小在 CBC 模式下根据算法为固定值。
  * 64  - BLOWFISH, CHACHA, DES, DESEDE, DESEDE3, SALSA20
  * 96  - CHACHA7539
  * 128 - AES, AES128, AES192, AES256, CAMELLIA, CAMELLIA128, CAMELLIA192, CAMELLIA256, NOEKEON, SEED, SM4
+ * CFB、OFB 最小值为 8，最大值为块大小，并以 8 位递增。设置时除了传入正确的 IV 外还需要在 CipherString 中加入长度。如 AES/CFB40/PKCS7PADDING
+ * CTR 最小值为块大小减去 64。最大值为块大小。DES 算法最小值为块大小减去 32。
+ * SIC 和 CTR 相同只是增加了限制，不允许块大小小于 128 的算法。
+ * 总之，大多数算法的可用 IV 大小都和块大小相等。且太小的 IV 常以固定值填充以增长到指定长度，所以一般选择块大小的 IV 就可以了。
  */
 
 /*
@@ -387,239 +391,6 @@ namespace LH.BouncyCastleHelpers
     }
 
     /// <summary>
-    /// 密钥辅助。
-    /// </summary>
-    internal static class CryptoHelper
-    {
-        #region 非对称密钥
-
-        /// <summary>
-        /// 创建 ECDSA 密钥对。
-        /// </summary>
-        /// <param name="curveOid">曲线 oid。可使用 CommonCurves 类中提供的常用曲线。或 SecObjectIdentifiers 中的命名曲线。</param>
-        /// <returns></returns>
-        internal static AsymmetricCipherKeyPair GenerateEcdsaKeyPair(DerObjectIdentifier curveOid)
-        {
-            var ec = SecNamedCurves.GetByOid(curveOid);
-            var domain = new ECDomainParameters(ec.Curve, ec.G, ec.N, ec.H);
-            var kgp = new ECKeyGenerationParameters(domain, Common.SecureRandom);
-            var generator = new ECKeyPairGenerator();
-            generator.Init(kgp);
-            return generator.GenerateKeyPair();
-        }
-
-        /// <summary>
-        /// 创建 RSA 密钥对。
-        /// </summary>
-        /// <param name="keySize">密钥长度。必须大于等于 2048且是 64 的倍数。</param>
-        /// <returns></returns>
-        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal static AsymmetricCipherKeyPair GenerateRsaKeyPair(int keySize)
-        {
-            if (keySize < 2048)
-            {
-                throw new Exception("密钥长度必须大于等于 2048。");
-            }
-            if (keySize % 64 != 0)
-            {
-                throw new Exception("密钥长度必须是 64 的倍数。");
-            }
-            var kgp = new RsaKeyGenerationParameters(BigInteger.ValueOf(0x10001), Common.SecureRandom, keySize, 25);
-            var generator = new RsaKeyPairGenerator();
-            generator.Init(kgp);
-            return generator.GenerateKeyPair();
-        }
-
-        /// <summary>
-        /// 创建 SM2 密钥对。
-        /// </summary>
-        /// <returns></returns>
-        internal static AsymmetricCipherKeyPair GenerateSM2KeyPair()
-        {
-            var ec = GMNamedCurves.GetByOid(GMObjectIdentifiers.sm2p256v1);
-            var domain = new ECDomainParameters(ec.Curve, ec.G, ec.N, ec.H);
-            var kgp = new ECKeyGenerationParameters(domain, Common.SecureRandom);
-            var generator = new ECKeyPairGenerator();
-            generator.Init(kgp);
-            return generator.GenerateKeyPair();
-        }
-
-        /// <summary>
-        /// 将密钥转换为 PEM 格式文本。
-        /// </summary>
-        /// <param name="key">密钥。</param>
-        /// <param name="pem">PEM 格式文本。</param>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static void ParseKey(AsymmetricKeyParameter key, out string pem)
-        {
-            using (var writer = new StringWriter())
-            {
-                var pemWriter = new PemWriter(writer);
-                pemWriter.WriteObject(key);
-                pem = writer.ToString();
-            }
-        }
-
-        /// <summary>
-        /// 使用密码保护，将私钥转换为 PEM 格式文本。
-        /// </summary>
-        /// <param name="privateKey">私钥。</param>
-        /// <param name="pemEncryptionAlgorithm">加密算法。可使用 NamedPemEncryptionAlgorithms 类中提供的已命名算法。名称是 OpenSSL 定义的 DEK 格式。</param>
-        /// <param name="password">设置密码。</param>
-        /// <param name="privateKeyEncPem">带加密标签的 PEM 格式文本。</param>
-        /// <returns></returns>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal static void ParseKey(AsymmetricKeyParameter privateKey, string pemEncryptionAlgorithm, string password, out string privateKeyEncPem)
-        {
-            if (privateKey.IsPrivate)
-            {
-                using (var writer = new StringWriter())
-                {
-                    var pemWriter = new PemWriter(writer);
-                    pemWriter.WriteObject(privateKey, pemEncryptionAlgorithm, password.ToCharArray(), Common.SecureRandom);
-                    privateKeyEncPem = writer.ToString();
-                }
-            }
-            else
-            {
-                throw new ArgumentException("不是私钥。", nameof(privateKey));
-            }
-        }
-
-        /// <summary>
-        /// 从 PEM 格式文本读取密钥对。
-        /// </summary>
-        /// <param name="privateKeyPem">PEM 格式文本。</param>
-        /// <returns></returns>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static AsymmetricCipherKeyPair ReadKeyPair(string privateKeyPem)
-        {
-            using (var reader = new StringReader(privateKeyPem))
-            {
-                var obj = new PemReader(reader).ReadObject();
-                return obj as AsymmetricCipherKeyPair;
-            }
-        }
-
-        /// <summary>
-        /// 从密码保护的 PEM 格式文本读取密钥对。
-        /// </summary>
-        /// <param name="privateKeyEncPem">带加密标签的 PEM 格式文本。</param>
-        /// <param name="password">设置密码。</param>
-        /// <returns></returns>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static AsymmetricCipherKeyPair ReadKeyPair(string privateKeyEncPem, string password)
-        {
-            using (var reader = new StringReader(privateKeyEncPem))
-            {
-                var obj = new PemReader(reader, new Password(password)).ReadObject();
-                return obj as AsymmetricCipherKeyPair;
-            }
-        }
-
-        /// <summary>
-        /// 从 PEM 格式文本读取公钥。
-        /// </summary>
-        /// <param name="publicKeyPem">PEM 格式文本。</param>
-        /// <returns></returns>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static AsymmetricKeyParameter ReadPublicKey(string publicKeyPem)
-        {
-            using (var reader = new StringReader(publicKeyPem))
-            {
-                var obj = new PemReader(reader).ReadObject();
-                return obj as AsymmetricKeyParameter;
-            }
-        }
-
-        private sealed class Password : IPasswordFinder
-        {
-            private readonly char[] _chars;
-
-            internal Password(string password)
-            {
-                _chars = password.ToCharArray();
-            }
-
-            public char[] GetPassword()
-            {
-                return _chars;
-            }
-        }
-
-        #endregion 非对称密钥
-
-        #region 对称密钥
-
-        /// <summary>
-        /// 创建 AES 密钥。
-        /// </summary>
-        /// <param name="pms">通过密钥交换协商的数组或传入随机数组。从中截取 KEY 和 IV。</param>
-        /// <param name="keySize">密钥大小。可选 128，192，256。</param>
-        /// <param name="useIV">指定是否使用 IV。CBC 模式以外设置为 false。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateAesKey(byte[] pms, int keySize, bool useIV)
-        {
-            return GenerateSymmetricKey("AES", pms, keySize, useIV ? 128 : 0);
-        }
-
-        /// <summary>
-        /// 创建 DESEDE3 密钥。
-        /// </summary>
-        /// <param name="pms">通过密钥交换协商的数组或传入随机数组。从中截取 KEY 和 IV。</param>
-        /// <param name="useIV">指定是否使用 IV。CBC 模式以外设置为 false。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateDesEde3Key(byte[] pms, bool useIV)
-        {
-            return GenerateSymmetricKey("DESEDE", pms, 192, useIV ? 64 : 0);
-        }
-
-        /// <summary>
-        /// 创建 DES 密钥。
-        /// </summary>
-        /// <param name="pms">通过密钥交换协商的数组或传入随机数组。从中截取 KEY 和 IV。</param>
-        /// <param name="useIV">指定是否使用 IV。CBC 模式以外设置为 false。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateDesKey(byte[] pms, bool useIV)
-        {
-            return GenerateSymmetricKey("DES", pms, 64, useIV ? 64 : 0);
-        }
-
-        /// <summary>
-        /// 创建 SM4 密钥。
-        /// </summary>
-        /// <param name="pms">通过密钥交换协商的数组或传入随机数组。从中截取 KEY 和 IV。</param>
-        /// <param name="useIV">指定是否使用 IV。CBC 模式以外设置为 false。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateSM4Key(byte[] pms, bool useIV)
-        {
-            return GenerateSymmetricKey("SM4", pms, 128, useIV ? 128 : 0);
-        }
-
-        /// <summary>
-        /// 创建对称加密算法密钥。
-        /// </summary>
-        /// <param name="symmetricAlgorithm">加密算法。可使用 NamedSymmetricAlgorithms 类中提供的已命名算法。参见注释中的补充说明。</param>
-        /// <param name="pms">通过密钥交换协商的数组或传入随机数组。从中截取 KEY 和 IV。</param>
-        /// <param name="keySize">密钥大小。参见注释中的补充说明。</param>
-        /// <param name="ivSize">IV 大小。根据算法和加密模式设置。CBC 模式以外设置为 0。参见注释中的补充说明。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateSymmetricKey(string symmetricAlgorithm, byte[] pms, int keySize, int ivSize)
-        {
-            ICipherParameters parameters = ParameterUtilities.CreateKeyParameter(symmetricAlgorithm, pms, 0, keySize / 8);
-            if (ivSize > 0)
-            {
-                int len = ivSize / 8;
-                parameters = new ParametersWithIV(parameters, pms, pms.Length - len, len);
-            }
-            return parameters;
-        }
-
-        #endregion 对称密钥
-    }
-
-    /// <summary>
     /// 加密辅助。
     /// </summary>
     internal static class EncryptionHelper
@@ -910,6 +681,316 @@ namespace LH.BouncyCastleHelpers
     }
 
     /// <summary>
+    /// 密钥辅助。
+    /// </summary>
+    internal static class KeyParametersHelper
+    {
+        #region 非对称密钥
+
+        /// <summary>
+        /// 创建 ECDSA 密钥对。
+        /// </summary>
+        /// <param name="curveOid">曲线 oid。可使用 CommonCurves 类中提供的常用曲线。或 SecObjectIdentifiers 中的命名曲线。</param>
+        /// <returns></returns>
+        internal static AsymmetricCipherKeyPair GenerateEcdsaKeyPair(DerObjectIdentifier curveOid)
+        {
+            var ec = SecNamedCurves.GetByOid(curveOid);
+            var domain = new ECDomainParameters(ec.Curve, ec.G, ec.N, ec.H);
+            var kgp = new ECKeyGenerationParameters(domain, Common.SecureRandom);
+            var generator = new ECKeyPairGenerator();
+            generator.Init(kgp);
+            return generator.GenerateKeyPair();
+        }
+
+        /// <summary>
+        /// 创建 RSA 密钥对。
+        /// </summary>
+        /// <param name="keySize">密钥长度。必须大于等于 2048且是 64 的倍数。</param>
+        /// <returns></returns>
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
+        internal static AsymmetricCipherKeyPair GenerateRsaKeyPair(int keySize)
+        {
+            if (keySize < 2048)
+            {
+                throw new Exception("密钥长度必须大于等于 2048。");
+            }
+            if (keySize % 64 != 0)
+            {
+                throw new Exception("密钥长度必须是 64 的倍数。");
+            }
+            var kgp = new RsaKeyGenerationParameters(BigInteger.ValueOf(0x10001), Common.SecureRandom, keySize, 25);
+            var generator = new RsaKeyPairGenerator();
+            generator.Init(kgp);
+            return generator.GenerateKeyPair();
+        }
+
+        /// <summary>
+        /// 创建 SM2 密钥对。
+        /// </summary>
+        /// <returns></returns>
+        internal static AsymmetricCipherKeyPair GenerateSM2KeyPair()
+        {
+            var ec = GMNamedCurves.GetByOid(GMObjectIdentifiers.sm2p256v1);
+            var domain = new ECDomainParameters(ec.Curve, ec.G, ec.N, ec.H);
+            var kgp = new ECKeyGenerationParameters(domain, Common.SecureRandom);
+            var generator = new ECKeyPairGenerator();
+            generator.Init(kgp);
+            return generator.GenerateKeyPair();
+        }
+
+        /// <summary>
+        /// 将密钥转换为 PEM 格式文本。
+        /// </summary>
+        /// <param name="key">密钥。</param>
+        /// <param name="pem">PEM 格式文本。</param>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static void ParseKey(AsymmetricKeyParameter key, out string pem)
+        {
+            using (var writer = new StringWriter())
+            {
+                var pemWriter = new PemWriter(writer);
+                pemWriter.WriteObject(key);
+                pem = writer.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 使用密码保护，将私钥转换为 PEM 格式文本。
+        /// </summary>
+        /// <param name="privateKey">私钥。</param>
+        /// <param name="pemEncryptionAlgorithm">加密算法。可使用 NamedPemEncryptionAlgorithms 类中提供的已命名算法。名称是 OpenSSL 定义的 DEK 格式。</param>
+        /// <param name="password">设置密码。</param>
+        /// <param name="privateKeyEncPem">带加密标签的 PEM 格式文本。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
+        internal static void ParseKey(AsymmetricKeyParameter privateKey, string pemEncryptionAlgorithm, string password, out string privateKeyEncPem)
+        {
+            if (privateKey.IsPrivate)
+            {
+                using (var writer = new StringWriter())
+                {
+                    var pemWriter = new PemWriter(writer);
+                    pemWriter.WriteObject(privateKey, pemEncryptionAlgorithm, password.ToCharArray(), Common.SecureRandom);
+                    privateKeyEncPem = writer.ToString();
+                }
+            }
+            else
+            {
+                throw new ArgumentException("不是私钥。", nameof(privateKey));
+            }
+        }
+
+        /// <summary>
+        /// 从 PEM 格式文本读取密钥对。
+        /// </summary>
+        /// <param name="privateKeyPem">PEM 格式文本。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static AsymmetricCipherKeyPair ReadKeyPair(string privateKeyPem)
+        {
+            using (var reader = new StringReader(privateKeyPem))
+            {
+                var obj = new PemReader(reader).ReadObject();
+                return obj as AsymmetricCipherKeyPair;
+            }
+        }
+
+        /// <summary>
+        /// 从密码保护的 PEM 格式文本读取密钥对。
+        /// </summary>
+        /// <param name="privateKeyEncPem">带加密标签的 PEM 格式文本。</param>
+        /// <param name="password">设置密码。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static AsymmetricCipherKeyPair ReadKeyPair(string privateKeyEncPem, string password)
+        {
+            using (var reader = new StringReader(privateKeyEncPem))
+            {
+                var obj = new PemReader(reader, new Password(password)).ReadObject();
+                return obj as AsymmetricCipherKeyPair;
+            }
+        }
+
+        /// <summary>
+        /// 从 PEM 格式文本读取公钥。
+        /// </summary>
+        /// <param name="publicKeyPem">PEM 格式文本。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static AsymmetricKeyParameter ReadPublicKey(string publicKeyPem)
+        {
+            using (var reader = new StringReader(publicKeyPem))
+            {
+                var obj = new PemReader(reader).ReadObject();
+                return obj as AsymmetricKeyParameter;
+            }
+        }
+
+        private sealed class Password : IPasswordFinder
+        {
+            private readonly char[] _chars;
+
+            internal Password(string password)
+            {
+                _chars = password.ToCharArray();
+            }
+
+            public char[] GetPassword()
+            {
+                return _chars;
+            }
+        }
+
+        #endregion 非对称密钥
+
+        #region 对称密钥
+
+        /// <summary>
+        /// 创建 AES 密钥。
+        /// </summary>
+        /// <param name="rgbKey">密钥数组。长度可以是 16、24、32 字节。</param>
+        /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
+        /// <returns></returns>
+        internal static ICipherParameters GenerateAesKey(byte[] rgbKey, byte[] rgbIV)
+        {
+            return GenerateSymmetricKey("AES", rgbKey, rgbIV);
+        }
+
+        /// <summary>
+        /// 创建 AES 密钥。
+        /// </summary>
+        /// <param name="keyBuffer">从中截取密钥的数组缓冲区。</param>
+        /// <param name="keyCutOffset">截取密钥的偏移。</param>
+        /// <param name="keyCutCount">截取的密钥长度。长度可以是 16、24、32 字节。</param>
+        /// <param name="ivBuffer">从中截取初始化向量的数组缓冲区。</param>
+        /// <param name="ivCutOffset">截取初始化向量的偏移。</param>
+        /// <returns></returns>
+        internal static ICipherParameters GenerateAesKey(byte[] keyBuffer, int keyCutOffset, int keyCutCount, byte[] ivBuffer, int ivCutOffset)
+        {
+            return GenerateSymmetricKey("DESEDE", keyBuffer, keyCutOffset, keyCutCount, ivBuffer, ivCutOffset, 8);
+        }
+
+        /// <summary>
+        /// 创建 DESEDE3 密钥。
+        /// </summary>
+        /// <param name="rgbKey">密钥数组。长度是 24 字节。</param>
+        /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
+        /// <returns></returns>
+        internal static ICipherParameters GenerateDesEde3Key(byte[] rgbKey, byte[] rgbIV)
+        {
+            return GenerateSymmetricKey("DESEDE", rgbKey, rgbIV);
+        }
+
+        /// <summary>
+        /// 创建 DESEDE3 密钥。
+        /// </summary>
+        /// <param name="keyBuffer">从中截取密钥的数组缓冲区。</param>
+        /// <param name="keyCutOffset">截取密钥的偏移。</param>
+        /// <param name="ivBuffer">从中截取初始化向量的数组缓冲区。</param>
+        /// <param name="ivCutOffset">截取初始化向量的偏移。</param>
+        /// <returns></returns>
+        internal static ICipherParameters GenerateDesEde3Key(byte[] keyBuffer, int keyCutOffset, byte[] ivBuffer, int ivCutOffset)
+        {
+            return GenerateSymmetricKey("DESEDE", keyBuffer, keyCutOffset, 24, ivBuffer, ivCutOffset, 8);
+        }
+
+        /// <summary>
+        /// 创建 DES 密钥。
+        /// </summary>
+        /// <param name="rgbKey">密钥数组。长度是 8 字节。</param>
+        /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
+        /// <returns></returns>
+        internal static ICipherParameters GenerateDesKey(byte[] rgbKey, byte[] rgbIV)
+        {
+            return GenerateSymmetricKey("DES", rgbKey, rgbIV);
+        }
+
+        /// <summary>
+        /// 创建 DES 密钥。
+        /// </summary>
+        /// <param name="keyBuffer">从中截取密钥的数组缓冲区。</param>
+        /// <param name="keyCutOffset">截取密钥的偏移。</param>
+        /// <param name="ivBuffer">从中截取初始化向量的数组缓冲区。</param>
+        /// <param name="ivCutOffset">截取初始化向量的偏移。</param>
+        /// <returns></returns>
+        internal static ICipherParameters GenerateDesKey(byte[] keyBuffer, int keyCutOffset, byte[] ivBuffer, int ivCutOffset)
+        {
+            return GenerateSymmetricKey("DES", keyBuffer, keyCutOffset, 8, ivBuffer, ivCutOffset, 8);
+        }
+
+        /// <summary>
+        /// 创建 SM4 密钥。
+        /// </summary>
+        /// <param name="rgbKey">密钥数组。长度是 16 字节。</param>
+        /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
+        /// <returns></returns>
+        internal static ICipherParameters GenerateSM4Key(byte[] rgbKey, byte[] rgbIV)
+        {
+            return GenerateSymmetricKey("SM4", rgbKey, rgbIV);
+        }
+
+        /// <summary>
+        /// 创建 SM4 密钥。
+        /// </summary>
+        /// <param name="keyBuffer">从中截取密钥的数组缓冲区。</param>
+        /// <param name="keyCutOffset">截取密钥的偏移。</param>
+        /// <param name="ivBuffer">从中截取初始化向量的数组缓冲区。</param>
+        /// <param name="ivCutOffset">截取初始化向量的偏移。</param>
+        /// <returns></returns>
+        internal static ICipherParameters GenerateSM4Key(byte[] keyBuffer, int keyCutOffset, byte[] ivBuffer, int ivCutOffset)
+        {
+            return GenerateSymmetricKey("SM4", keyBuffer, keyCutOffset, 16, ivBuffer, ivCutOffset, 16);
+        }
+
+        /// <summary>
+        /// 创建对称加密算法密钥。
+        /// </summary>
+        /// <param name="symmetricAlgorithm">加密算法。可使用 NamedSymmetricAlgorithms 类中提供的已命名算法。参见注释中的补充说明。</param>
+        /// <param name="rgbKey">密钥数组。</param>
+        /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
+        /// <returns></returns>
+        internal static ICipherParameters GenerateSymmetricKey(string symmetricAlgorithm, byte[] rgbKey, byte[] rgbIV)
+        {
+            ICipherParameters parameters = ParameterUtilities.CreateKeyParameter(symmetricAlgorithm, rgbKey);
+            if (rgbIV != null)
+            {
+                parameters = new ParametersWithIV(parameters, rgbIV);
+            }
+            return parameters;
+        }
+
+        /// <summary>
+        /// 创建对称加密算法密钥。
+        /// </summary>
+        /// <param name="symmetricAlgorithm">加密算法。可使用 NamedSymmetricAlgorithms 类中提供的已命名算法。参见注释中的补充说明。</param>
+        /// <param name="keyBuffer">从中截取密钥的数组缓冲区。</param>
+        /// <param name="keyCutOffset">截取密钥的偏移。</param>
+        /// <param name="keyCutCount">截取的密钥长度。</param>
+        /// <param name="ivBuffer">从中截取初始化向量的数组缓冲区。</param>
+        /// <param name="ivCutOffset">截取初始化向量的偏移。</param>
+        /// <param name="ivCutCount">截取的初始化向量长度。</param>
+        /// <returns></returns>
+        internal static ICipherParameters GenerateSymmetricKey(string symmetricAlgorithm,
+                                                               byte[] keyBuffer,
+                                                               int keyCutOffset,
+                                                               int keyCutCount,
+                                                               byte[] ivBuffer,
+                                                               int ivCutOffset,
+                                                               int ivCutCount)
+        {
+            ICipherParameters parameters = ParameterUtilities.CreateKeyParameter(symmetricAlgorithm, keyBuffer, keyCutOffset, keyCutCount);
+            if (ivBuffer != null)
+            {
+                parameters = new ParametersWithIV(parameters, ivBuffer, ivCutOffset, ivCutCount);
+            }
+            return parameters;
+        }
+
+        #endregion 对称密钥
+    }
+
+    /// <summary>
     /// 签名辅助。
     /// </summary>
     internal static class SignatureHelper
@@ -1037,7 +1118,7 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 随机数生成器。
         /// </summary>
-        internal readonly static SecureRandom SecureRandom = new SecureRandom();
+        internal static readonly SecureRandom SecureRandom = new SecureRandom();
     }
 
     /// <summary>
@@ -1045,9 +1126,9 @@ namespace LH.BouncyCastleHelpers
     /// </summary>
     internal static class CommonCurves
     {
-        internal readonly static DerObjectIdentifier SecP256r1 = SecObjectIdentifiers.SecP256r1;
-        internal readonly static DerObjectIdentifier SecP384r1 = SecObjectIdentifiers.SecP384r1;
-        internal readonly static DerObjectIdentifier SecP521r1 = SecObjectIdentifiers.SecP521r1;
+        internal static readonly DerObjectIdentifier SecP256r1 = SecObjectIdentifiers.SecP256r1;
+        internal static readonly DerObjectIdentifier SecP384r1 = SecObjectIdentifiers.SecP384r1;
+        internal static readonly DerObjectIdentifier SecP521r1 = SecObjectIdentifiers.SecP521r1;
     }
 
     /// <summary>
@@ -1055,15 +1136,15 @@ namespace LH.BouncyCastleHelpers
     /// </summary>
     internal static class CommonHashAlgorithms
     {
-        internal readonly static DerObjectIdentifier MD5 = PkcsObjectIdentifiers.MD5;
-        internal readonly static DerObjectIdentifier SHA1 = OiwObjectIdentifiers.IdSha1;
-        internal readonly static DerObjectIdentifier SHA256 = NistObjectIdentifiers.IdSha256;
-        internal readonly static DerObjectIdentifier SHA3_256 = NistObjectIdentifiers.IdSha3_256;
-        internal readonly static DerObjectIdentifier SHA3_384 = NistObjectIdentifiers.IdSha3_384;
-        internal readonly static DerObjectIdentifier SHA3_512 = NistObjectIdentifiers.IdSha3_512;
-        internal readonly static DerObjectIdentifier SHA384 = NistObjectIdentifiers.IdSha384;
-        internal readonly static DerObjectIdentifier SHA512 = NistObjectIdentifiers.IdSha512;
-        internal readonly static DerObjectIdentifier SM3 = GMObjectIdentifiers.sm3;
+        internal static readonly DerObjectIdentifier MD5 = PkcsObjectIdentifiers.MD5;
+        internal static readonly DerObjectIdentifier SHA1 = OiwObjectIdentifiers.IdSha1;
+        internal static readonly DerObjectIdentifier SHA256 = NistObjectIdentifiers.IdSha256;
+        internal static readonly DerObjectIdentifier SHA3_256 = NistObjectIdentifiers.IdSha3_256;
+        internal static readonly DerObjectIdentifier SHA3_384 = NistObjectIdentifiers.IdSha3_384;
+        internal static readonly DerObjectIdentifier SHA3_512 = NistObjectIdentifiers.IdSha3_512;
+        internal static readonly DerObjectIdentifier SHA384 = NistObjectIdentifiers.IdSha384;
+        internal static readonly DerObjectIdentifier SHA512 = NistObjectIdentifiers.IdSha512;
+        internal static readonly DerObjectIdentifier SM3 = GMObjectIdentifiers.sm3;
     }
 
     /// <summary>
@@ -1071,16 +1152,16 @@ namespace LH.BouncyCastleHelpers
     /// </summary>
     internal static class CommonSignatureAlgorithms
     {
-        internal readonly static DerObjectIdentifier SHA256WithDSA = NistObjectIdentifiers.DsaWithSha256;
-        internal readonly static DerObjectIdentifier SHA256WithECDSA = X9ObjectIdentifiers.ECDsaWithSha256;
-        internal readonly static DerObjectIdentifier SHA256WithRSA = PkcsObjectIdentifiers.Sha256WithRsaEncryption;
-        internal readonly static DerObjectIdentifier SHA384WithDSA = NistObjectIdentifiers.DsaWithSha384;
-        internal readonly static DerObjectIdentifier SHA384WithECDSA = X9ObjectIdentifiers.ECDsaWithSha384;
-        internal readonly static DerObjectIdentifier SHA384WithRSA = PkcsObjectIdentifiers.Sha384WithRsaEncryption;
-        internal readonly static DerObjectIdentifier SHA512WithDSA = NistObjectIdentifiers.DsaWithSha512;
-        internal readonly static DerObjectIdentifier SHA512WithECDSA = X9ObjectIdentifiers.ECDsaWithSha512;
-        internal readonly static DerObjectIdentifier SHA512WithRSA = PkcsObjectIdentifiers.Sha512WithRsaEncryption;
-        internal readonly static DerObjectIdentifier SM3WithSM2 = GMObjectIdentifiers.sm2sign_with_sm3;
+        internal static readonly DerObjectIdentifier SHA256WithDSA = NistObjectIdentifiers.DsaWithSha256;
+        internal static readonly DerObjectIdentifier SHA256WithECDSA = X9ObjectIdentifiers.ECDsaWithSha256;
+        internal static readonly DerObjectIdentifier SHA256WithRSA = PkcsObjectIdentifiers.Sha256WithRsaEncryption;
+        internal static readonly DerObjectIdentifier SHA384WithDSA = NistObjectIdentifiers.DsaWithSha384;
+        internal static readonly DerObjectIdentifier SHA384WithECDSA = X9ObjectIdentifiers.ECDsaWithSha384;
+        internal static readonly DerObjectIdentifier SHA384WithRSA = PkcsObjectIdentifiers.Sha384WithRsaEncryption;
+        internal static readonly DerObjectIdentifier SHA512WithDSA = NistObjectIdentifiers.DsaWithSha512;
+        internal static readonly DerObjectIdentifier SHA512WithECDSA = X9ObjectIdentifiers.ECDsaWithSha512;
+        internal static readonly DerObjectIdentifier SHA512WithRSA = PkcsObjectIdentifiers.Sha512WithRsaEncryption;
+        internal static readonly DerObjectIdentifier SM3WithSM2 = GMObjectIdentifiers.sm2sign_with_sm3;
     }
 
     /// <summary>
