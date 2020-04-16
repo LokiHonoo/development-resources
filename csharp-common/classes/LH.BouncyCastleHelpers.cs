@@ -15,7 +15,7 @@
  * 签名算法的补充说明
  *
  * 可使用 PkcsObjectIdentifiers、X9ObjectIdentifiers、NistObjectIdentifiers、GMObjectIdentifiers 中的签名相关的算法 oid。
- * 也可使用 CommonSignatureAlgorithms 类中提供的常用算法。
+ * 也可使用 NamedSignatureAlgorithms 类中提供的常用算法。
  *
  * 使用 SignerUtilities.Algorithms 获取可用算法的别名。
  *
@@ -44,7 +44,7 @@
  * 96  - CHACHA7539
  * 128 - AES, AES128, AES192, AES256, CAMELLIA, CAMELLIA128, CAMELLIA192, CAMELLIA256, NOEKEON, SEED, SM4
  * CFB、OFB 最小值为 8，最大值为块大小，并以 8 位递增。设置时除了传入正确的 IV 外还需要在 CipherString 中加入长度。如 AES/CFB40/PKCS7PADDING
- * CTR 最小值为块大小减去 64。最大值为块大小。DES 算法最小值为块大小减去 32。
+ * CTR、SIC 最小值为 (BlockSize / 2) 位，或 (BlockSize - 64) 位中的较大值。最大值为块大小。
  * SIC 和 CTR 相同只是增加了限制，不允许块大小小于 128 的算法。
  * 总之，大多数算法的可用 IV 大小都和块大小相等。且太小的 IV 常以固定值填充以增长到指定长度，所以一般选择块大小的 IV 就可以了。
  */
@@ -54,19 +54,16 @@
  *
  * 可使用 PkcsObjectIdentifiers、OiwObjectIdentifiers、NistObjectIdentifiers、TeleTrusTObjectIdentifiers、
  *     CryptoProObjectIdentifiers、MiscObjectIdentifiers、RosstandartObjectIdentifiers、UAObjectIdentifiers、GMObjectIdentifiers 中的校验相关的算法 oid。
- * 也可使用 CommonHashAlgorithms 类中提供的常用算法。
+ * 也可使用 NamedHashAlgorithms 类中提供的常用算法。
  *
  * 使用 DigestUtilities.Algorithms 获取可用算法的别名。
  */
 
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.GM;
-using Org.BouncyCastle.Asn1.Nist;
-using Org.BouncyCastle.Asn1.Oiw;
 using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Macs;
@@ -145,14 +142,14 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建证书请求。
         /// </summary>
-        /// <param name="signatureAlgorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
+        /// <param name="signatureAlgorithm">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="keyPair">使用者密钥对。</param>
         /// <param name="dn">使用者 DN。</param>
         /// <param name="extensions">使用者扩展属性。</param>
         /// <returns></returns>
-        internal static Pkcs10CertificationRequest GenerateCsr(DerObjectIdentifier signatureAlgorithmOid, AsymmetricCipherKeyPair keyPair, X509Name dn, X509Extensions extensions)
+        internal static Pkcs10CertificationRequest GenerateCsr(string signatureAlgorithm, AsymmetricCipherKeyPair keyPair, X509Name dn, X509Extensions extensions)
         {
-            var signatureFactory = new Asn1SignatureFactory(signatureAlgorithmOid.Id, keyPair.Private, Common.SecureRandom);
+            var signatureFactory = new Asn1SignatureFactory(signatureAlgorithm, keyPair.Private, Common.SecureRandom);
             var set = new DerSet(extensions);
             var attribute = new DerSet(new AttributePkcs(PkcsObjectIdentifiers.Pkcs9AtExtensionRequest, set));
             return new Pkcs10CertificationRequest(signatureFactory, dn, keyPair.Public, attribute);
@@ -196,27 +193,27 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建颁发机构自签名证书。
         /// </summary>
-        /// <param name="signatureAlgorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
+        /// <param name="signatureAlgorithm">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="keyPair">颁发机构密钥对。</param>
         /// <param name="dn">颁发机构 DN。</param>
         /// <param name="extensions">扩展属性。</param>
         /// <param name="start">启用时间。</param>
         /// <param name="days">从启用时间开始的有效天数。</param>
         /// <returns></returns>
-        internal static X509Certificate GenerateIssuerCert(DerObjectIdentifier signatureAlgorithmOid,
+        internal static X509Certificate GenerateIssuerCert(string signatureAlgorithm,
                                                            AsymmetricCipherKeyPair keyPair,
                                                            X509Name dn,
                                                            X509Extensions extensions,
                                                            DateTime start,
                                                            int days)
         {
-            return GenerateCert(signatureAlgorithmOid, keyPair.Private, dn, dn, keyPair.Public, extensions, start, days);
+            return GenerateCert(signatureAlgorithm, keyPair.Private, dn, dn, keyPair.Public, extensions, start, days);
         }
 
         /// <summary>
         /// 创建使用者证书。
         /// </summary>
-        /// <param name="signatureAlgorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
+        /// <param name="signatureAlgorithm">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="issuerPrivateKey">颁发机构的私钥。</param>
         /// <param name="issuerCert">颁发机构的证书。</param>
         /// <param name="subjectDN">使用者 DN。</param>
@@ -227,7 +224,7 @@ namespace LH.BouncyCastleHelpers
         /// <returns></returns>
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         [SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
-        internal static X509Certificate GenerateSubjectCert(DerObjectIdentifier signatureAlgorithmOid,
+        internal static X509Certificate GenerateSubjectCert(string signatureAlgorithm,
                                                             AsymmetricKeyParameter issuerPrivateKey,
                                                             X509Certificate issuerCert,
                                                             X509Name subjectDN,
@@ -252,7 +249,7 @@ namespace LH.BouncyCastleHelpers
             {
                 throw new ArgumentException("签署的有效期超出了颁发机构证书的有效期。", nameof(issuerCert));
             }
-            return GenerateCert(signatureAlgorithmOid, issuerPrivateKey, issuerCert.SubjectDN, subjectDN, subjectPublicKey, extensions, start, days);
+            return GenerateCert(signatureAlgorithm, issuerPrivateKey, issuerCert.SubjectDN, subjectDN, subjectPublicKey, extensions, start, days);
         }
 
         /// <summary>
@@ -286,7 +283,7 @@ namespace LH.BouncyCastleHelpers
             }
         }
 
-        private static X509Certificate GenerateCert(DerObjectIdentifier signatureAlgorithmOid,
+        private static X509Certificate GenerateCert(string signatureAlgorithm,
                                                     AsymmetricKeyParameter issuerPrivateKey,
                                                     X509Name issuerDN,
                                                     X509Name subjectDN,
@@ -296,7 +293,7 @@ namespace LH.BouncyCastleHelpers
                                                     int days)
         {
             var sn = new BigInteger(128, Common.SecureRandom);
-            var signatureFactory = new Asn1SignatureFactory(signatureAlgorithmOid.Id, issuerPrivateKey, Common.SecureRandom);
+            var signatureFactory = new Asn1SignatureFactory(signatureAlgorithm, issuerPrivateKey, Common.SecureRandom);
             var generator = new X509V3CertificateGenerator();
             generator.SetSerialNumber(sn);
             generator.SetIssuerDN(issuerDN);
@@ -575,25 +572,25 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 校验。
         /// </summary>
-        /// <param name="hashAlgorithmOid">校验算法 oid。可使用 CommonHashAlgorithms 类中提供的常用算法。可用算法清单参见注释中的补充说明。</param>
+        /// <param name="algorithmName">校验算法。可使用 NamedHashAlgorithms 类中提供的常用算法。可用算法清单参见注释中的补充说明。</param>
         /// <param name="data">要校验的数据。</param>
         /// <returns></returns>
-        internal static byte[] ComputeHash(DerObjectIdentifier hashAlgorithmOid, byte[] data)
+        internal static byte[] ComputeHash(string algorithmName, byte[] data)
         {
-            return ComputeHash(hashAlgorithmOid, data, 0, data.Length);
+            return ComputeHash(algorithmName, data, 0, data.Length);
         }
 
         /// <summary>
         /// 校验。
         /// </summary>
-        /// <param name="hashAlgorithmOid">校验算法 oid。可使用 CommonHashAlgorithms 类中提供的常用算法。可用算法清单参见注释中的补充说明。</param>
+        /// <param name="algorithmName">校验算法。可使用 NamedHashAlgorithms 类中提供的常用算法。可用算法清单参见注释中的补充说明。</param>
         /// <param name="buffer">包含要校验的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
-        internal static byte[] ComputeHash(DerObjectIdentifier hashAlgorithmOid, byte[] buffer, int offset, int count)
+        internal static byte[] ComputeHash(string algorithmName, byte[] buffer, int offset, int count)
         {
-            IDigest algorithm = DigestUtilities.GetDigest(hashAlgorithmOid);
+            IDigest algorithm = DigestUtilities.GetDigest(algorithmName);
             algorithm.BlockUpdate(buffer, offset, count);
             byte[] hash = new byte[algorithm.GetDigestSize()];
             algorithm.DoFinal(hash, 0);
@@ -603,27 +600,27 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// HMAC 校验。
         /// </summary>
-        /// <param name="hashAlgorithmOid">校验算法 oid。可使用 CommonHashAlgorithms 类中提供的常用算法。可用算法清单参见注释中的补充说明。</param>
+        /// <param name="algorithmName">校验算法。可使用 NamedHashAlgorithms 类中提供的常用算法。可用算法清单参见注释中的补充说明。</param>
         /// <param name="hmacKey">HMAC 密钥。随机字节数组。</param>
         /// <param name="data">要校验的数据。</param>
         /// <returns></returns>
-        internal static byte[] HmacComputeHash(DerObjectIdentifier hashAlgorithmOid, byte[] hmacKey, byte[] data)
+        internal static byte[] HmacComputeHash(string algorithmName, byte[] hmacKey, byte[] data)
         {
-            return HmacComputeHash(hashAlgorithmOid, hmacKey, data, 0, data.Length);
+            return HmacComputeHash(algorithmName, hmacKey, data, 0, data.Length);
         }
 
         /// <summary>
         /// HMAC 校验。
         /// </summary>
-        /// <param name="hashAlgorithmOid">校验算法 oid。可使用 CommonHashAlgorithms 类中提供的常用算法。可用算法清单参见注释中的补充说明。</param>
+        /// <param name="algorithmName">校验算法 oid。可使用 NamedHashAlgorithms 类中提供的常用算法。可用算法清单参见注释中的补充说明。</param>
         /// <param name="hmacKey">HMAC 密钥。随机字节数组。</param>
         /// <param name="buffer">包含要校验的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
-        internal static byte[] HmacComputeHash(DerObjectIdentifier hashAlgorithmOid, byte[] hmacKey, byte[] buffer, int offset, int count)
+        internal static byte[] HmacComputeHash(string algorithmName, byte[] hmacKey, byte[] buffer, int offset, int count)
         {
-            IDigest digest = DigestUtilities.GetDigest(hashAlgorithmOid);
+            IDigest digest = DigestUtilities.GetDigest(algorithmName);
             HMac algorithm = new HMac(digest);
             algorithm.Init(new KeyParameter(hmacKey));
             algorithm.BlockUpdate(buffer, offset, count);
@@ -690,11 +687,11 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建 ECDSA 密钥对。
         /// </summary>
-        /// <param name="curveOid">曲线 oid。可使用 CommonCurves 类中提供的常用曲线。或 SecObjectIdentifiers 中的命名曲线。</param>
+        /// <param name="curve">曲线。可使用 NamedCurves 类中提供的常用曲线。或 SecObjectIdentifiers 中的命名曲线。</param>
         /// <returns></returns>
-        internal static AsymmetricCipherKeyPair GenerateEcdsaKeyPair(DerObjectIdentifier curveOid)
+        internal static AsymmetricCipherKeyPair GenerateEcdsaKeyPair(string curve)
         {
-            var ec = SecNamedCurves.GetByOid(curveOid);
+            var ec = SecNamedCurves.GetByName(curve);
             var domain = new ECDomainParameters(ec.Curve, ec.G, ec.N, ec.H);
             var kgp = new ECKeyGenerationParameters(domain, Common.SecureRandom);
             var generator = new ECKeyPairGenerator();
@@ -858,20 +855,6 @@ namespace LH.BouncyCastleHelpers
         }
 
         /// <summary>
-        /// 创建 AES 密钥。
-        /// </summary>
-        /// <param name="keyBuffer">从中截取密钥的数组缓冲区。</param>
-        /// <param name="keyCutOffset">截取密钥的偏移。</param>
-        /// <param name="keyCutCount">截取的密钥长度。长度可以是 16、24、32 字节。</param>
-        /// <param name="ivBuffer">从中截取初始化向量的数组缓冲区。</param>
-        /// <param name="ivCutOffset">截取初始化向量的偏移。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateAesKey(byte[] keyBuffer, int keyCutOffset, int keyCutCount, byte[] ivBuffer, int ivCutOffset)
-        {
-            return GenerateSymmetricKey("DESEDE", keyBuffer, keyCutOffset, keyCutCount, ivBuffer, ivCutOffset, 8);
-        }
-
-        /// <summary>
         /// 创建 DESEDE3 密钥。
         /// </summary>
         /// <param name="rgbKey">密钥数组。长度是 24 字节。</param>
@@ -880,19 +863,6 @@ namespace LH.BouncyCastleHelpers
         internal static ICipherParameters GenerateDesEde3Key(byte[] rgbKey, byte[] rgbIV)
         {
             return GenerateSymmetricKey("DESEDE", rgbKey, rgbIV);
-        }
-
-        /// <summary>
-        /// 创建 DESEDE3 密钥。
-        /// </summary>
-        /// <param name="keyBuffer">从中截取密钥的数组缓冲区。</param>
-        /// <param name="keyCutOffset">截取密钥的偏移。</param>
-        /// <param name="ivBuffer">从中截取初始化向量的数组缓冲区。</param>
-        /// <param name="ivCutOffset">截取初始化向量的偏移。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateDesEde3Key(byte[] keyBuffer, int keyCutOffset, byte[] ivBuffer, int ivCutOffset)
-        {
-            return GenerateSymmetricKey("DESEDE", keyBuffer, keyCutOffset, 24, ivBuffer, ivCutOffset, 8);
         }
 
         /// <summary>
@@ -907,19 +877,6 @@ namespace LH.BouncyCastleHelpers
         }
 
         /// <summary>
-        /// 创建 DES 密钥。
-        /// </summary>
-        /// <param name="keyBuffer">从中截取密钥的数组缓冲区。</param>
-        /// <param name="keyCutOffset">截取密钥的偏移。</param>
-        /// <param name="ivBuffer">从中截取初始化向量的数组缓冲区。</param>
-        /// <param name="ivCutOffset">截取初始化向量的偏移。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateDesKey(byte[] keyBuffer, int keyCutOffset, byte[] ivBuffer, int ivCutOffset)
-        {
-            return GenerateSymmetricKey("DES", keyBuffer, keyCutOffset, 8, ivBuffer, ivCutOffset, 8);
-        }
-
-        /// <summary>
         /// 创建 SM4 密钥。
         /// </summary>
         /// <param name="rgbKey">密钥数组。长度是 16 字节。</param>
@@ -931,58 +888,18 @@ namespace LH.BouncyCastleHelpers
         }
 
         /// <summary>
-        /// 创建 SM4 密钥。
-        /// </summary>
-        /// <param name="keyBuffer">从中截取密钥的数组缓冲区。</param>
-        /// <param name="keyCutOffset">截取密钥的偏移。</param>
-        /// <param name="ivBuffer">从中截取初始化向量的数组缓冲区。</param>
-        /// <param name="ivCutOffset">截取初始化向量的偏移。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateSM4Key(byte[] keyBuffer, int keyCutOffset, byte[] ivBuffer, int ivCutOffset)
-        {
-            return GenerateSymmetricKey("SM4", keyBuffer, keyCutOffset, 16, ivBuffer, ivCutOffset, 16);
-        }
-
-        /// <summary>
         /// 创建对称加密算法密钥。
         /// </summary>
-        /// <param name="symmetricAlgorithm">加密算法。可使用 NamedSymmetricAlgorithms 类中提供的已命名算法。参见注释中的补充说明。</param>
+        /// <param name="algorithmName">加密算法。可使用 NamedSymmetricAlgorithms 类中提供的已命名算法。参见注释中的补充说明。</param>
         /// <param name="rgbKey">密钥数组。</param>
         /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
         /// <returns></returns>
-        internal static ICipherParameters GenerateSymmetricKey(string symmetricAlgorithm, byte[] rgbKey, byte[] rgbIV)
+        internal static ICipherParameters GenerateSymmetricKey(string algorithmName, byte[] rgbKey, byte[] rgbIV)
         {
-            ICipherParameters parameters = ParameterUtilities.CreateKeyParameter(symmetricAlgorithm, rgbKey);
+            ICipherParameters parameters = ParameterUtilities.CreateKeyParameter(algorithmName, rgbKey);
             if (rgbIV != null)
             {
                 parameters = new ParametersWithIV(parameters, rgbIV);
-            }
-            return parameters;
-        }
-
-        /// <summary>
-        /// 创建对称加密算法密钥。
-        /// </summary>
-        /// <param name="symmetricAlgorithm">加密算法。可使用 NamedSymmetricAlgorithms 类中提供的已命名算法。参见注释中的补充说明。</param>
-        /// <param name="keyBuffer">从中截取密钥的数组缓冲区。</param>
-        /// <param name="keyCutOffset">截取密钥的偏移。</param>
-        /// <param name="keyCutCount">截取的密钥长度。</param>
-        /// <param name="ivBuffer">从中截取初始化向量的数组缓冲区。</param>
-        /// <param name="ivCutOffset">截取初始化向量的偏移。</param>
-        /// <param name="ivCutCount">截取的初始化向量长度。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateSymmetricKey(string symmetricAlgorithm,
-                                                               byte[] keyBuffer,
-                                                               int keyCutOffset,
-                                                               int keyCutCount,
-                                                               byte[] ivBuffer,
-                                                               int ivCutOffset,
-                                                               int ivCutCount)
-        {
-            ICipherParameters parameters = ParameterUtilities.CreateKeyParameter(symmetricAlgorithm, keyBuffer, keyCutOffset, keyCutCount);
-            if (ivBuffer != null)
-            {
-                parameters = new ParametersWithIV(parameters, ivBuffer, ivCutOffset, ivCutCount);
             }
             return parameters;
         }
@@ -998,27 +915,27 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 签名。
         /// </summary>
-        /// <param name="signatureAlgorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
+        /// <param name="algorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="privateKey">本地私钥。</param>
         /// <param name="data">要计算签名的数据。</param>
         /// <returns></returns>
-        internal static byte[] Sign(DerObjectIdentifier signatureAlgorithmOid, AsymmetricKeyParameter privateKey, byte[] data)
+        internal static byte[] Sign(string algorithmName, AsymmetricKeyParameter privateKey, byte[] data)
         {
-            return Sign(signatureAlgorithmOid, privateKey, data, 0, data.Length);
+            return Sign(algorithmName, privateKey, data, 0, data.Length);
         }
 
         /// <summary>
         /// 签名。
         /// </summary>
-        /// <param name="signatureAlgorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
+        /// <param name="algorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="privateKey">本地私钥。</param>
         /// <param name="buffer">包含要计算签名的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
-        internal static byte[] Sign(DerObjectIdentifier signatureAlgorithmOid, AsymmetricKeyParameter privateKey, byte[] buffer, int offset, int count)
+        internal static byte[] Sign(string algorithmName, AsymmetricKeyParameter privateKey, byte[] buffer, int offset, int count)
         {
-            var signer = SignerUtilities.InitSigner(signatureAlgorithmOid, true, privateKey, Common.SecureRandom);
+            var signer = SignerUtilities.InitSigner(algorithmName, true, privateKey, Common.SecureRandom);
             signer.BlockUpdate(buffer, offset, count);
             return signer.GenerateSignature();
         }
@@ -1026,30 +943,30 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 验证签名。
         /// </summary>
-        /// <param name="signatureAlgorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
+        /// <param name="algorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="publicKey">对方发送的公钥。</param>
         /// <param name="data">要计算签名的数据。</param>
         /// <param name="signature">对方发送的签名。</param>
         /// <returns></returns>
-        internal static bool Verify(DerObjectIdentifier signatureAlgorithmOid, AsymmetricKeyParameter publicKey, byte[] data, byte[] signature)
+        internal static bool Verify(string algorithmName, AsymmetricKeyParameter publicKey, byte[] data, byte[] signature)
         {
-            return Verify(signatureAlgorithmOid, publicKey, data, 0, data.Length, signature);
+            return Verify(algorithmName, publicKey, data, 0, data.Length, signature);
         }
 
         /// <summary>
         /// 验证签名。
         /// </summary>
-        /// <param name="signatureAlgorithmOid">签名算法 oid。可使用 CommonSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
+        /// <param name="algorithmName">签名算法。可使用 NamedSignatureAlgorithms 类中提供的常用算法。参见注释中的补充说明。</param>
         /// <param name="publicKey">对方发送的公钥。</param>
         /// <param name="buffer">包含要计算签名的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <param name="signature">对方发送的签名。</param>
         /// <returns></returns>
-        internal static bool Verify(DerObjectIdentifier signatureAlgorithmOid, AsymmetricKeyParameter publicKey, byte[] buffer, int offset, int count, byte[] signature)
+        internal static bool Verify(string algorithmName, AsymmetricKeyParameter publicKey, byte[] buffer, int offset, int count, byte[] signature)
         {
             //var verifier = SignerUtilities.InitSigner(signatureAlgorithmOid, false, publicKey, null);
-            var verifier = SignerUtilities.GetSigner(signatureAlgorithmOid);
+            var verifier = SignerUtilities.GetSigner(algorithmName);
             verifier.Init(false, publicKey);
             verifier.BlockUpdate(buffer, offset, count);
             return verifier.VerifySignature(signature);
@@ -1122,55 +1039,38 @@ namespace LH.BouncyCastleHelpers
     }
 
     /// <summary>
-    /// 常用曲线。
-    /// </summary>
-    internal static class CommonCurves
-    {
-        internal static readonly DerObjectIdentifier SecP256r1 = SecObjectIdentifiers.SecP256r1;
-        internal static readonly DerObjectIdentifier SecP384r1 = SecObjectIdentifiers.SecP384r1;
-        internal static readonly DerObjectIdentifier SecP521r1 = SecObjectIdentifiers.SecP521r1;
-    }
-
-    /// <summary>
-    /// 常用校验算法。
-    /// </summary>
-    internal static class CommonHashAlgorithms
-    {
-        internal static readonly DerObjectIdentifier MD5 = PkcsObjectIdentifiers.MD5;
-        internal static readonly DerObjectIdentifier SHA1 = OiwObjectIdentifiers.IdSha1;
-        internal static readonly DerObjectIdentifier SHA256 = NistObjectIdentifiers.IdSha256;
-        internal static readonly DerObjectIdentifier SHA3_256 = NistObjectIdentifiers.IdSha3_256;
-        internal static readonly DerObjectIdentifier SHA3_384 = NistObjectIdentifiers.IdSha3_384;
-        internal static readonly DerObjectIdentifier SHA3_512 = NistObjectIdentifiers.IdSha3_512;
-        internal static readonly DerObjectIdentifier SHA384 = NistObjectIdentifiers.IdSha384;
-        internal static readonly DerObjectIdentifier SHA512 = NistObjectIdentifiers.IdSha512;
-        internal static readonly DerObjectIdentifier SM3 = GMObjectIdentifiers.sm3;
-    }
-
-    /// <summary>
-    /// 常用签名算法。
-    /// </summary>
-    internal static class CommonSignatureAlgorithms
-    {
-        internal static readonly DerObjectIdentifier SHA256WithDSA = NistObjectIdentifiers.DsaWithSha256;
-        internal static readonly DerObjectIdentifier SHA256WithECDSA = X9ObjectIdentifiers.ECDsaWithSha256;
-        internal static readonly DerObjectIdentifier SHA256WithRSA = PkcsObjectIdentifiers.Sha256WithRsaEncryption;
-        internal static readonly DerObjectIdentifier SHA384WithDSA = NistObjectIdentifiers.DsaWithSha384;
-        internal static readonly DerObjectIdentifier SHA384WithECDSA = X9ObjectIdentifiers.ECDsaWithSha384;
-        internal static readonly DerObjectIdentifier SHA384WithRSA = PkcsObjectIdentifiers.Sha384WithRsaEncryption;
-        internal static readonly DerObjectIdentifier SHA512WithDSA = NistObjectIdentifiers.DsaWithSha512;
-        internal static readonly DerObjectIdentifier SHA512WithECDSA = X9ObjectIdentifiers.ECDsaWithSha512;
-        internal static readonly DerObjectIdentifier SHA512WithRSA = PkcsObjectIdentifiers.Sha512WithRsaEncryption;
-        internal static readonly DerObjectIdentifier SM3WithSM2 = GMObjectIdentifiers.sm2sign_with_sm3;
-    }
-
-    /// <summary>
     /// 已命名非对称加密算法设置。
     /// </summary>
     internal static class NamedAsymmetricCipherStrings
     {
         internal const string RSA_OAEP = "RSA//OAEPPADDING";
         internal const string RSA_PKCS1 = "RSA//PKCS1PADDING";
+    }
+
+    /// <summary>
+    /// 常用曲线。
+    /// </summary>
+    internal static class NamedCurves
+    {
+        internal const string SECP256R1 = "SecP256r1";
+        internal const string SECP384R1 = "SecP384r1";
+        internal const string SECP521R1 = "SecP521r1";
+    }
+
+    /// <summary>
+    /// 已命名校验算法。
+    /// </summary>
+    internal static class NamedHashAlgorithms
+    {
+        internal const string MD5 = "MD5";
+        internal const string SHA1 = "SHA1";
+        internal const string SHA256 = "SHA256";
+        internal const string SHA3_256 = "SHA3-256";
+        internal const string SHA3_384 = "SHA3-384";
+        internal const string SHA3_512 = "SHA3-512";
+        internal const string SHA384 = "SHA384";
+        internal const string SHA512 = "SHA512";
+        internal const string SM3 = "SM3";
     }
 
     /// <summary>
@@ -1188,6 +1088,23 @@ namespace LH.BouncyCastleHelpers
         internal const string DES_ECB = "DES-ECB";
         internal const string DES_EDE3_CBC = "DES-EDE3-CBC";
         internal const string DES_EDE3_ECB = "DES-EDE3-ECB";
+    }
+
+    /// <summary>
+    /// 已命名签名算法。
+    /// </summary>
+    internal static class NamedSignatureAlgorithms
+    {
+        internal const string SHA256_WITH_DSA = "SHA256WithDSA";
+        internal const string SHA256_WITH_ECDSA = "SHA256WithECDSA";
+        internal const string SHA256_WITH_RSA = "SHA256WithRSA";
+        internal const string SHA384_WITH_DSA = "SHA384WithDSA";
+        internal const string SHA384_WITH_ECDSA = "SHA384WithECDSA";
+        internal const string SHA384_WITH_RSA = "SHA384WithRSA";
+        internal const string SHA512_WITH_DSA = "SHA512WithDSA";
+        internal const string SHA512_WITH_ECDSA = "SHA512WithECDSA";
+        internal const string SHA512_WITH_RSA = "SHA512WithRSA";
+        internal const string SM3_WITH_SM2 = "SM3WithSM2";
     }
 
     /// <summary>

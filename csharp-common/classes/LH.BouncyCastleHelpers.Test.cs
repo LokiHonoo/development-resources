@@ -23,20 +23,20 @@ namespace LH.BouncyCastleHelpers
             //
             // ===========================  密钥测试  ===========================
             //
-            var caKeyPair = CryptoHelper.GenerateEcdsaKeyPair(CommonCurves.SecP256r1);
-            var serverKeyPair = CryptoHelper.GenerateEcdsaKeyPair(CommonCurves.SecP256r1);
-            var clientKeyPair = CryptoHelper.GenerateEcdsaKeyPair(CommonCurves.SecP256r1);
+            var caKeyPair = KeyParametersHelper.GenerateEcdsaKeyPair(NamedCurves.SECP256R1);
+            var serverKeyPair = KeyParametersHelper.GenerateEcdsaKeyPair(NamedCurves.SECP256R1);
+            var clientKeyPair = KeyParametersHelper.GenerateEcdsaKeyPair(NamedCurves.SECP256R1);
 
             //
             // 密钥读写测试。
             //
-            CryptoHelper.ParseKey(caKeyPair.Public, out string publicKeyPem);
-            CryptoHelper.ParseKey(caKeyPair.Private, out string privateKeyPem);
-            CryptoHelper.ParseKey(caKeyPair.Private, NamedPemEncryptionAlgorithms.AES_256_CBC, "123456", out string privateKeyEncPem);
+            KeyParametersHelper.ParseKey(caKeyPair.Public, out string publicKeyPem);
+            KeyParametersHelper.ParseKey(caKeyPair.Private, out string privateKeyPem);
+            KeyParametersHelper.ParseKey(caKeyPair.Private, NamedPemEncryptionAlgorithms.AES_256_CBC, "123456", out string privateKeyEncPem);
             //
-            _ = CryptoHelper.ReadPublicKey(publicKeyPem);
-            caKeyPair = CryptoHelper.ReadKeyPair(privateKeyPem);
-            caKeyPair = CryptoHelper.ReadKeyPair(privateKeyEncPem, "123456");
+            _ = KeyParametersHelper.ReadPublicKey(publicKeyPem);
+            caKeyPair = KeyParametersHelper.ReadKeyPair(privateKeyPem);
+            caKeyPair = KeyParametersHelper.ReadKeyPair(privateKeyEncPem, "123456");
             //
             // ===========================  证书测试  ===========================
             //
@@ -55,7 +55,7 @@ namespace LH.BouncyCastleHelpers
             //
             // 机构证书。
             //
-            var caCert = CertificateHelper.GenerateIssuerCert(CommonSignatureAlgorithms.SHA256WithECDSA,
+            var caCert = CertificateHelper.GenerateIssuerCert(NamedSignatureAlgorithms.SHA256_WITH_ECDSA,
                                                               caKeyPair,
                                                               caDN,
                                                               null,
@@ -80,8 +80,8 @@ namespace LH.BouncyCastleHelpers
             extensionsGenerator.AddExtension(X509Extensions.KeyUsage, true, new KeyUsage(KeyUsage.KeyCertSign | KeyUsage.CrlSign));
             var serverExtensions = extensionsGenerator.Generate();
             var clientExtensions = serverExtensions;
-            var serverCsr = CertificateHelper.GenerateCsr(CommonSignatureAlgorithms.SHA256WithECDSA, serverKeyPair, serverDN, serverExtensions);
-            var clientCsr = CertificateHelper.GenerateCsr(CommonSignatureAlgorithms.SHA256WithECDSA, clientKeyPair, clientDN, clientExtensions);
+            var serverCsr = CertificateHelper.GenerateCsr(NamedSignatureAlgorithms.SHA256_WITH_ECDSA, serverKeyPair, serverDN, serverExtensions);
+            var clientCsr = CertificateHelper.GenerateCsr(NamedSignatureAlgorithms.SHA256_WITH_ECDSA, clientKeyPair, clientDN, clientExtensions);
             //
             // 证书请求读写测试。
             //
@@ -94,7 +94,7 @@ namespace LH.BouncyCastleHelpers
             //
             CertificateHelper.ExtractCsr(serverCsr, out serverDN, out AsymmetricKeyParameter serverPublicKey, out serverExtensions);
             CertificateHelper.ExtractCsr(clientCsr, out clientDN, out AsymmetricKeyParameter clientPublicKey, out clientExtensions);
-            var serverCert = CertificateHelper.GenerateSubjectCert(caCert.CertificateStructure.SignatureAlgorithm.Algorithm,
+            var serverCert = CertificateHelper.GenerateSubjectCert(caCert.CertificateStructure.SignatureAlgorithm.Algorithm.Id,
                                                                    caKeyPair.Private,
                                                                    caCert,
                                                                    serverDN,
@@ -102,7 +102,7 @@ namespace LH.BouncyCastleHelpers
                                                                    serverExtensions,
                                                                    DateTime.UtcNow.AddDays(-1),
                                                                    90);
-            var clientCert = CertificateHelper.GenerateSubjectCert(caCert.CertificateStructure.SignatureAlgorithm.Algorithm,
+            var clientCert = CertificateHelper.GenerateSubjectCert(caCert.CertificateStructure.SignatureAlgorithm.Algorithm.Id,
                                                                    caKeyPair.Private,
                                                                    caCert,
                                                                    clientDN,
@@ -176,11 +176,11 @@ namespace LH.BouncyCastleHelpers
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("==========================  Signature  ==========================");
-            var signature = SignatureHelper.Sign(CommonSignatureAlgorithms.SHA256WithECDSA, serverKeyPair.Private, data);
-            validated = SignatureHelper.Verify(CommonSignatureAlgorithms.SHA256WithECDSA, serverCert.GetPublicKey(), data, signature);
+            var signature = SignatureHelper.Sign(NamedSignatureAlgorithms.SHA256_WITH_ECDSA, serverKeyPair.Private, data);
+            validated = SignatureHelper.Verify(NamedSignatureAlgorithms.SHA256_WITH_ECDSA, serverCert.GetPublicKey(), data, signature);
             Console.WriteLine("Server terminal verify signature - " + validated);
-            signature = SignatureHelper.Sign(CommonSignatureAlgorithms.SHA256WithECDSA, clientKeyPair.Private, data);
-            validated = SignatureHelper.Verify(CommonSignatureAlgorithms.SHA256WithECDSA, clientCert.GetPublicKey(), data, signature);
+            signature = SignatureHelper.Sign(NamedSignatureAlgorithms.SHA256_WITH_ECDSA, clientKeyPair.Private, data);
+            validated = SignatureHelper.Verify(NamedSignatureAlgorithms.SHA256_WITH_ECDSA, clientCert.GetPublicKey(), data, signature);
             Console.WriteLine("Client terminal verify signature - " + validated);
             //
             // ==========================  非对称加密  ==========================
@@ -188,15 +188,15 @@ namespace LH.BouncyCastleHelpers
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("===================  Asymmetric encryption  =====================");
-            var rsaKeyPair = CryptoHelper.GenerateRsaKeyPair(2048);
+            var rsaKeyPair = KeyParametersHelper.GenerateRsaKeyPair(2048);
             var testBytes = new byte[400];
             Common.SecureRandom.NextBytes(testBytes);
             var encBytes = EncryptionHelper.AsymmetricEncrypt(rsaKeyPair.Public, NamedAsymmetricCipherStrings.RSA_OAEP, testBytes);
             var decBytes = EncryptionHelper.AsymmetricDecrypt(rsaKeyPair.Private, NamedAsymmetricCipherStrings.RSA_OAEP, encBytes);
             Console.WriteLine("Original hash - ");
-            Console.WriteLine(BitConverter.ToString(HashHelper.ComputeHash(CommonHashAlgorithms.SHA3_256, testBytes)).Replace("-", string.Empty));
+            Console.WriteLine(BitConverter.ToString(HashHelper.ComputeHash(NamedHashAlgorithms.SHA3_256, testBytes)).Replace("-", string.Empty));
             Console.WriteLine("Decrypted hash  - ");
-            Console.WriteLine(BitConverter.ToString(HashHelper.ComputeHash(CommonHashAlgorithms.SHA3_256, decBytes)).Replace("-", string.Empty));
+            Console.WriteLine(BitConverter.ToString(HashHelper.ComputeHash(NamedHashAlgorithms.SHA3_256, decBytes)).Replace("-", string.Empty));
             //
             // ===========================  密钥交换  ===========================
             //
@@ -209,9 +209,9 @@ namespace LH.BouncyCastleHelpers
             var agreementB = KeyExchangeHelper.CreateAgreement(parametersB, out AsymmetricKeyParameter publicKeyB);
             var pmsA = agreementA.CalculateAgreement(publicKeyB);
             var pmsB = agreementB.CalculateAgreement(publicKeyA);
-            Console.WriteLine("Key exchange alice pms - ");
+            Console.WriteLine("Key exchange alice's pms - ");
             Console.WriteLine(pmsA);
-            Console.WriteLine("Key exchange bob pms - ");
+            Console.WriteLine("Key exchange bob's pms - ");
             Console.WriteLine(pmsB);
             //
             // ===========================  对称加密  ===========================
@@ -219,15 +219,20 @@ namespace LH.BouncyCastleHelpers
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("====================  Symmetric encryption  =====================");
-            var symmetricKey = CryptoHelper.GenerateSymmetricKey(NamedSymmetricAlgorithms.SM4, pmsA.ToByteArrayUnsigned(), 128, 128);
-            testBytes = new byte[422];
+            var pms = pmsA.ToByteArrayUnsigned();
+            var symmetricKey = new byte[128 / 8];
+            var symmetricIV = new byte[128 / 8];
+            Array.Copy(pms, 0, symmetricKey, 0, symmetricKey.Length);
+            Array.Copy(pms, 0, symmetricIV, 0, symmetricIV.Length);
+            var symmetricKeyParameters = KeyParametersHelper.GenerateSymmetricKey(NamedSymmetricAlgorithms.SM4, symmetricKey, symmetricIV);
+            testBytes = new byte[1422];
             Common.SecureRandom.NextBytes(testBytes);
-            encBytes = EncryptionHelper.SymmetricEncrypt(symmetricKey, NamedSymmetricCipherStrings.SM4_CBC_PKCS7, testBytes);
-            decBytes = EncryptionHelper.SymmetricDecrypt(symmetricKey, NamedSymmetricCipherStrings.SM4_CBC_PKCS7, encBytes);
+            encBytes = EncryptionHelper.SymmetricEncrypt(symmetricKeyParameters, NamedSymmetricCipherStrings.SM4_CBC_PKCS7, testBytes);
+            decBytes = EncryptionHelper.SymmetricDecrypt(symmetricKeyParameters, NamedSymmetricCipherStrings.SM4_CBC_PKCS7, encBytes);
             Console.WriteLine("Original hash - ");
-            Console.WriteLine(BitConverter.ToString(HashHelper.ComputeHash(CommonHashAlgorithms.SM3, testBytes)).Replace("-", string.Empty));
+            Console.WriteLine(BitConverter.ToString(HashHelper.ComputeHash(NamedHashAlgorithms.SM3, testBytes)).Replace("-", string.Empty));
             Console.WriteLine("Decrypted hash  - ");
-            Console.WriteLine(BitConverter.ToString(HashHelper.ComputeHash(CommonHashAlgorithms.SM3, decBytes)).Replace("-", string.Empty));
+            Console.WriteLine(BitConverter.ToString(HashHelper.ComputeHash(NamedHashAlgorithms.SM3, decBytes)).Replace("-", string.Empty));
             //
             //
             //
