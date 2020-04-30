@@ -9,6 +9,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -22,7 +23,12 @@ namespace LH.Xml
         /// <summary>
         /// 格式化设置。
         /// </summary>
-        private static readonly XmlWriterSettings _settings = new XmlWriterSettings { Indent = true, NewLineChars = Environment.NewLine };
+        private static readonly XmlReaderSettings _readerSettings = new XmlReaderSettings { XmlResolver = null };
+
+        /// <summary>
+        /// 格式化设置。
+        /// </summary>
+        private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings { Indent = true, NewLineChars = Environment.NewLine };
 
         /// <summary>
         /// 返回格式化后的 XmlDocument 字符串。
@@ -31,7 +37,7 @@ namespace LH.Xml
         /// <returns></returns>
         internal static string GetFormattedString(XmlDocument doc)
         {
-            return GetFormattedString(doc, _settings);
+            return GetFormattedString(doc, _writerSettings);
         }
 
         /// <summary>
@@ -56,13 +62,32 @@ namespace LH.Xml
         }
 
         /// <summary>
+        /// 以安全设置将 Xml 文本转换为 XmlDocument 实例。
+        /// </summary>
+        /// <param name="xml">Xml 文本。</param>
+        /// <returns></returns>
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static XmlDocument Parse(string xml)
+        {
+            XmlDocument doc = new XmlDocument() { XmlResolver = null };
+            using (StringReader reader = new StringReader(xml))
+            {
+                using (XmlReader xReader = XmlReader.Create(reader, _readerSettings))
+                {
+                    doc.Load(xReader);
+                }
+            }
+            return doc;
+        }
+
+        /// <summary>
         /// 保存格式化后的 XmlDocument 到文件。
         /// </summary>
         /// <param name="path">保存的文件路径。</param>
         /// <param name="doc">XmlDocument 文档。</param>
         internal static void SaveFormattedToFile(string path, XmlDocument doc)
         {
-            SaveFormattedToFile(path, doc, _settings);
+            SaveFormattedToFile(path, doc, _writerSettings);
         }
 
         /// <summary>
