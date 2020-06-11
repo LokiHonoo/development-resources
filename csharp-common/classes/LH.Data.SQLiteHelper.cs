@@ -327,6 +327,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "<Pending>")]
         internal static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
@@ -497,45 +498,20 @@ namespace LH.Data
         /// <returns></returns>
         internal static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText)
         {
-            return TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, null);
+            return TransactionExecuteNonQuery(connection, commandText, null);
         }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <param name="parameters">Parameters.</param>
-        /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
-        {
-            return TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, parameters);
-        }
-
-        /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, IsolationLevel iso, string commandText)
-        {
-            return TransactionExecuteNonQuery(connection, iso, commandText, null);
-        }
-
-        /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, IsolationLevel iso, string commandText, params SQLiteParameter[] parameters)
+        internal static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -549,22 +525,31 @@ namespace LH.Data
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (SQLiteTransaction transaction = connection.BeginTransaction(iso))
+            using (SQLiteCommand command = connection.CreateCommand())
             {
-                using (SQLiteCommand command = connection.CreateCommand())
+                StringBuilder sql = new StringBuilder();
+                sql.AppendLine("BEGIN TRANSACTION;");
+                sql.Append(commandText);
+                sql.AppendLine(";");
+                sql.AppendLine("COMMIT;");
+                command.CommandText = sql.ToString();
+                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
+                try
                 {
-                    command.CommandText = commandText;
-                    if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                    try
+                    result = command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    using (SQLiteCommand rollback = connection.CreateCommand())
                     {
-                        result = command.ExecuteNonQuery();
-                        transaction.Commit();
+                        command.CommandText = "ROLLBACK;";
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        catch { }
                     }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        exception = ex;
-                    }
+                    exception = ex;
                 }
             }
             if (state != ConnectionState.Open) { connection.Close(); }
@@ -585,42 +570,19 @@ namespace LH.Data
         /// <param name="procedure">Sql procedure.</param>
         internal static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure)
         {
-            TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, null);
+            TransactionExecuteProcedure(connection, procedure, null);
         }
 
         /// <summary>
         /// Executing stored procedure by transaction.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
-        /// <param name="parameters">Parameters.</param>
-        internal static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters)
-        {
-            TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, parameters);
-        }
-
-        /// <summary>
-        /// Executing stored procedure by transaction.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
-        internal static void TransactionExecuteProcedure(SQLiteConnection connection, IsolationLevel iso, string procedure)
-        {
-            TransactionExecuteProcedure(connection, iso, procedure, null);
-        }
-
-        /// <summary>
-        /// Executing stored procedure by transaction.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        internal static void TransactionExecuteProcedure(SQLiteConnection connection, IsolationLevel iso, string procedure, params SQLiteParameter[] parameters)
+        internal static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -634,21 +596,32 @@ namespace LH.Data
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (SQLiteTransaction transaction = connection.BeginTransaction(iso))
+            using (SQLiteCommand command = connection.CreateCommand())
             {
-                using (SQLiteCommand command = new SQLiteCommand(procedure, connection) { CommandType = CommandType.StoredProcedure })
+                command.CommandType = CommandType.StoredProcedure;
+                StringBuilder sql = new StringBuilder();
+                sql.AppendLine("BEGIN TRANSACTION;");
+                sql.Append(procedure);
+                sql.AppendLine(";");
+                sql.AppendLine("COMMIT;");
+                command.CommandText = sql.ToString();
+                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
+                try
                 {
-                    if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                    try
+                    command.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    using (SQLiteCommand rollback = connection.CreateCommand())
                     {
-                        command.ExecuteNonQuery();
-                        transaction.Commit();
+                        command.CommandText = "ROLLBACK;";
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        catch { }
                     }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        exception = ex;
-                    }
+                    exception = ex;
                 }
             }
             if (state != ConnectionState.Open) { connection.Close(); }
@@ -666,45 +639,20 @@ namespace LH.Data
         /// <returns></returns>
         internal static object TransactionExecuteScalar(SQLiteConnection connection, string commandText)
         {
-            return TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, null);
+            return TransactionExecuteScalar(connection, commandText, null);
         }
 
         /// <summary>
         /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <param name="parameters">Parameters.</param>
-        /// <returns></returns>
-        internal static object TransactionExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
-        {
-            return TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, parameters);
-        }
-
-        /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <returns></returns>
-        internal static object TransactionExecuteScalar(SQLiteConnection connection, IsolationLevel iso, string commandText)
-        {
-            return TransactionExecuteScalar(connection, iso, commandText, null);
-        }
-
-        /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-        internal static object TransactionExecuteScalar(SQLiteConnection connection, IsolationLevel iso, string commandText, params SQLiteParameter[] parameters)
+        internal static object TransactionExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
         {
             if (connection == null)
             {
@@ -718,22 +666,31 @@ namespace LH.Data
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (SQLiteTransaction transaction = connection.BeginTransaction(iso))
+            using (SQLiteCommand command = connection.CreateCommand())
             {
-                using (SQLiteCommand command = connection.CreateCommand())
+                StringBuilder sql = new StringBuilder();
+                sql.AppendLine("BEGIN TRANSACTION;");
+                sql.Append(commandText);
+                sql.AppendLine(";");
+                sql.AppendLine("COMMIT;");
+                command.CommandText = sql.ToString();
+                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
+                try
                 {
-                    command.CommandText = commandText;
-                    if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                    try
+                    result = command.ExecuteScalar();
+                }
+                catch (Exception ex)
+                {
+                    using (SQLiteCommand rollback = connection.CreateCommand())
                     {
-                        result = command.ExecuteScalar();
-                        transaction.Commit();
+                        command.CommandText = "ROLLBACK;";
+                        try
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        catch { }
                     }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        exception = ex;
-                    }
+                    exception = ex;
                 }
             }
             if (state != ConnectionState.Open) { connection.Close(); }

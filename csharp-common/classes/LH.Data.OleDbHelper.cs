@@ -299,6 +299,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
+        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "<Pending>")]
         internal static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
             if (connection == null)
@@ -539,7 +540,11 @@ namespace LH.Data
                     }
                     catch (Exception ex)
                     {
-                        transaction.Rollback();
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch { }
                         exception = ex;
                     }
                 }
@@ -613,8 +618,10 @@ namespace LH.Data
             if (state != ConnectionState.Open) { connection.Open(); }
             using (OleDbTransaction transaction = connection.BeginTransaction(iso))
             {
-                using (OleDbCommand command = new OleDbCommand(procedure, connection) { CommandType = CommandType.StoredProcedure })
+                using (OleDbCommand command = connection.CreateCommand())
                 {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.CommandText = procedure;
                     if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
                     {
@@ -623,7 +630,11 @@ namespace LH.Data
                     }
                     catch (Exception ex)
                     {
-                        transaction.Rollback();
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch { }
                         exception = ex;
                     }
                 }
@@ -709,7 +720,11 @@ namespace LH.Data
                     }
                     catch (Exception ex)
                     {
-                        transaction.Rollback();
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch { }
                         exception = ex;
                     }
                 }
