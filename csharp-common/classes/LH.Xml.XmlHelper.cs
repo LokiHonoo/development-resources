@@ -62,17 +62,29 @@ namespace LH.Xml
         }
 
         /// <summary>
-        /// 以安全设置将 Xml 文本转换为 XmlDocument 实例。
+        /// 将 Xml 文本转换为 XmlDocument 实例。
         /// </summary>
         /// <param name="xml">Xml 文本。</param>
         /// <returns></returns>
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         internal static XmlDocument Parse(string xml)
         {
-            XmlDocument doc = new XmlDocument() { XmlResolver = null };
+            return Parse(xml, null, _readerSettings);
+        }
+
+        /// <summary>
+        /// 将 Xml 文本转换为 XmlDocument 实例。
+        /// </summary>
+        /// <param name="xml">Xml 文本。</param>
+        /// <param name="resolver">解析器。</param>
+        /// <param name="settings">格式化设置。</param>
+        /// <returns></returns>
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static XmlDocument Parse(string xml, XmlResolver resolver, XmlReaderSettings settings)
+        {
+            XmlDocument doc = new XmlDocument() { XmlResolver = resolver };
             using (StringReader reader = new StringReader(xml))
             {
-                using (XmlReader xReader = XmlReader.Create(reader, _readerSettings))
+                using (XmlReader xReader = XmlReader.Create(reader, settings))
                 {
                     doc.Load(xReader);
                 }
