@@ -1235,7 +1235,7 @@ namespace LH.Data
         /// <returns></returns>
         internal static string Vacuum()
         {
-            return "VACUUM";
+            return "VACUUM;";
         }
 
         #endregion Table
