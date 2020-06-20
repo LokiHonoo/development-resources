@@ -28,7 +28,7 @@ namespace LH.Xml
         /// <summary>
         /// 格式化设置。
         /// </summary>
-        private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings { Indent = true, NewLineChars = Environment.NewLine };
+        private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings { Indent = true, NewLineChars = Environment.NewLine, Encoding = new UTF8Encoding(false) };
 
         /// <summary>
         /// 返回格式化后的 XmlDocument 字符串。
@@ -59,6 +59,37 @@ namespace LH.Xml
                 writer.Close();
             }
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// 读取 Xml 文件并转换为 XmlDocument 实例。
+        /// </summary>
+        /// <param name="path">文件路径。</param>
+        /// <returns></returns>
+        internal static XmlDocument LoadFromFile(string path)
+        {
+            return LoadFromFile(path, null, _readerSettings);
+        }
+
+        /// <summary>
+        /// 读取 Xml 文件并转换为 XmlDocument 实例。
+        /// </summary>
+        /// <param name="path">文件路径。</param>
+        /// <param name="resolver">解析器。</param>
+        /// <param name="settings">格式化设置。</param>
+        /// <returns></returns>
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static XmlDocument LoadFromFile(string path, XmlResolver resolver, XmlReaderSettings settings)
+        {
+            XmlDocument doc = new XmlDocument() { XmlResolver = resolver };
+            using (TextReader reader = new StreamReader(path))
+            {
+                using (XmlReader xReader = XmlReader.Create(reader, settings))
+                {
+                    doc.Load(xReader);
+                }
+            }
+            return doc;
         }
 
         /// <summary>
