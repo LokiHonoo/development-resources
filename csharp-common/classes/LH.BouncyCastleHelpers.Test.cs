@@ -191,8 +191,8 @@ namespace LH.BouncyCastleHelpers
             var rsaKeyPair = KeyParametersHelper.GenerateRsaKeyPair(2048);
             var testBytes = new byte[400];
             Common.SecureRandom.NextBytes(testBytes);
-            var encBytes = EncryptionHelper.AsymmetricEncrypt(rsaKeyPair.Public, NamedAsymmetricCipherStrings.RSA_OAEP, testBytes);
-            var decBytes = EncryptionHelper.AsymmetricDecrypt(rsaKeyPair.Private, NamedAsymmetricCipherStrings.RSA_OAEP, encBytes);
+            var encBytes = EncryptionHelper.AsymmetricEncrypt(NamedAsymmetricCipherStrings.RSA_OAEP, rsaKeyPair.Public, testBytes);
+            var decBytes = EncryptionHelper.AsymmetricDecrypt(NamedAsymmetricCipherStrings.RSA_OAEP, rsaKeyPair.Private, encBytes);
             Console.WriteLine("Original hash - ");
             Console.WriteLine(BitConverter.ToString(HashHelper.ComputeHash(NamedHashAlgorithms.SHA3_256, testBytes)).Replace("-", string.Empty));
             Console.WriteLine("Decrypted hash  - ");
@@ -224,11 +224,11 @@ namespace LH.BouncyCastleHelpers
             var symmetricIV = new byte[128 / 8];
             Array.Copy(pms, 0, symmetricKey, 0, symmetricKey.Length);
             Array.Copy(pms, 0, symmetricIV, 0, symmetricIV.Length);
-            var symmetricKeyParameters = KeyParametersHelper.GenerateSymmetricKey(NamedSymmetricAlgorithms.SM4, symmetricKey, symmetricIV);
+            var symmetricKeyParameters = KeyParametersHelper.GenerateSymmetricKey(symmetricKey, symmetricIV);
             testBytes = new byte[1422];
             Common.SecureRandom.NextBytes(testBytes);
-            encBytes = EncryptionHelper.SymmetricEncrypt(symmetricKeyParameters, NamedSymmetricCipherStrings.SM4_CBC_PKCS7, testBytes);
-            decBytes = EncryptionHelper.SymmetricDecrypt(symmetricKeyParameters, NamedSymmetricCipherStrings.SM4_CBC_PKCS7, encBytes);
+            encBytes = EncryptionHelper.SymmetricEncrypt(NamedSymmetricCipherStrings.SM4_CBC_PKCS7, symmetricKeyParameters, testBytes);
+            decBytes = EncryptionHelper.SymmetricDecrypt(NamedSymmetricCipherStrings.SM4_CBC_PKCS7, symmetricKeyParameters, encBytes);
             Console.WriteLine("Original hash - ");
             Console.WriteLine(BitConverter.ToString(HashHelper.ComputeHash(NamedHashAlgorithms.SM3, testBytes)).Replace("-", string.Empty));
             Console.WriteLine("Decrypted hash  - ");

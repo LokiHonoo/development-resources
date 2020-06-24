@@ -26,6 +26,10 @@
  * BUG: 使用签名算法查询类 DefaultSignatureAlgorithmIdentifierFinder 时 SHA256WithECDSA 指向 SHA224WithECDSA。
  *      若使用此方法获取 oid 应注意修正。
  *      BouncyCastle 1.8.6 尚未修复此 BUG。
+ *
+ * BUG: RC5_64 对称加密算法密钥不支持默认 round 数，因此不能使用通用的 KeyParameter 类型。必须创建 RC5Parameters 并指定 round。
+ *      RC5 算法没有此问题。
+ *      BouncyCastle 1.8.6 尚未修复此 BUG。
  */
 
 /*
@@ -397,26 +401,26 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 非对称加密算法解密。
         /// </summary>
-        /// <param name="asymmetricPrivateKey">非对称算法私钥。</param>
         /// <param name="asymmetricCipherString">加密算法设置。可使用 NamedAsymmetricCipherStrings 类中提供的已命名参数。根据密钥参数选择。</param>
+        /// <param name="asymmetricPrivateKey">非对称算法私钥。</param>
         /// <param name="data">要解密的数据。内部实现分段解密，可传入全部数据字节。</param>
         /// <returns></returns>
-        internal static byte[] AsymmetricDecrypt(ICipherParameters asymmetricPrivateKey, string asymmetricCipherString, byte[] data)
+        internal static byte[] AsymmetricDecrypt(string asymmetricCipherString, ICipherParameters asymmetricPrivateKey, byte[] data)
         {
-            return AsymmetricDecrypt(asymmetricPrivateKey, asymmetricCipherString, data, 0, data.Length);
+            return AsymmetricDecrypt(asymmetricCipherString, asymmetricPrivateKey, data, 0, data.Length);
         }
 
         /// <summary>
         /// 非对称加密算法解密。
         /// </summary>
-        /// <param name="asymmetricPrivateKey">非对称算法私钥。</param>
         /// <param name="asymmetricCipherString">加密算法设置。可使用 NamedAsymmetricCipherStrings 类中提供的已命名参数。根据密钥参数选择。</param>
+        /// <param name="asymmetricPrivateKey">非对称算法私钥。</param>
         /// <param name="buffer">包含要解密的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。内部实现分段解密，可传入全部数据字节长度。</param>
         /// <returns></returns>
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal static byte[] AsymmetricDecrypt(ICipherParameters asymmetricPrivateKey, string asymmetricCipherString, byte[] buffer, int offset, int count)
+        internal static byte[] AsymmetricDecrypt(string asymmetricCipherString, ICipherParameters asymmetricPrivateKey, byte[] buffer, int offset, int count)
         {
             var algorithm = CipherUtilities.GetCipher(asymmetricCipherString);
             algorithm.Init(false, asymmetricPrivateKey);
@@ -448,25 +452,25 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 非对称加密算法加密。
         /// </summary>
-        /// <param name="asymmetricPublicKey">非对称算法公钥。</param>
         /// <param name="asymmetricCipherString">加密算法设置。可使用 NamedAsymmetricCipherStrings 类中提供的已命名参数。根据密钥参数选择。</param>
+        /// <param name="asymmetricPublicKey">非对称算法公钥。</param>
         /// <param name="data">要加密的数据。内部实现分段加密，可传入全部数据字节。</param>
         /// <returns></returns>
-        internal static byte[] AsymmetricEncrypt(ICipherParameters asymmetricPublicKey, string asymmetricCipherString, byte[] data)
+        internal static byte[] AsymmetricEncrypt(string asymmetricCipherString, ICipherParameters asymmetricPublicKey, byte[] data)
         {
-            return AsymmetricEncrypt(asymmetricPublicKey, asymmetricCipherString, data, 0, data.Length);
+            return AsymmetricEncrypt(asymmetricCipherString, asymmetricPublicKey, data, 0, data.Length);
         }
 
         /// <summary>
         /// 非对称加密算法加密。
         /// </summary>
-        /// <param name="asymmetricPublicKey">非对称算法公钥。</param>
         /// <param name="asymmetricCipherString">加密算法设置。可使用 NamedAsymmetricCipherStrings 类中提供的已命名参数。根据密钥参数选择。</param>
+        /// <param name="asymmetricPublicKey">非对称算法公钥。</param>
         /// <param name="buffer">包含要加密的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。内部实现分段加密，可传入全部数据字节长度。</param>
         /// <returns></returns>
-        internal static byte[] AsymmetricEncrypt(ICipherParameters asymmetricPublicKey, string asymmetricCipherString, byte[] buffer, int offset, int count)
+        internal static byte[] AsymmetricEncrypt(string asymmetricCipherString, ICipherParameters asymmetricPublicKey, byte[] buffer, int offset, int count)
         {
             var algorithm = CipherUtilities.GetCipher(asymmetricCipherString);
             algorithm.Init(true, asymmetricPublicKey);
@@ -508,25 +512,25 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 对称加密算法解密。
         /// </summary>
-        /// <param name="symmetricKey">对称算法密钥。</param>
         /// <param name="symmetricCipherString">加密算法设置。可使用 NamedSymmetricCipherStrings 类中提供的已命名参数。根据密钥参数选择。</param>
+        /// <param name="symmetricKey">对称算法密钥。</param>
         /// <param name="data">要解密的数据。</param>
         /// <returns></returns>
-        internal static byte[] SymmetricDecrypt(ICipherParameters symmetricKey, string symmetricCipherString, byte[] data)
+        internal static byte[] SymmetricDecrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] data)
         {
-            return SymmetricDecrypt(symmetricKey, symmetricCipherString, data, 0, data.Length);
+            return SymmetricDecrypt(symmetricCipherString, symmetricKey, data, 0, data.Length);
         }
 
         /// <summary>
         /// 对称加密算法解密。
         /// </summary>
-        /// <param name="symmetricKey">对称算法密钥。</param>
         /// <param name="symmetricCipherString">加密算法设置。可使用 NamedSymmetricCipherStrings 类中提供的已命名参数。根据密钥参数选择。</param>
+        /// <param name="symmetricKey">对称算法密钥。</param>
         /// <param name="buffer">包含要解密的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
-        internal static byte[] SymmetricDecrypt(ICipherParameters symmetricKey, string symmetricCipherString, byte[] buffer, int offset, int count)
+        internal static byte[] SymmetricDecrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] buffer, int offset, int count)
         {
             var algorithm = CipherUtilities.GetCipher(symmetricCipherString);
             algorithm.Init(false, symmetricKey);
@@ -536,25 +540,25 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 对称加密算法加密。
         /// </summary>
-        /// <param name="symmetricKey">对称算法密钥。</param>
         /// <param name="symmetricCipherString">加密算法设置。可使用 NamedSymmetricCipherStrings 类中提供的已命名参数。根据密钥参数选择。</param>
+        /// <param name="symmetricKey">对称算法密钥。</param>
         /// <param name="data">要加密的数据。</param>
         /// <returns></returns>
-        internal static byte[] SymmetricEncrypt(ICipherParameters symmetricKey, string symmetricCipherString, byte[] data)
+        internal static byte[] SymmetricEncrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] data)
         {
-            return SymmetricEncrypt(symmetricKey, symmetricCipherString, data, 0, data.Length);
+            return SymmetricEncrypt(symmetricCipherString, symmetricKey, data, 0, data.Length);
         }
 
         /// <summary>
         /// 对称加密算法加密。
         /// </summary>
-        /// <param name="symmetricKey">对称算法密钥。</param>
         /// <param name="symmetricCipherString">加密算法设置。可使用 NamedSymmetricCipherStrings 类中提供的已命名参数。根据密钥参数选择。</param>
+        /// <param name="symmetricKey">对称算法密钥。</param>
         /// <param name="buffer">包含要加密的数据的缓冲区。</param>
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
-        internal static byte[] SymmetricEncrypt(ICipherParameters symmetricKey, string symmetricCipherString, byte[] buffer, int offset, int count)
+        internal static byte[] SymmetricEncrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] buffer, int offset, int count)
         {
             var algorithm = CipherUtilities.GetCipher(symmetricCipherString);
             algorithm.Init(true, symmetricKey);
@@ -844,60 +848,31 @@ namespace LH.BouncyCastleHelpers
         #region 对称密钥
 
         /// <summary>
-        /// 创建 AES 密钥。
+        /// 创建 RC5 对称加密算法密钥，默认 12 round。 RC5_64 对称加密算法密钥不支持默认 round 数，因此不能使用通用的 KeyParameter 类型。
         /// </summary>
-        /// <param name="rgbKey">密钥数组。长度可以是 16、24、32 字节。</param>
+        /// <param name="rgbKey">密钥数组。</param>
         /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
         /// <returns></returns>
-        internal static ICipherParameters GenerateAesKey(byte[] rgbKey, byte[] rgbIV)
+        internal static ICipherParameters GenerateRC5Key(byte[] rgbKey, byte[] rgbIV)
         {
-            return GenerateSymmetricKey("AES", rgbKey, rgbIV);
-        }
-
-        /// <summary>
-        /// 创建 DESEDE3 密钥。
-        /// </summary>
-        /// <param name="rgbKey">密钥数组。长度是 24 字节。</param>
-        /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateDesEde3Key(byte[] rgbKey, byte[] rgbIV)
-        {
-            return GenerateSymmetricKey("DESEDE", rgbKey, rgbIV);
-        }
-
-        /// <summary>
-        /// 创建 DES 密钥。
-        /// </summary>
-        /// <param name="rgbKey">密钥数组。长度是 8 字节。</param>
-        /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateDesKey(byte[] rgbKey, byte[] rgbIV)
-        {
-            return GenerateSymmetricKey("DES", rgbKey, rgbIV);
-        }
-
-        /// <summary>
-        /// 创建 SM4 密钥。
-        /// </summary>
-        /// <param name="rgbKey">密钥数组。长度是 16 字节。</param>
-        /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
-        /// <returns></returns>
-        internal static ICipherParameters GenerateSM4Key(byte[] rgbKey, byte[] rgbIV)
-        {
-            return GenerateSymmetricKey("SM4", rgbKey, rgbIV);
+            ICipherParameters parameters = new RC5Parameters(rgbKey, 12);
+            if (rgbIV != null && rgbIV.Length > 0)
+            {
+                parameters = new ParametersWithIV(parameters, rgbIV);
+            }
+            return parameters;
         }
 
         /// <summary>
         /// 创建对称加密算法密钥。
         /// </summary>
-        /// <param name="algorithmName">加密算法。可使用 NamedSymmetricAlgorithms 类中提供的已命名算法。参见注释中的补充说明。</param>
         /// <param name="rgbKey">密钥数组。</param>
         /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
         /// <returns></returns>
-        internal static ICipherParameters GenerateSymmetricKey(string algorithmName, byte[] rgbKey, byte[] rgbIV)
+        internal static ICipherParameters GenerateSymmetricKey(byte[] rgbKey, byte[] rgbIV)
         {
-            ICipherParameters parameters = ParameterUtilities.CreateKeyParameter(algorithmName, rgbKey);
-            if (rgbIV != null)
+            ICipherParameters parameters = new KeyParameter(rgbKey);
+            if (rgbIV != null && rgbIV.Length > 0)
             {
                 parameters = new ParametersWithIV(parameters, rgbIV);
             }
@@ -1105,17 +1080,6 @@ namespace LH.BouncyCastleHelpers
         internal const string SHA512_WITH_ECDSA = "SHA512WithECDSA";
         internal const string SHA512_WITH_RSA = "SHA512WithRSA";
         internal const string SM3_WITH_SM2 = "SM3WithSM2";
-    }
-
-    /// <summary>
-    /// 已命名对称加密算法。
-    /// </summary>
-    internal static class NamedSymmetricAlgorithms
-    {
-        internal const string AES = "AES";
-        internal const string DES = "DES";
-        internal const string DESEDE = "DESEDE";
-        internal const string SM4 = "SM4";
     }
 
     /// <summary>

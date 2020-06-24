@@ -1462,6 +1462,26 @@ namespace LH.Drawing
         }
 
         /// <summary>
+        /// 3x3 矩阵轴对换。
+        /// </summary>
+        /// <param name="m">3x3 矩阵。</param>
+        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
+        private static void Transpose3x3(double[,] m)
+        {
+            double tmp = m[0, 1];
+            m[0, 1] = m[1, 0];
+            m[1, 0] = tmp;
+
+            tmp = m[0, 2];
+            m[0, 2] = m[2, 0];
+            m[2, 0] = tmp;
+
+            tmp = m[1, 2];
+            m[1, 2] = m[2, 1];
+            m[2, 1] = tmp;
+        }
+
+        /// <summary>
         /// 获取 3x3 矩阵的行列式。
         /// </summary>
         /// <param name="m">3x3 矩阵。</param>
@@ -1495,26 +1515,6 @@ namespace LH.Drawing
             mi[2, 1] = -scale * (m[2, 1] * m[0, 0] - m[2, 0] * m[0, 1]);
             mi[2, 2] = scale * (m[1, 1] * m[0, 0] - m[1, 0] * m[0, 1]);
             return mi;
-        }
-
-        /// <summary>
-        /// 3x3 矩阵轴对换。
-        /// </summary>
-        /// <param name="m">3x3 矩阵。</param>
-        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
-        private void Transpose3x3(double[,] m)
-        {
-            double tmp = m[0, 1];
-            m[0, 1] = m[1, 0];
-            m[1, 0] = tmp;
-
-            tmp = m[0, 2];
-            m[0, 2] = m[2, 0];
-            m[2, 0] = tmp;
-
-            tmp = m[1, 2];
-            m[1, 2] = m[2, 1];
-            m[2, 1] = tmp;
         }
     }
 }
