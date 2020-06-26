@@ -1079,7 +1079,7 @@ namespace LH.BouncyCastleHelpers
         internal const string SHA512_WITH_DSA = "SHA512WithDSA";
         internal const string SHA512_WITH_ECDSA = "SHA512WithECDSA";
         internal const string SHA512_WITH_RSA = "SHA512WithRSA";
-        internal const string SM3_WITH_SM2 = "SM3WithSM2";
+        internal const string SM3_WITH_SM2 = "1.2.156.10197.1.501";
     }
 
     /// <summary>
