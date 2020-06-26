@@ -12,17 +12,17 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
-namespace LH.Collections
+namespace LH.Collections.Generic
 {
     /// <summary>
     /// 求数组组合。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
-    internal sealed class Combination<T>
+    internal class Combination<T>
     {
         #region 成员
 
-        private readonly ArraySegment<T> _array;
+        private readonly IList<T> _array;
         private readonly int _m;
 
         #endregion 成员
@@ -45,36 +45,15 @@ namespace LH.Collections
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal Combination(T[] array, int m)
-        {
-            if (array == null || array.Length == 0)
-            {
-                throw new Exception("元素数组不能是空数组。");
-            }
-            if (m < 1 || m > array.Length)
-            {
-                throw new Exception("m 的值不能小于 1 或大于元素数组的最大长度。");
-            }
-            _array = new ArraySegment<T>(array);
-            _m = m;
-        }
-
-        /// <summary>
-        /// 求数组 m 个元素的组合。
-        /// </summary>
-        /// <param name="array">元素数组切片。</param>
-        /// <param name="m">指定选择的元素数量。</param>
-        /// <exception cref="Exception" />
-        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal Combination(ArraySegment<T> array, int m)
+        internal Combination(IList<T> array, int m)
         {
             if (array.Count == 0)
             {
-                throw new Exception("元素数组切片不能是空数组切片。");
+                throw new Exception("元素数组不能是空数组。");
             }
             if (m < 1 || m > array.Count)
             {
-                throw new Exception("m 的不能小于 1 或大于元素数组切片的最大长度。");
+                throw new Exception("m 的不能小于 1 或大于元素数组的最大长度。");
             }
             _array = array;
             _m = m;
@@ -140,30 +119,15 @@ namespace LH.Collections
         }
 
         /// <summary>
-        /// 交换元素数组切片中的两个元素。
-        /// </summary>
-        /// <param name="array">元素数组切片。</param>
-        /// <param name="indexA">要交换的第一个元素的索引。</param>
-        /// <param name="indexB">要交换的第二个元素的索引。</param>
-        private static void Swap(ArraySegment<T> array, int indexA, int indexB)
-        {
-            indexA = array.Offset + indexA;
-            indexB = array.Offset + indexB;
-            T tmp = array.Array[indexA];
-            array.Array[indexA] = array.Array[indexB];
-            array.Array[indexB] = tmp;
-        }
-
-        /// <summary>
         /// 组合递归方法。
         /// </summary>
-        /// <param name="array">元素数组切片。</param>
+        /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
-        /// <param name="ii">循环到的主要分段元素数组切片的索引。</param>
-        /// <param name="jj">循环到的盈余分段元素数组切片的索引。</param>
+        /// <param name="ii">循环到的主要分段元素数组的索引。</param>
+        /// <param name="jj">循环到的盈余分段元素数组的索引。</param>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        private void Combine(ArraySegment<T> array, int m, int ii, int jj, CreatedCallback created, object userState)
+        private static void Combine(IList<T> array, int m, int ii, int jj, CreatedCallback created, object userState)
         {
             for (int i = ii; i < m; i++)
             {
@@ -175,8 +139,21 @@ namespace LH.Collections
                 }
             }
             T[] result = new T[m];
-            Buffer.BlockCopy(array.Array, array.Offset, result, 0, result.Length);
+            array.CopyTo(result, 0);
             created?.Invoke(result, userState);
+        }
+
+        /// <summary>
+        /// 交换元素数组中的两个元素。
+        /// </summary>
+        /// <param name="array">元素数组。</param>
+        /// <param name="indexA">要交换的第一个元素的索引。</param>
+        /// <param name="indexB">要交换的第二个元素的索引。</param>
+        private static void Swap(IList<T> array, int indexA, int indexB)
+        {
+            T tmp = array[indexA];
+            array[indexA] = array[indexB];
+            array[indexB] = tmp;
         }
     }
 
@@ -184,12 +161,11 @@ namespace LH.Collections
     /// 求数组排列。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
-    [SuppressMessage("Performance", "CA1812:避免未实例化的内部类", Justification = "<挂起>")]
-    internal sealed class Permutation<T>
+    internal class Permutation<T>
     {
         #region 成员
 
-        private readonly ArraySegment<T> _array;
+        private readonly IList<T> _array;
         private readonly int _m;
 
         #endregion 成员
@@ -212,36 +188,15 @@ namespace LH.Collections
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal Permutation(T[] array, int m)
-        {
-            if (array == null || array.Length == 0)
-            {
-                throw new Exception("元素数组不能是空数组。");
-            }
-            if (m < 1 || m > array.Length)
-            {
-                throw new Exception("m 的不能小于 1 或大于元素数组的最大长度。");
-            }
-            _array = new ArraySegment<T>(array);
-            _m = m;
-        }
-
-        /// <summary>
-        /// 求数组 m 个元素的排列。
-        /// </summary>
-        /// <param name="array">元素数组切片。</param>
-        /// <param name="m">指定选择的元素数量。</param>
-        /// <exception cref="Exception" />
-        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal Permutation(ArraySegment<T> array, int m)
+        internal Permutation(IList<T> array, int m)
         {
             if (array.Count == 0)
             {
-                throw new Exception("元素数组切片不能是空数组切片。");
+                throw new Exception("元素数组不能是空数组。");
             }
             if (m < 1 || m > array.Count)
             {
-                throw new Exception("m 的值不能小于 1 或大于元素数组切片的最大长度。");
+                throw new Exception("m 的值不能小于 1 或大于元素数组的最大长度。");
             }
             _array = array;
             _m = m;
@@ -313,33 +268,18 @@ namespace LH.Collections
         }
 
         /// <summary>
-        /// 交换元素数组切片中的两个元素。
-        /// </summary>
-        /// <param name="array">元素数组切片。</param>
-        /// <param name="indexA">要交换的第一个元素的索引。</param>
-        /// <param name="indexB">要交换的第二个元素的索引。</param>
-        private static void Swap(ArraySegment<T> array, int indexA, int indexB)
-        {
-            indexA = array.Offset + indexA;
-            indexB = array.Offset + indexB;
-            T tmp = array.Array[indexA];
-            array.Array[indexA] = array.Array[indexB];
-            array.Array[indexB] = tmp;
-        }
-
-        /// <summary>
         /// 排列递归方法。
         /// </summary>
-        /// <param name="array">元素数组切片。</param>
-        /// <param name="ii">已循环到的元素数组切片的索引。</param>
+        /// <param name="array">元素数组。</param>
+        /// <param name="ii">已循环到的元素数组的索引。</param>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        private void Permutate(ArraySegment<T> array, int ii, CreatedCallback created, object userState)
+        private static void Permutate(IList<T> array, int ii, CreatedCallback created, object userState)
         {
             if (ii == array.Count - 1)
             {
                 T[] result = new T[array.Count];
-                Buffer.BlockCopy(array.Array, array.Offset, result, 0, result.Length);
+                array.CopyTo(result, 0);
                 created?.Invoke(result, userState);
             }
             else
@@ -358,6 +298,19 @@ namespace LH.Collections
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 交换元素数组中的两个元素。
+        /// </summary>
+        /// <param name="array">元素数组。</param>
+        /// <param name="indexA">要交换的第一个元素的索引。</param>
+        /// <param name="indexB">要交换的第二个元素的索引。</param>
+        private static void Swap(IList<T> array, int indexA, int indexB)
+        {
+            T tmp = array[indexA];
+            array[indexA] = array[indexB];
+            array[indexB] = tmp;
         }
     }
 }

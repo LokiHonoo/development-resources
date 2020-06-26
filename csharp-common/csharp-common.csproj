@@ -5,8 +5,8 @@
     <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <RootNamespace>CSharpCommon</RootNamespace>
     <PackageId>csharp-common</PackageId>
-    <Authors>csharp-common</Authors>
-    <Company>CSharpCommon</Company>
+    <Authors>LH</Authors>
+    <Company>LH.Studio</Company>
     <Product>csharp-common</Product>
   </PropertyGroup>
 
