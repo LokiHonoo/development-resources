@@ -113,7 +113,7 @@ namespace LH.Net.UPnP
         /// <returns></returns>
         /// <exception cref="Exception"/>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        internal static string PostAction(Service service, bool man, string action, params KeyValuePair<string, string>[] arguments)
+        internal static string PostAction(UPnPService service, bool man, string action, params KeyValuePair<string, string>[] arguments)
         {
             if (service == null)
             {
@@ -167,7 +167,7 @@ namespace LH.Net.UPnP
         /// <param name="description">Mapping description.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        internal static void AddPortMapping(Service service,
+        internal static void AddPortMapping(UPnPService service,
                                           bool man,
                                           int externalPort,
                                           string protocol,
@@ -203,7 +203,7 @@ namespace LH.Net.UPnP
         /// <param name="protocol">The protocol to delete mapping. This property accepts the following protocol: TCP, UDP.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        internal static void DeletePortMapping(Service service, bool man, int externalPort, string protocol)
+        internal static void DeletePortMapping(UPnPService service, bool man, int externalPort, string protocol)
         {
             KeyValuePair<string, string>[] arguments = new KeyValuePair<string, string>[] {
                 new KeyValuePair<string, string>("NewRemoteHost", string.Empty),
@@ -222,9 +222,9 @@ namespace LH.Net.UPnP
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
-        internal static RootDevice[] Discover(AddressFamily addressFamilyFilter, int mx)
+        internal static UPnPRootDevice[] Discover(AddressFamily addressFamilyFilter, int mx)
         {
-            List<RootDevice> dis = new List<RootDevice>();
+            List<UPnPRootDevice> dis = new List<UPnPRootDevice>();
             List<string> responses = new List<string>();
             using (UdpClient client = new UdpClient(new IPEndPoint(IPAddress.Any, 0)))
             {
@@ -303,7 +303,7 @@ namespace LH.Net.UPnP
                                 continue;
                             }
                             bool exist = false;
-                            foreach (RootDevice di in dis)
+                            foreach (UPnPRootDevice di in dis)
                             {
                                 if (descriptionUrl == di.DescriptionUrl)
                                 {
@@ -316,7 +316,7 @@ namespace LH.Net.UPnP
                                 try
                                 {
                                     byte[] down = wc.DownloadData(descriptionUrl);
-                                    RootDevice di = new RootDevice(descriptionUrl, Encoding.UTF8.GetString(down));
+                                    UPnPRootDevice di = new UPnPRootDevice(descriptionUrl, Encoding.UTF8.GetString(down));
                                     if (di == null)
                                     {
                                         continue;
@@ -346,7 +346,7 @@ namespace LH.Net.UPnP
         /// <param name="man">Append MAN HTTP Header If throw 405 WebException. MAN: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        internal static IPAddress GetExternalIPAddress(Service service, bool man)
+        internal static IPAddress GetExternalIPAddress(UPnPService service, bool man)
         {
             string down = PostAction(service, man, "GetExternalIPAddress", null);
             string ip = GetResponseValue(down, "NewExternalIPAddress");
@@ -360,7 +360,7 @@ namespace LH.Net.UPnP
         /// <param name="man">Append MAN HTTP Header If throw 405 WebException. MAN: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        internal static NatRsipStatus GetNATRSIPStatus(Service service, bool man)
+        internal static NatRsipStatus GetNATRSIPStatus(UPnPService service, bool man)
         {
             string down = PostAction(service, man, "GetNATRSIPStatus", null);
             return new NatRsipStatus(Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewRSIPAvailable"), CultureInfo.InvariantCulture)),
@@ -376,7 +376,7 @@ namespace LH.Net.UPnP
         /// <returns></returns>
         /// <exception cref="Exception"/>
         [SuppressMessage("Usage", "CA2200:Rethrow to preserve stack details.", Justification = "<Pending>")]
-        internal static PortMappingEntry GetSpecificPortMappingEntry(Service service, bool man, int index)
+        internal static PortMappingEntry GetSpecificPortMappingEntry(UPnPService service, bool man, int index)
         {
             try
             {
@@ -409,7 +409,7 @@ namespace LH.Net.UPnP
         /// <param name="protocol">The protocol to query. This property accepts the following protocol: TCP, UDP.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        internal static PortMappingEntry GetSpecificPortMappingEntry(Service service, bool man, int externalPort, string protocol)
+        internal static PortMappingEntry GetSpecificPortMappingEntry(UPnPService service, bool man, int externalPort, string protocol)
         {
             KeyValuePair<string, string>[] arguments = new KeyValuePair<string, string>[] {
                 new KeyValuePair<string, string>("NewRemoteHost", string.Empty),
@@ -440,189 +440,6 @@ namespace LH.Net.UPnP
     }
 
     #region Components
-
-    /// <summary>
-    /// UPnP device.
-    /// </summary>
-    internal sealed class Device
-    {
-        #region Members
-
-        /// <summary>
-        /// Child devices.
-        /// </summary>
-        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
-        internal Device[] Devices { get; }
-
-        /// <summary>
-        /// Device type.
-        /// </summary>
-        internal string DeviceType { get; }
-
-        /// <summary>
-        /// Friendly name.
-        /// </summary>
-        internal string FriendlyName { get; }
-
-        /// <summary>
-        /// Manufacturer.
-        /// </summary>
-        internal string Manufacturer { get; }
-
-        /// <summary>
-        /// Manufacturer url.
-        /// </summary>
-        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
-        internal string ManufacturerUrl { get; }
-
-        /// <summary>
-        /// Model description.
-        /// </summary>
-        internal string ModelDescription { get; }
-
-        /// <summary>
-        /// Model name.
-        /// </summary>
-        internal string ModelName { get; }
-
-        /// <summary>
-        /// Model number.
-        /// </summary>
-        internal string ModelNumber { get; }
-
-        /// <summary>
-        /// Model url.
-        /// </summary>
-        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
-        internal string ModelUrl { get; }
-
-        /// <summary>
-        /// Parent device.
-        /// </summary>
-        /// <exception cref="Exception"/>
-        internal Device Parent { get; }
-
-        /// <summary>
-        /// Root device info.
-        /// </summary>
-        internal RootDevice Root { get; }
-
-        /// <summary>
-        /// SerialNumber.
-        /// </summary>
-        internal string SerialNumber { get; }
-
-        /// <summary>
-        /// Services.
-        /// </summary>
-        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
-        internal Service[] Services { get; }
-
-        /// <summary>
-        /// Unique device name.
-        /// </summary>
-        internal string Udn { get; }
-
-        #endregion Members
-
-        /// <summary>
-        /// Initializes a new instance of the Device class.
-        /// </summary>
-        /// <param name="uri">Must specify device base uri, Because the description file does not contain uri.</param>
-        /// <param name="root">Root device info.</param>
-        /// <param name="parent">Parent device.</param>
-        /// <param name="deviceNode">Device XmlNode.</param>
-        /// <param name="nm">XmlNamespaceManager.</param>
-        /// <exception cref="Exception"/>
-        [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
-        internal Device(Uri uri, RootDevice root, Device parent, XmlNode deviceNode, XmlNamespaceManager nm)
-        {
-            if (deviceNode == null)
-            {
-                throw new ArgumentNullException(nameof(deviceNode));
-            }
-            List<Device> childDevices = new List<Device>();
-            List<Service> services = new List<Service>();
-            //
-            this.Root = root;
-            this.Parent = parent;
-            this.DeviceType = deviceNode.SelectSingleNode("ns:deviceType", nm).InnerText.Trim();
-            this.FriendlyName = deviceNode.SelectSingleNode("ns:friendlyName", nm).InnerText.Trim();
-            this.Manufacturer = deviceNode.SelectSingleNode("ns:manufacturer", nm).InnerText.Trim();
-            this.ManufacturerUrl = deviceNode.SelectSingleNode("ns:manufacturerURL", nm).InnerText.Trim();
-            this.ModelDescription = deviceNode.SelectSingleNode("ns:modelDescription", nm).InnerText.Trim();
-            this.ModelName = deviceNode.SelectSingleNode("ns:modelName", nm).InnerText.Trim();
-            this.ModelNumber = deviceNode.SelectSingleNode("ns:modelNumber", nm).InnerText.Trim();
-            this.ModelUrl = deviceNode.SelectSingleNode("ns:modelURL", nm).InnerText.Trim();
-            this.SerialNumber = deviceNode.SelectSingleNode("ns:serialNumber", nm).InnerText.Trim();
-            this.Udn = deviceNode.SelectSingleNode("ns:UDN", nm).InnerText.Replace("uuid:", string.Empty).Trim();
-            XmlNodeList childDeviceNodes = deviceNode.SelectNodes("ns:deviceList/ns:device", nm);
-            //
-            foreach (XmlNode childDeviceNode in childDeviceNodes)
-            {
-                childDevices.Add(new Device(uri, root, this, childDeviceNode, nm));
-            }
-            //
-            XmlNodeList serviceNodes = deviceNode.SelectNodes("ns:serviceList/ns:service", nm);
-            foreach (XmlNode serviceNode in serviceNodes)
-            {
-                services.Add(new Service(uri, root, this, serviceNode, nm));
-            }
-            //
-            this.Devices = childDevices.ToArray();
-            this.Services = services.ToArray();
-        }
-
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.FriendlyName, this.DeviceType);
-        }
-
-        /// <summary>
-        /// Find the specified type of device.
-        /// </summary>
-        /// <param name="deviceType">Device type.</param>
-        /// <returns></returns>
-        internal Device[] FindDevices(string deviceType)
-        {
-            List<Device> devices = new List<Device>();
-            if (this.DeviceType.Equals(deviceType, StringComparison.OrdinalIgnoreCase))
-            {
-                devices.Add(this);
-            }
-            foreach (Device childDevice in this.Devices)
-            {
-                devices.AddRange(childDevice.FindDevices(deviceType));
-            }
-            return devices.ToArray();
-        }
-
-        /// <summary>
-        /// Find the specified type of service.
-        /// </summary>
-        /// <param name="serviceType">Service type.</param>
-        /// <returns></returns>
-        internal Service[] FindServices(string serviceType)
-        {
-            List<Service> services = new List<Service>();
-            foreach (Service service in this.Services)
-            {
-                if (service.ServiceType.Equals(serviceType, StringComparison.OrdinalIgnoreCase))
-                {
-                    services.Add(service);
-                }
-            }
-            foreach (Device childDevice in this.Devices)
-            {
-                services.AddRange(childDevice.FindServices(serviceType));
-            }
-            return services.ToArray();
-        }
-    }
 
     /// <summary>
     /// NAT RSIP status.
@@ -708,9 +525,192 @@ namespace LH.Net.UPnP
     }
 
     /// <summary>
+    /// UPnP device.
+    /// </summary>
+    internal sealed class UPnPDevice
+    {
+        #region Members
+
+        /// <summary>
+        /// Child devices.
+        /// </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
+        internal UPnPDevice[] Devices { get; }
+
+        /// <summary>
+        /// Device type.
+        /// </summary>
+        internal string DeviceType { get; }
+
+        /// <summary>
+        /// Friendly name.
+        /// </summary>
+        internal string FriendlyName { get; }
+
+        /// <summary>
+        /// Manufacturer.
+        /// </summary>
+        internal string Manufacturer { get; }
+
+        /// <summary>
+        /// Manufacturer url.
+        /// </summary>
+        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
+        internal string ManufacturerUrl { get; }
+
+        /// <summary>
+        /// Model description.
+        /// </summary>
+        internal string ModelDescription { get; }
+
+        /// <summary>
+        /// Model name.
+        /// </summary>
+        internal string ModelName { get; }
+
+        /// <summary>
+        /// Model number.
+        /// </summary>
+        internal string ModelNumber { get; }
+
+        /// <summary>
+        /// Model url.
+        /// </summary>
+        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
+        internal string ModelUrl { get; }
+
+        /// <summary>
+        /// Parent device.
+        /// </summary>
+        /// <exception cref="Exception"/>
+        internal UPnPDevice Parent { get; }
+
+        /// <summary>
+        /// Root device info.
+        /// </summary>
+        internal UPnPRootDevice Root { get; }
+
+        /// <summary>
+        /// SerialNumber.
+        /// </summary>
+        internal string SerialNumber { get; }
+
+        /// <summary>
+        /// Services.
+        /// </summary>
+        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
+        internal UPnPService[] Services { get; }
+
+        /// <summary>
+        /// Unique device name.
+        /// </summary>
+        internal string Udn { get; }
+
+        #endregion Members
+
+        /// <summary>
+        /// Initializes a new instance of the Device class.
+        /// </summary>
+        /// <param name="uri">Must specify device base uri, Because the description file does not contain uri.</param>
+        /// <param name="root">Root device info.</param>
+        /// <param name="parent">Parent device.</param>
+        /// <param name="deviceNode">Device XmlNode.</param>
+        /// <param name="nm">XmlNamespaceManager.</param>
+        /// <exception cref="Exception"/>
+        [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
+        internal UPnPDevice(Uri uri, UPnPRootDevice root, UPnPDevice parent, XmlNode deviceNode, XmlNamespaceManager nm)
+        {
+            if (deviceNode == null)
+            {
+                throw new ArgumentNullException(nameof(deviceNode));
+            }
+            List<UPnPDevice> childDevices = new List<UPnPDevice>();
+            List<UPnPService> services = new List<UPnPService>();
+            //
+            this.Root = root;
+            this.Parent = parent;
+            this.DeviceType = deviceNode.SelectSingleNode("ns:deviceType", nm).InnerText.Trim();
+            this.FriendlyName = deviceNode.SelectSingleNode("ns:friendlyName", nm).InnerText.Trim();
+            this.Manufacturer = deviceNode.SelectSingleNode("ns:manufacturer", nm).InnerText.Trim();
+            this.ManufacturerUrl = deviceNode.SelectSingleNode("ns:manufacturerURL", nm).InnerText.Trim();
+            this.ModelDescription = deviceNode.SelectSingleNode("ns:modelDescription", nm).InnerText.Trim();
+            this.ModelName = deviceNode.SelectSingleNode("ns:modelName", nm).InnerText.Trim();
+            this.ModelNumber = deviceNode.SelectSingleNode("ns:modelNumber", nm).InnerText.Trim();
+            this.ModelUrl = deviceNode.SelectSingleNode("ns:modelURL", nm).InnerText.Trim();
+            this.SerialNumber = deviceNode.SelectSingleNode("ns:serialNumber", nm).InnerText.Trim();
+            this.Udn = deviceNode.SelectSingleNode("ns:UDN", nm).InnerText.Replace("uuid:", string.Empty).Trim();
+            XmlNodeList childDeviceNodes = deviceNode.SelectNodes("ns:deviceList/ns:device", nm);
+            //
+            foreach (XmlNode childDeviceNode in childDeviceNodes)
+            {
+                childDevices.Add(new UPnPDevice(uri, root, this, childDeviceNode, nm));
+            }
+            //
+            XmlNodeList serviceNodes = deviceNode.SelectNodes("ns:serviceList/ns:service", nm);
+            foreach (XmlNode serviceNode in serviceNodes)
+            {
+                services.Add(new UPnPService(uri, root, this, serviceNode, nm));
+            }
+            //
+            this.Devices = childDevices.ToArray();
+            this.Services = services.ToArray();
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.FriendlyName, this.DeviceType);
+        }
+
+        /// <summary>
+        /// Find the specified type of device.
+        /// </summary>
+        /// <param name="deviceType">Device type.</param>
+        /// <returns></returns>
+        internal UPnPDevice[] FindDevices(string deviceType)
+        {
+            List<UPnPDevice> devices = new List<UPnPDevice>();
+            if (this.DeviceType.Equals(deviceType, StringComparison.OrdinalIgnoreCase))
+            {
+                devices.Add(this);
+            }
+            foreach (UPnPDevice childDevice in this.Devices)
+            {
+                devices.AddRange(childDevice.FindDevices(deviceType));
+            }
+            return devices.ToArray();
+        }
+
+        /// <summary>
+        /// Find the specified type of service.
+        /// </summary>
+        /// <param name="serviceType">Service type.</param>
+        /// <returns></returns>
+        internal UPnPService[] FindServices(string serviceType)
+        {
+            List<UPnPService> services = new List<UPnPService>();
+            foreach (UPnPService service in this.Services)
+            {
+                if (service.ServiceType.Equals(serviceType, StringComparison.OrdinalIgnoreCase))
+                {
+                    services.Add(service);
+                }
+            }
+            foreach (UPnPDevice childDevice in this.Devices)
+            {
+                services.AddRange(childDevice.FindServices(serviceType));
+            }
+            return services.ToArray();
+        }
+    }
+
+    /// <summary>
     /// UPnP root device.
     /// </summary>
-    internal sealed class RootDevice
+    internal sealed class UPnPRootDevice
     {
         #region Members
 
@@ -728,7 +728,7 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Root device.
         /// </summary>
-        internal Device Device { get; }
+        internal UPnPDevice Device { get; }
 
         /// <summary>
         /// Root device base uri.
@@ -744,7 +744,7 @@ namespace LH.Net.UPnP
         /// <param name="descriptionXmlString">Root device escription xml string.</param>
         /// <exception cref="Exception"/>
         [SuppressMessage("Design", "CA1054:Uri parameters should not be strings", Justification = "<Pending>")]
-        internal RootDevice(string descriptionUrl, string descriptionXmlString)
+        internal UPnPRootDevice(string descriptionUrl, string descriptionXmlString)
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(descriptionXmlString);
@@ -755,7 +755,7 @@ namespace LH.Net.UPnP
             this.Uri = new Uri(string.Format(CultureInfo.InvariantCulture, "{0}://{1}", uri.Scheme, uri.Authority));
             this.DescriptionUrl = descriptionUrl;
             this.DescriptionXmlString = descriptionXmlString;
-            this.Device = new Device(uri, this, null, deviceNode, nm);
+            this.Device = new UPnPDevice(uri, this, null, deviceNode, nm);
         }
 
         /// <summary>
@@ -772,7 +772,7 @@ namespace LH.Net.UPnP
         /// </summary>
         /// <param name="deviceType">Device type.</param>
         /// <returns></returns>
-        internal Device[] FindDevices(string deviceType)
+        internal UPnPDevice[] FindDevices(string deviceType)
         {
             return this.Device.FindDevices(deviceType);
         }
@@ -782,7 +782,7 @@ namespace LH.Net.UPnP
         /// </summary>
         /// <param name="serviceType">Service type.</param>
         /// <returns></returns>
-        internal Service[] FindServices(string serviceType)
+        internal UPnPService[] FindServices(string serviceType)
         {
             return this.Device.FindServices(serviceType);
         }
@@ -791,7 +791,7 @@ namespace LH.Net.UPnP
     /// <summary>
     /// UPnP service.
     /// </summary>
-    internal sealed class Service
+    internal sealed class UPnPService
     {
         #region Members
 
@@ -811,12 +811,12 @@ namespace LH.Net.UPnP
         /// Parent device.
         /// </summary>
         /// <exception cref="Exception"/>
-        internal Device Parent { get; }
+        internal UPnPDevice Parent { get; }
 
         /// <summary>
         /// Root device info.
         /// </summary>
-        internal RootDevice Root { get; }
+        internal UPnPRootDevice Root { get; }
 
         /// <summary>
         /// Scpd url.
@@ -845,7 +845,7 @@ namespace LH.Net.UPnP
         /// <param name="serviceNode">Service XmlNode.</param>
         /// <param name="nm">XmlNamespaceManager.</param>
         /// <exception cref="Exception"/>
-        internal Service(Uri uri, RootDevice root, Device parent, XmlNode serviceNode, XmlNamespaceManager nm)
+        internal UPnPService(Uri uri, UPnPRootDevice root, UPnPDevice parent, XmlNode serviceNode, XmlNamespaceManager nm)
         {
             if (uri == null)
             {

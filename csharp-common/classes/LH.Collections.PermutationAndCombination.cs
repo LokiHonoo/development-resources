@@ -123,8 +123,7 @@ namespace LH.Collections
         /// <param name="n">指定元素总数。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <returns></returns>
-        [SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
-        private BigInteger C(int n, int m)
+        private static BigInteger C(int n, int m)
         {
             BigInteger numerator = BigInteger.One;
             BigInteger denominator = BigInteger.One;
@@ -138,6 +137,21 @@ namespace LH.Collections
                 denominator *= i;
             }
             return numerator / denominator;
+        }
+
+        /// <summary>
+        /// 交换元素数组切片中的两个元素。
+        /// </summary>
+        /// <param name="array">元素数组切片。</param>
+        /// <param name="indexA">要交换的第一个元素的索引。</param>
+        /// <param name="indexB">要交换的第二个元素的索引。</param>
+        private static void Swap(ArraySegment<T> array, int indexA, int indexB)
+        {
+            indexA = array.Offset + indexA;
+            indexB = array.Offset + indexB;
+            T tmp = array.Array[indexA];
+            array.Array[indexA] = array.Array[indexB];
+            array.Array[indexB] = tmp;
         }
 
         /// <summary>
@@ -163,22 +177,6 @@ namespace LH.Collections
             T[] result = new T[m];
             Buffer.BlockCopy(array.Array, array.Offset, result, 0, result.Length);
             created?.Invoke(result, userState);
-        }
-
-        /// <summary>
-        /// 交换元素数组切片中的两个元素。
-        /// </summary>
-        /// <param name="array">元素数组切片。</param>
-        /// <param name="indexA">要交换的第一个元素的索引。</param>
-        /// <param name="indexB">要交换的第二个元素的索引。</param>
-        [SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
-        private void Swap(ArraySegment<T> array, int indexA, int indexB)
-        {
-            indexA = array.Offset + indexA;
-            indexB = array.Offset + indexB;
-            T tmp = array.Array[indexA];
-            array.Array[indexA] = array.Array[indexB];
-            array.Array[indexB] = tmp;
         }
     }
 
@@ -303,8 +301,7 @@ namespace LH.Collections
         /// <param name="n">指定元素总数。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <returns></returns>
-        [SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
-        private BigInteger P(int n, int m)
+        private static BigInteger P(int n, int m)
         {
             BigInteger integer = BigInteger.One;
             for (int i = 0; i < m; i++)
@@ -313,6 +310,21 @@ namespace LH.Collections
                 n--;
             }
             return integer;
+        }
+
+        /// <summary>
+        /// 交换元素数组切片中的两个元素。
+        /// </summary>
+        /// <param name="array">元素数组切片。</param>
+        /// <param name="indexA">要交换的第一个元素的索引。</param>
+        /// <param name="indexB">要交换的第二个元素的索引。</param>
+        private static void Swap(ArraySegment<T> array, int indexA, int indexB)
+        {
+            indexA = array.Offset + indexA;
+            indexB = array.Offset + indexB;
+            T tmp = array.Array[indexA];
+            array.Array[indexA] = array.Array[indexB];
+            array.Array[indexB] = tmp;
         }
 
         /// <summary>
@@ -346,22 +358,6 @@ namespace LH.Collections
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// 交换元素数组切片中的两个元素。
-        /// </summary>
-        /// <param name="array">元素数组切片。</param>
-        /// <param name="indexA">要交换的第一个元素的索引。</param>
-        /// <param name="indexB">要交换的第二个元素的索引。</param>
-        [SuppressMessage("Build", "CA1822:成员 Swap 不访问实例数据，可标记为 static (在 Visual Basic 中为 Shared)", Justification = "<挂起>")]
-        private void Swap(ArraySegment<T> array, int indexA, int indexB)
-        {
-            indexA = array.Offset + indexA;
-            indexB = array.Offset + indexB;
-            T tmp = array.Array[indexA];
-            array.Array[indexA] = array.Array[indexB];
-            array.Array[indexB] = tmp;
         }
     }
 }
