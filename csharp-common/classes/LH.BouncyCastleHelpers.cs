@@ -1071,7 +1071,7 @@ namespace LH.BouncyCastleHelpers
     internal static class NamedSignatureAlgorithms
     {
         internal const string SHA256_WITH_DSA = "SHA256WithDSA";
-        internal const string SHA256_WITH_ECDSA = "SHA256WithECDSA";
+        internal const string SHA256_WITH_ECDSA = "1.2.840.10045.4.3.2";
         internal const string SHA256_WITH_RSA = "SHA256WithRSA";
         internal const string SHA384_WITH_DSA = "SHA384WithDSA";
         internal const string SHA384_WITH_ECDSA = "SHA384WithECDSA";
