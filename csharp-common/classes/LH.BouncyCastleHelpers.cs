@@ -159,37 +159,6 @@ namespace LH.BouncyCastleHelpers
             return new Pkcs10CertificationRequest(signatureFactory, dn, keyPair.Public, attribute);
         }
 
-        /// <summary>
-        /// 将证书请求转换为 PEM 格式文本。
-        /// </summary>
-        /// <param name="csr">证书请求。</param>
-        /// <param name="pem">PEM 格式文本。</param>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static void ParseCsr(Pkcs10CertificationRequest csr, out string pem)
-        {
-            using (var writer = new StringWriter())
-            {
-                var pemWriter = new PemWriter(writer);
-                pemWriter.WriteObject(csr);
-                pem = writer.ToString();
-            }
-        }
-
-        /// <summary>
-        /// 从 PEM 格式文本读取证书请求。
-        /// </summary>
-        /// <param name="pem">PEM 格式文本。</param>
-        /// <returns></returns>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static Pkcs10CertificationRequest ReadCsr(string pem)
-        {
-            using (var reader = new StringReader(pem))
-            {
-                var obj = new PemReader(reader).ReadObject();
-                return obj as Pkcs10CertificationRequest;
-            }
-        }
-
         #endregion 证书请求
 
         #region 证书
@@ -256,37 +225,6 @@ namespace LH.BouncyCastleHelpers
             return GenerateCert(signatureAlgorithm, issuerPrivateKey, issuerCert.SubjectDN, subjectDN, subjectPublicKey, extensions, start, days);
         }
 
-        /// <summary>
-        /// 将证书转换为 PEM 格式文本。
-        /// </summary>
-        /// <param name="cert">证书。</param>
-        /// <param name="pem">PEM 格式文本。</param>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static void ParseCert(X509Certificate cert, out string pem)
-        {
-            using (var writer = new StringWriter())
-            {
-                var pemWriter = new PemWriter(writer);
-                pemWriter.WriteObject(cert);
-                pem = writer.ToString();
-            }
-        }
-
-        /// <summary>
-        /// 从 PEM 格式文本读取证书。
-        /// </summary>
-        /// <param name="pem">PEM 格式文本。</param>
-        /// <returns></returns>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static X509Certificate ReadCert(string pem)
-        {
-            using (var reader = new StringReader(pem))
-            {
-                var obj = new PemReader(reader).ReadObject();
-                return obj as X509Certificate;
-            }
-        }
-
         private static X509Certificate GenerateCert(string signatureAlgorithm,
                                                     AsymmetricKeyParameter issuerPrivateKey,
                                                     X509Name issuerDN,
@@ -327,64 +265,25 @@ namespace LH.BouncyCastleHelpers
         /// <param name="privateKey">私钥。</param>
         /// <param name="namedCerts">设置了别名的证书集合。</param>
         /// <param name="password">设置密码。</param>
-        /// <param name="output">输出到流。</param>
-        internal static void GeneratePfx(string keyAlias, AsymmetricKeyParameter privateKey, Dictionary<string, X509Certificate> namedCerts, string password, Stream output)
-        {
-            var store = new Pkcs12StoreBuilder().Build();
-            var certEntries = new List<X509CertificateEntry>();
-            foreach (var namedCert in namedCerts)
-            {
-                var certEntry = new X509CertificateEntry(namedCert.Value);
-                store.SetCertificateEntry(namedCert.Key, certEntry);
-                certEntries.Add(certEntry);
-            }
-            store.SetKeyEntry(keyAlias, new AsymmetricKeyEntry(privateKey), certEntries.ToArray());
-            var pass = string.IsNullOrEmpty(password) ? null : password.ToCharArray();
-            store.Save(output, pass, Common.SecureRandom);
-            output.Flush();
-        }
-
-        /// <summary>
-        /// 创建 P12 证书。
-        /// </summary>
-        /// <param name="keyAlias">私钥的别名。</param>
-        /// <param name="privateKey">私钥。</param>
-        /// <param name="namedCerts">设置了别名的证书集合。</param>
-        /// <param name="password">设置密码。</param>
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static byte[] GeneratePfx(string keyAlias, AsymmetricKeyParameter privateKey, Dictionary<string, X509Certificate> namedCerts, string password)
+        internal static Pkcs12Store GeneratePfx(string keyAlias, AsymmetricKeyParameter privateKey, Dictionary<string, X509Certificate> namedCerts, string password)
         {
             using (var ms = new MemoryStream())
             {
-                GeneratePfx(keyAlias, privateKey, namedCerts, password, ms);
-                return ms.ToArray();
-            }
-        }
-
-        /// <summary>
-        /// 读取 P12 证书。
-        /// </summary>
-        /// <param name="input">从流中读取。</param>
-        /// <param name="password">设置密码。</param>
-        internal static Pkcs12Store ReadPfx(Stream input, string password)
-        {
-            var pass = string.IsNullOrEmpty(password) ? null : password.ToCharArray();
-            return new Pkcs12Store(input, pass);
-        }
-
-        /// <summary>
-        /// 读取 P12 证书。
-        /// </summary>
-        /// <param name="raw">二进制对象。</param>
-        /// <param name="password">设置密码。</param>
-        /// <returns></returns>
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static Pkcs12Store ReadPfx(byte[] raw, string password)
-        {
-            using (var ms = new MemoryStream(raw))
-            {
-                return ReadPfx(ms, password);
+                var store = new Pkcs12StoreBuilder().Build();
+                var certEntries = new List<X509CertificateEntry>();
+                foreach (var namedCert in namedCerts)
+                {
+                    var certEntry = new X509CertificateEntry(namedCert.Value);
+                    store.SetCertificateEntry(namedCert.Key, certEntry);
+                    certEntries.Add(certEntry);
+                }
+                store.SetKeyEntry(keyAlias, new AsymmetricKeyEntry(privateKey), certEntries.ToArray());
+                var pass = string.IsNullOrEmpty(password) ? null : password.ToCharArray();
+                store.Save(ms, pass, Common.SecureRandom);
+                ms.Flush();
+                return new Pkcs12Store(ms, pass);
             }
         }
 
@@ -739,110 +638,6 @@ namespace LH.BouncyCastleHelpers
             return generator.GenerateKeyPair();
         }
 
-        /// <summary>
-        /// 将密钥转换为 PEM 格式文本。
-        /// </summary>
-        /// <param name="key">密钥。</param>
-        /// <param name="pem">PEM 格式文本。</param>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static void ParseKey(AsymmetricKeyParameter key, out string pem)
-        {
-            using (var writer = new StringWriter())
-            {
-                var pemWriter = new PemWriter(writer);
-                pemWriter.WriteObject(key);
-                pem = writer.ToString();
-            }
-        }
-
-        /// <summary>
-        /// 使用密码保护，将私钥转换为 PEM 格式文本。
-        /// </summary>
-        /// <param name="privateKey">私钥。</param>
-        /// <param name="pemEncryptionAlgorithm">加密算法。可使用 NamedPemEncryptionAlgorithms 类中提供的已命名算法。名称是 OpenSSL 定义的 DEK 格式。</param>
-        /// <param name="password">设置密码。</param>
-        /// <param name="privateKeyEncPem">带加密标签的 PEM 格式文本。</param>
-        /// <returns></returns>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal static void ParseKey(AsymmetricKeyParameter privateKey, string pemEncryptionAlgorithm, string password, out string privateKeyEncPem)
-        {
-            if (privateKey.IsPrivate)
-            {
-                using (var writer = new StringWriter())
-                {
-                    var pemWriter = new PemWriter(writer);
-                    pemWriter.WriteObject(privateKey, pemEncryptionAlgorithm, password.ToCharArray(), Common.SecureRandom);
-                    privateKeyEncPem = writer.ToString();
-                }
-            }
-            else
-            {
-                throw new ArgumentException("不是私钥。", nameof(privateKey));
-            }
-        }
-
-        /// <summary>
-        /// 从 PEM 格式文本读取密钥对。
-        /// </summary>
-        /// <param name="privateKeyPem">PEM 格式文本。</param>
-        /// <returns></returns>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static AsymmetricCipherKeyPair ReadKeyPair(string privateKeyPem)
-        {
-            using (var reader = new StringReader(privateKeyPem))
-            {
-                var obj = new PemReader(reader).ReadObject();
-                return obj as AsymmetricCipherKeyPair;
-            }
-        }
-
-        /// <summary>
-        /// 从密码保护的 PEM 格式文本读取密钥对。
-        /// </summary>
-        /// <param name="privateKeyEncPem">带加密标签的 PEM 格式文本。</param>
-        /// <param name="password">设置密码。</param>
-        /// <returns></returns>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static AsymmetricCipherKeyPair ReadKeyPair(string privateKeyEncPem, string password)
-        {
-            using (var reader = new StringReader(privateKeyEncPem))
-            {
-                var obj = new PemReader(reader, new Password(password)).ReadObject();
-                return obj as AsymmetricCipherKeyPair;
-            }
-        }
-
-        /// <summary>
-        /// 从 PEM 格式文本读取公钥。
-        /// </summary>
-        /// <param name="publicKeyPem">PEM 格式文本。</param>
-        /// <returns></returns>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static AsymmetricKeyParameter ReadPublicKey(string publicKeyPem)
-        {
-            using (var reader = new StringReader(publicKeyPem))
-            {
-                var obj = new PemReader(reader).ReadObject();
-                return obj as AsymmetricKeyParameter;
-            }
-        }
-
-        private sealed class Password : IPasswordFinder
-        {
-            private readonly char[] _chars;
-
-            internal Password(string password)
-            {
-                _chars = password.ToCharArray();
-            }
-
-            public char[] GetPassword()
-            {
-                return _chars;
-            }
-        }
-
         #endregion 非对称密钥
 
         #region 对称密钥
@@ -880,6 +675,177 @@ namespace LH.BouncyCastleHelpers
         }
 
         #endregion 对称密钥
+    }
+
+    /// <summary>
+    /// 证书辅助。
+    /// </summary>
+    internal static class PemHelper
+    {
+        /// <summary>
+        /// 将证书转换为 PEM 格式文本。
+        /// </summary>
+        /// <param name="cert">证书。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static string Cert2Pem(X509Certificate cert)
+        {
+            using (var writer = new StringWriter())
+            {
+                var pemWriter = new PemWriter(writer);
+                pemWriter.WriteObject(cert);
+                return writer.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 将证书请求转换为 PEM 格式文本。
+        /// </summary>
+        /// <param name="csr">证书请求。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static string Csr2Pem(Pkcs10CertificationRequest csr)
+        {
+            using (var writer = new StringWriter())
+            {
+                var pemWriter = new PemWriter(writer);
+                pemWriter.WriteObject(csr);
+                return writer.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 将密钥转换为 PEM 格式文本。
+        /// </summary>
+        /// <param name="key">密钥。</param>]
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static string Key2Pem(AsymmetricKeyParameter key)
+        {
+            using (var writer = new StringWriter())
+            {
+                var pemWriter = new PemWriter(writer);
+                pemWriter.WriteObject(key);
+                return writer.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 使用密码保护，将私钥转换为 PEM 格式文本。
+        /// </summary>
+        /// <param name="privateKey">私钥。</param>
+        /// <param name="pemEncryptionAlgorithm">加密算法。可使用 NamedPemEncryptionAlgorithms 类中提供的已命名算法。名称是 OpenSSL 定义的 DEK 格式。</param>
+        /// <param name="password">设置密码。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
+        internal static string Key2Pem(AsymmetricKeyParameter privateKey, string pemEncryptionAlgorithm, string password)
+        {
+            if (privateKey.IsPrivate)
+            {
+                using (var writer = new StringWriter())
+                {
+                    var pemWriter = new PemWriter(writer);
+                    pemWriter.WriteObject(privateKey, pemEncryptionAlgorithm, password.ToCharArray(), Common.SecureRandom);
+                    return writer.ToString();
+                }
+            }
+            else
+            {
+                throw new ArgumentException("不是私钥。", nameof(privateKey));
+            }
+        }
+
+        /// <summary>
+        /// 将 PEM 格式文本转换为证书。
+        /// </summary>
+        /// <param name="pem">PEM 格式文本。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static X509Certificate Pem2Cert(string pem)
+        {
+            using (var reader = new StringReader(pem))
+            {
+                var obj = new PemReader(reader).ReadObject();
+                return obj as X509Certificate;
+            }
+        }
+
+        /// <summary>
+        /// 将 PEM 格式文本转换为证书请求。
+        /// </summary>
+        /// <param name="pem">PEM 格式文本。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static Pkcs10CertificationRequest Pem2Csr(string pem)
+        {
+            using (var reader = new StringReader(pem))
+            {
+                var obj = new PemReader(reader).ReadObject();
+                return obj as Pkcs10CertificationRequest;
+            }
+        }
+
+        /// <summary>
+        /// 将 PEM 格式文本转换为密钥。
+        /// </summary>
+        /// <param name="pem">PEM 格式文本。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static AsymmetricKeyParameter Pem2Key(string pem)
+        {
+            using (var reader = new StringReader(pem))
+            {
+                var obj = new PemReader(reader).ReadObject();
+                return obj as AsymmetricKeyParameter;
+            }
+        }
+
+        /// <summary>
+        /// 将 PEM 格式文本转换为密钥对。
+        /// </summary>
+        /// <param name="pem">PEM 格式文本。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static AsymmetricCipherKeyPair Pem2KeyPair(string pem)
+        {
+            using (var reader = new StringReader(pem))
+            {
+                var obj = new PemReader(reader).ReadObject();
+                return obj as AsymmetricCipherKeyPair;
+            }
+        }
+
+        /// <summary>
+        /// 指定密码，将 PEM 格式文本转换为密钥对。
+        /// </summary>
+        /// <param name="pem">带加密标签的 PEM 格式文本。</param>
+        /// <param name="password">设置密码。</param>
+        /// <returns></returns>
+        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        internal static AsymmetricCipherKeyPair Pem2KeyPair(string pem, string password)
+        {
+            using (var reader = new StringReader(pem))
+            {
+                var obj = new PemReader(reader, new Password(password)).ReadObject();
+                return obj as AsymmetricCipherKeyPair;
+            }
+        }
+
+        private sealed class Password : IPasswordFinder
+        {
+            private readonly char[] _chars;
+
+            internal Password(string password)
+            {
+                _chars = password.ToCharArray();
+            }
+
+            public char[] GetPassword()
+            {
+                return _chars;
+            }
+        }
     }
 
     /// <summary>
