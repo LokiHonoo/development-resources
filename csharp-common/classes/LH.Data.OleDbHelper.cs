@@ -17,29 +17,29 @@ namespace LH.Data
     /// <summary>
     /// OleDb extension.
     /// </summary>
-    internal static class OleDbHelper
+    public static class OleDbHelper
     {
         #region ConnectionBehavior
 
         /// <summary>
         /// Connection open/close behavior when using DataAdapter. Default Auto.
         /// </summary>
-        internal static OleDbConnectionBehavior DataAdapterConnectionBehavior { get; set; } = OleDbConnectionBehavior.Auto;
+        public static OleDbConnectionBehavior DataAdapterConnectionBehavior { get; set; } = OleDbConnectionBehavior.Auto;
 
         /// <summary>
         /// Connection open/close behavior when using DataReader. Default Manual.
         /// </summary>
-        internal static OleDbConnectionBehavior DataReaderConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
+        public static OleDbConnectionBehavior DataReaderConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Execute. Default Manual.
         /// </summary>
-        internal static OleDbConnectionBehavior ExecuteConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
+        public static OleDbConnectionBehavior ExecuteConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Transaction. Default Manual.
         /// </summary>
-        internal static OleDbConnectionBehavior TransactionConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
+        public static OleDbConnectionBehavior TransactionConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
 
         #endregion ConnectionBehavior
 
@@ -50,9 +50,9 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        internal static OleDbConnection BuildConnection(OleDbConnectionStringBuilder connectionStringBuilder)
+        public static OleDbConnection BuildConnection(OleDbConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder == null)
+            if (connectionStringBuilder is null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -65,7 +65,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         /// <returns></returns>
-        internal static OleDbConnection BuildConnection(string connectionString)
+        public static OleDbConnection BuildConnection(string connectionString)
         {
             return new OleDbConnection(connectionString);
         }
@@ -75,9 +75,9 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        internal static string BuildConnectionString(OleDbConnectionStringBuilder connectionStringBuilder)
+        public static string BuildConnectionString(OleDbConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder == null)
+            if (connectionStringBuilder is null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -96,7 +96,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText)
+        public static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText)
         {
             return FillDataSet(dataSet, connection, selectCommandText, null);
         }
@@ -110,9 +110,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
+        public static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -137,7 +137,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText)
+        public static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText)
         {
             return FillDataTable(dataTable, connection, selectCommandText, null);
         }
@@ -151,9 +151,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
+        public static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -178,7 +178,7 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText)
+        public static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText)
         {
             return new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
         }
@@ -191,7 +191,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
+        public static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
             OleDbDataAdapter result = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
             if (parameters != null && parameters.Length > 0) { result.SelectCommand.Parameters.AddRange(parameters); }
@@ -204,7 +204,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataSet GetDataSet(OleDbConnection connection, string selectCommandText)
+        public static DataSet GetDataSet(OleDbConnection connection, string selectCommandText)
         {
             return GetDataSet(connection, selectCommandText, null);
         }
@@ -217,9 +217,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static DataSet GetDataSet(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
+        public static DataSet GetDataSet(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -243,7 +243,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataTable GetDataTable(OleDbConnection connection, string selectCommandText)
+        public static DataTable GetDataTable(OleDbConnection connection, string selectCommandText)
         {
             return GetDataTable(connection, selectCommandText, null);
         }
@@ -256,9 +256,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static DataTable GetDataTable(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
+        public static DataTable GetDataTable(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -286,7 +286,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText)
+        public static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText)
         {
             return GetDataReader(connection, commandText, null);
         }
@@ -300,9 +300,9 @@ namespace LH.Data
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "<Pending>")]
-        internal static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
+        public static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -343,7 +343,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int ExecuteNonQuery(OleDbConnection connection, string commandText)
+        public static int ExecuteNonQuery(OleDbConnection connection, string commandText)
         {
             return ExecuteNonQuery(connection, commandText, null);
         }
@@ -356,9 +356,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int ExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
+        public static int ExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -385,7 +385,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void ExecuteProcedure(OleDbConnection connection, string procedure)
+        public static void ExecuteProcedure(OleDbConnection connection, string procedure)
         {
             ExecuteProcedure(connection, procedure, null);
         }
@@ -398,9 +398,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        internal static void ExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters)
+        public static void ExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -425,7 +425,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object ExecuteScalar(OleDbConnection connection, string commandText)
+        public static object ExecuteScalar(OleDbConnection connection, string commandText)
         {
             return ExecuteScalar(connection, commandText, null);
         }
@@ -438,9 +438,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static object ExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
+        public static object ExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -472,7 +472,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText)
+        public static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText)
         {
             return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, null);
         }
@@ -484,7 +484,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
+        public static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
             return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, parameters);
         }
@@ -496,7 +496,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText)
+        public static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText)
         {
             return TransactionExecuteNonQuery(connection, iso, commandText, null);
         }
@@ -512,9 +512,9 @@ namespace LH.Data
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        internal static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
+        public static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -550,7 +550,7 @@ namespace LH.Data
                 }
             }
             if (state != ConnectionState.Open) { connection.Close(); }
-            if (exception == null)
+            if (exception is null)
             {
                 return result;
             }
@@ -565,7 +565,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void TransactionExecuteProcedure(OleDbConnection connection, string procedure)
+        public static void TransactionExecuteProcedure(OleDbConnection connection, string procedure)
         {
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, null);
         }
@@ -576,7 +576,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        internal static void TransactionExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters)
+        public static void TransactionExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters)
         {
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, parameters);
         }
@@ -587,7 +587,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure)
+        public static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure)
         {
             TransactionExecuteProcedure(connection, iso, procedure, null);
         }
@@ -602,9 +602,9 @@ namespace LH.Data
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-        internal static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure, params OleDbParameter[] parameters)
+        public static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure, params OleDbParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -652,7 +652,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(OleDbConnection connection, string commandText)
+        public static object TransactionExecuteScalar(OleDbConnection connection, string commandText)
         {
             return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, null);
         }
@@ -664,7 +664,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
+        public static object TransactionExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
             return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, parameters);
         }
@@ -676,7 +676,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText)
+        public static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText)
         {
             return TransactionExecuteScalar(connection, iso, commandText, null);
         }
@@ -692,9 +692,9 @@ namespace LH.Data
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
+        public static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -730,7 +730,7 @@ namespace LH.Data
                 }
             }
             if (state != ConnectionState.Open) { connection.Close(); }
-            if (exception == null)
+            if (exception is null)
             {
                 return result;
             }
@@ -748,7 +748,7 @@ namespace LH.Data
     /// <summary>
     /// The mode of the connection when querying.
     /// </summary>
-    internal enum OleDbConnectionBehavior
+    public enum OleDbConnectionBehavior
     {
         /// <summary>Does not open automatically. If the connection is not open  when the querying, an exception is thrown.</summary>
         Manual,

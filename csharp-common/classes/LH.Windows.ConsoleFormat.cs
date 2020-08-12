@@ -17,18 +17,18 @@ namespace LH.Windows
     /// Windows 控制台控制。
     /// </summary>
     [SuppressMessage("Design", "CA1060:将 pinvoke 移到本机方法类", Justification = "<挂起>")]
-    internal static class ConsoleFormat
+    public static class ConsoleFormat
     {
         #region Native
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint mode);
+        private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint mode);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern IntPtr GetStdHandle(int hConsoleHandle);
+        private static extern IntPtr GetStdHandle(int hConsoleHandle);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint mode);
+        private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint mode);
 
         #endregion Native
 
@@ -41,7 +41,7 @@ namespace LH.Windows
         /// <summary>
         /// 关闭控制台快速编辑模式，防止阻塞现象。
         /// </summary>
-        internal static void DisableQuickEditMode()
+        public static void DisableQuickEditMode()
         {
             IntPtr hStdin = GetStdHandle(STD_INPUT_HANDLE);
             GetConsoleMode(hStdin, out uint mode);

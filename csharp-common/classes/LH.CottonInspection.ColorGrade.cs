@@ -17,7 +17,7 @@ namespace LH.CottonInspection
     /// <summary>
     /// 棉花检验，颜色级转换。
     /// </summary>
-    internal static class ColorGrade
+    public static class ColorGrade
     {
         /// <summary>
         /// 颜色级和聚焦扫描值对应关系表。
@@ -531,7 +531,7 @@ namespace LH.CottonInspection
         /// 获取关系表的 CSV 表格。
         /// </summary>
         /// <returns></returns>
-        internal static string GetCSV()
+        public static string GetCSV()
         {
             StringBuilder sb = new StringBuilder();
             double b = 4d;
@@ -567,7 +567,7 @@ namespace LH.CottonInspection
         /// <returns></returns>
         /// <exception cref="Exception" />
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal static byte GetGrade(double rd, double b)
+        public static byte GetGrade(double rd, double b)
         {
             b = Math.Round(b, 1);
             rd = Math.Round(rd, 1);
@@ -592,7 +592,7 @@ namespace LH.CottonInspection
         /// <exception cref="Exception" />
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         [SuppressMessage("样式", "IDE0066:将 switch 语句转换为表达式", Justification = "<挂起>")]
-        internal static string GetName(byte value)
+        public static string GetName(byte value)
         {
             switch (value)
             {

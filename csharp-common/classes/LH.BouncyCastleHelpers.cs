@@ -90,7 +90,7 @@ namespace LH.BouncyCastleHelpers
     /// <summary>
     /// 证书辅助。
     /// </summary>
-    internal static class CertificateHelper
+    public static class CertificateHelper
     {
         #region 证书请求
 
@@ -102,8 +102,13 @@ namespace LH.BouncyCastleHelpers
         /// <param name="publicKey">使用者公钥。</param>
         /// <param name="extensions">使用者扩展属性。</param>
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal static void ExtractCsr(Pkcs10CertificationRequest csr, out X509Name dn, out AsymmetricKeyParameter publicKey, out X509Extensions extensions)
+        public static void ExtractCsr(Pkcs10CertificationRequest csr, out X509Name dn, out AsymmetricKeyParameter publicKey, out X509Extensions extensions)
         {
+            if (csr is null)
+            {
+                throw new ArgumentNullException(nameof(csr));
+            }
+
             var csrInfo = csr.GetCertificationRequestInfo();
             publicKey = csr.GetPublicKey();
             if (!csr.Verify(publicKey))
@@ -151,8 +156,12 @@ namespace LH.BouncyCastleHelpers
         /// <param name="dn">使用者 DN。</param>
         /// <param name="extensions">使用者扩展属性。</param>
         /// <returns></returns>
-        internal static Pkcs10CertificationRequest GenerateCsr(string signatureAlgorithm, AsymmetricCipherKeyPair keyPair, X509Name dn, X509Extensions extensions)
+        public static Pkcs10CertificationRequest GenerateCsr(string signatureAlgorithm, AsymmetricCipherKeyPair keyPair, X509Name dn, X509Extensions extensions)
         {
+            if (keyPair is null)
+            {
+                throw new ArgumentNullException(nameof(keyPair));
+            }
             var signatureFactory = new Asn1SignatureFactory(signatureAlgorithm, keyPair.Private, Common.SecureRandom);
             var set = new DerSet(extensions);
             var attribute = new DerSet(new AttributePkcs(PkcsObjectIdentifiers.Pkcs9AtExtensionRequest, set));
@@ -173,13 +182,18 @@ namespace LH.BouncyCastleHelpers
         /// <param name="start">启用时间。</param>
         /// <param name="days">从启用时间开始的有效天数。</param>
         /// <returns></returns>
-        internal static X509Certificate GenerateIssuerCert(string signatureAlgorithm,
+        public static X509Certificate GenerateIssuerCert(string signatureAlgorithm,
                                                            AsymmetricCipherKeyPair keyPair,
                                                            X509Name dn,
                                                            X509Extensions extensions,
                                                            DateTime start,
                                                            int days)
         {
+            if (keyPair is null)
+            {
+                throw new ArgumentNullException(nameof(keyPair));
+            }
+
             return GenerateCert(signatureAlgorithm, keyPair.Private, dn, dn, keyPair.Public, extensions, start, days);
         }
 
@@ -197,7 +211,7 @@ namespace LH.BouncyCastleHelpers
         /// <returns></returns>
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         [SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
-        internal static X509Certificate GenerateSubjectCert(string signatureAlgorithm,
+        public static X509Certificate GenerateSubjectCert(string signatureAlgorithm,
                                                             AsymmetricKeyParameter issuerPrivateKey,
                                                             X509Certificate issuerCert,
                                                             X509Name subjectDN,
@@ -206,6 +220,11 @@ namespace LH.BouncyCastleHelpers
                                                             DateTime start,
                                                             int days)
         {
+            if (issuerCert is null)
+            {
+                throw new ArgumentNullException(nameof(issuerCert));
+            }
+
             try
             {
                 issuerCert.CheckValidity();
@@ -267,8 +286,12 @@ namespace LH.BouncyCastleHelpers
         /// <param name="password">设置密码。</param>
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static Pkcs12Store GeneratePfx(string keyAlias, AsymmetricKeyParameter privateKey, Dictionary<string, X509Certificate> namedCerts, string password)
+        public static Pkcs12Store GeneratePfx(string keyAlias, AsymmetricKeyParameter privateKey, Dictionary<string, X509Certificate> namedCerts, string password)
         {
+            if (namedCerts is null)
+            {
+                throw new ArgumentNullException(nameof(namedCerts));
+            }
             using (var ms = new MemoryStream())
             {
                 var store = new Pkcs12StoreBuilder().Build();
@@ -293,7 +316,7 @@ namespace LH.BouncyCastleHelpers
     /// <summary>
     /// 加密辅助。
     /// </summary>
-    internal static class EncryptionHelper
+    public static class EncryptionHelper
     {
         #region 非对称加解密
 
@@ -304,8 +327,13 @@ namespace LH.BouncyCastleHelpers
         /// <param name="asymmetricPrivateKey">非对称算法私钥。</param>
         /// <param name="data">要解密的数据。内部实现分段解密，可传入全部数据字节。</param>
         /// <returns></returns>
-        internal static byte[] AsymmetricDecrypt(string asymmetricCipherString, ICipherParameters asymmetricPrivateKey, byte[] data)
+        public static byte[] AsymmetricDecrypt(string asymmetricCipherString, ICipherParameters asymmetricPrivateKey, byte[] data)
         {
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
             return AsymmetricDecrypt(asymmetricCipherString, asymmetricPrivateKey, data, 0, data.Length);
         }
 
@@ -319,7 +347,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="count">从缓冲区读取的字节数。内部实现分段解密，可传入全部数据字节长度。</param>
         /// <returns></returns>
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal static byte[] AsymmetricDecrypt(string asymmetricCipherString, ICipherParameters asymmetricPrivateKey, byte[] buffer, int offset, int count)
+        public static byte[] AsymmetricDecrypt(string asymmetricCipherString, ICipherParameters asymmetricPrivateKey, byte[] buffer, int offset, int count)
         {
             var algorithm = CipherUtilities.GetCipher(asymmetricCipherString);
             algorithm.Init(false, asymmetricPrivateKey);
@@ -355,8 +383,12 @@ namespace LH.BouncyCastleHelpers
         /// <param name="asymmetricPublicKey">非对称算法公钥。</param>
         /// <param name="data">要加密的数据。内部实现分段加密，可传入全部数据字节。</param>
         /// <returns></returns>
-        internal static byte[] AsymmetricEncrypt(string asymmetricCipherString, ICipherParameters asymmetricPublicKey, byte[] data)
+        public static byte[] AsymmetricEncrypt(string asymmetricCipherString, ICipherParameters asymmetricPublicKey, byte[] data)
         {
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
             return AsymmetricEncrypt(asymmetricCipherString, asymmetricPublicKey, data, 0, data.Length);
         }
 
@@ -369,7 +401,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。内部实现分段加密，可传入全部数据字节长度。</param>
         /// <returns></returns>
-        internal static byte[] AsymmetricEncrypt(string asymmetricCipherString, ICipherParameters asymmetricPublicKey, byte[] buffer, int offset, int count)
+        public static byte[] AsymmetricEncrypt(string asymmetricCipherString, ICipherParameters asymmetricPublicKey, byte[] buffer, int offset, int count)
         {
             var algorithm = CipherUtilities.GetCipher(asymmetricCipherString);
             algorithm.Init(true, asymmetricPublicKey);
@@ -415,8 +447,12 @@ namespace LH.BouncyCastleHelpers
         /// <param name="symmetricKey">对称算法密钥。</param>
         /// <param name="data">要解密的数据。</param>
         /// <returns></returns>
-        internal static byte[] SymmetricDecrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] data)
+        public static byte[] SymmetricDecrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] data)
         {
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
             return SymmetricDecrypt(symmetricCipherString, symmetricKey, data, 0, data.Length);
         }
 
@@ -429,7 +465,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
-        internal static byte[] SymmetricDecrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] buffer, int offset, int count)
+        public static byte[] SymmetricDecrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] buffer, int offset, int count)
         {
             var algorithm = CipherUtilities.GetCipher(symmetricCipherString);
             algorithm.Init(false, symmetricKey);
@@ -443,8 +479,12 @@ namespace LH.BouncyCastleHelpers
         /// <param name="symmetricKey">对称算法密钥。</param>
         /// <param name="data">要加密的数据。</param>
         /// <returns></returns>
-        internal static byte[] SymmetricEncrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] data)
+        public static byte[] SymmetricEncrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] data)
         {
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
             return SymmetricEncrypt(symmetricCipherString, symmetricKey, data, 0, data.Length);
         }
 
@@ -457,7 +497,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
-        internal static byte[] SymmetricEncrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] buffer, int offset, int count)
+        public static byte[] SymmetricEncrypt(string symmetricCipherString, ICipherParameters symmetricKey, byte[] buffer, int offset, int count)
         {
             var algorithm = CipherUtilities.GetCipher(symmetricCipherString);
             algorithm.Init(true, symmetricKey);
@@ -470,7 +510,7 @@ namespace LH.BouncyCastleHelpers
     /// <summary>
     /// 校验辅助。
     /// </summary>
-    internal static class HashHelper
+    public static class HashHelper
     {
         /// <summary>
         /// 校验。
@@ -478,8 +518,13 @@ namespace LH.BouncyCastleHelpers
         /// <param name="algorithmName">校验算法。可使用 NamedHashAlgorithms 类中提供的常用算法。可用算法清单参见注释中的补充说明。</param>
         /// <param name="data">要校验的数据。</param>
         /// <returns></returns>
-        internal static byte[] ComputeHash(string algorithmName, byte[] data)
+        public static byte[] ComputeHash(string algorithmName, byte[] data)
         {
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
             return ComputeHash(algorithmName, data, 0, data.Length);
         }
 
@@ -491,7 +536,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
-        internal static byte[] ComputeHash(string algorithmName, byte[] buffer, int offset, int count)
+        public static byte[] ComputeHash(string algorithmName, byte[] buffer, int offset, int count)
         {
             IDigest algorithm = DigestUtilities.GetDigest(algorithmName);
             algorithm.BlockUpdate(buffer, offset, count);
@@ -507,8 +552,13 @@ namespace LH.BouncyCastleHelpers
         /// <param name="hmacKey">HMAC 密钥。随机字节数组。</param>
         /// <param name="data">要校验的数据。</param>
         /// <returns></returns>
-        internal static byte[] HmacComputeHash(string algorithmName, byte[] hmacKey, byte[] data)
+        public static byte[] HmacComputeHash(string algorithmName, byte[] hmacKey, byte[] data)
         {
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
             return HmacComputeHash(algorithmName, hmacKey, data, 0, data.Length);
         }
 
@@ -521,7 +571,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
-        internal static byte[] HmacComputeHash(string algorithmName, byte[] hmacKey, byte[] buffer, int offset, int count)
+        public static byte[] HmacComputeHash(string algorithmName, byte[] hmacKey, byte[] buffer, int offset, int count)
         {
             IDigest digest = DigestUtilities.GetDigest(algorithmName);
             HMac algorithm = new HMac(digest);
@@ -536,7 +586,7 @@ namespace LH.BouncyCastleHelpers
     /// <summary>
     /// 密钥交换辅助。
     /// </summary>
-    internal static class KeyExchangeHelper
+    public static class KeyExchangeHelper
     {
         /// <summary>
         /// 创建密钥交换协议，并输出公钥。
@@ -544,7 +594,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="parameters">曲线参数。</param>
         /// <param name="publicKey">用于传递给对方的公钥。</param>
         /// <returns></returns>
-        internal static IBasicAgreement CreateAgreement(DHParameters parameters, out AsymmetricKeyParameter publicKey)
+        public static IBasicAgreement CreateAgreement(DHParameters parameters, out AsymmetricKeyParameter publicKey)
         {
             var generator = GeneratorUtilities.GetKeyPairGenerator("ECDH");
             var kgp = new DHKeyGenerationParameters(Common.SecureRandom, parameters);
@@ -561,7 +611,7 @@ namespace LH.BouncyCastleHelpers
         /// </summary>
         /// <param name="keySize">密钥长度。</param>
         /// <returns></returns>
-        internal static DHParameters CreateParametersA(int keySize)
+        public static DHParameters CreateParametersA(int keySize)
         {
             var generator = new DHParametersGenerator();
             generator.Init(keySize, 25, Common.SecureRandom);
@@ -574,7 +624,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="aP">Alice 曲线参数的 P 值。</param>
         /// <param name="aG">Alice 曲线参数的 G 值。</param>
         /// <returns></returns>
-        internal static DHParameters CreateParametersB(BigInteger aP, BigInteger aG)
+        public static DHParameters CreateParametersB(BigInteger aP, BigInteger aG)
         {
             return new DHParameters(aP, aG);
         }
@@ -583,7 +633,7 @@ namespace LH.BouncyCastleHelpers
     /// <summary>
     /// 密钥辅助。
     /// </summary>
-    internal static class KeyParametersHelper
+    public static class KeyParametersHelper
     {
         #region 非对称密钥
 
@@ -592,7 +642,7 @@ namespace LH.BouncyCastleHelpers
         /// </summary>
         /// <param name="curve">曲线。可使用 NamedCurves 类中提供的常用曲线。或 SecObjectIdentifiers 中的命名曲线。</param>
         /// <returns></returns>
-        internal static AsymmetricCipherKeyPair GenerateEcdsaKeyPair(string curve)
+        public static AsymmetricCipherKeyPair GenerateEcdsaKeyPair(string curve)
         {
             var ec = SecNamedCurves.GetByName(curve);
             var domain = new ECDomainParameters(ec.Curve, ec.G, ec.N, ec.H);
@@ -608,7 +658,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="keySize">密钥长度。必须大于等于 2048且是 64 的倍数。</param>
         /// <returns></returns>
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal static AsymmetricCipherKeyPair GenerateRsaKeyPair(int keySize)
+        public static AsymmetricCipherKeyPair GenerateRsaKeyPair(int keySize)
         {
             if (keySize < 2048)
             {
@@ -628,7 +678,7 @@ namespace LH.BouncyCastleHelpers
         /// 创建 SM2 密钥对。
         /// </summary>
         /// <returns></returns>
-        internal static AsymmetricCipherKeyPair GenerateSM2KeyPair()
+        public static AsymmetricCipherKeyPair GenerateSM2KeyPair()
         {
             var ec = GMNamedCurves.GetByOid(GMObjectIdentifiers.sm2p256v1);
             var domain = new ECDomainParameters(ec.Curve, ec.G, ec.N, ec.H);
@@ -648,7 +698,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="rgbKey">密钥数组。</param>
         /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
         /// <returns></returns>
-        internal static ICipherParameters GenerateRC5Key(byte[] rgbKey, byte[] rgbIV)
+        public static ICipherParameters GenerateRC5Key(byte[] rgbKey, byte[] rgbIV)
         {
             ICipherParameters parameters = new RC5Parameters(rgbKey, 12);
             if (rgbIV != null && rgbIV.Length > 0)
@@ -664,7 +714,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="rgbKey">密钥数组。</param>
         /// <param name="rgbIV">初始化向量数组。不使用 IV 的模式可以传入 null。允许的长度参见模式说明。</param>
         /// <returns></returns>
-        internal static ICipherParameters GenerateSymmetricKey(byte[] rgbKey, byte[] rgbIV)
+        public static ICipherParameters GenerateSymmetricKey(byte[] rgbKey, byte[] rgbIV)
         {
             ICipherParameters parameters = new KeyParameter(rgbKey);
             if (rgbIV != null && rgbIV.Length > 0)
@@ -680,7 +730,7 @@ namespace LH.BouncyCastleHelpers
     /// <summary>
     /// 证书辅助。
     /// </summary>
-    internal static class PemHelper
+    public static class PemHelper
     {
         /// <summary>
         /// 将证书转换为 PEM 格式文本。
@@ -688,7 +738,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="cert">证书。</param>
         /// <returns></returns>
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static string Cert2Pem(X509Certificate cert)
+        public static string Cert2Pem(X509Certificate cert)
         {
             using (var writer = new StringWriter())
             {
@@ -704,7 +754,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="csr">证书请求。</param>
         /// <returns></returns>
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static string Csr2Pem(Pkcs10CertificationRequest csr)
+        public static string Csr2Pem(Pkcs10CertificationRequest csr)
         {
             using (var writer = new StringWriter())
             {
@@ -720,7 +770,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="key">密钥。</param>]
         /// <returns></returns>
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static string Key2Pem(AsymmetricKeyParameter key)
+        public static string Key2Pem(AsymmetricKeyParameter key)
         {
             using (var writer = new StringWriter())
             {
@@ -739,8 +789,16 @@ namespace LH.BouncyCastleHelpers
         /// <returns></returns>
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal static string Key2Pem(AsymmetricKeyParameter privateKey, string pemEncryptionAlgorithm, string password)
+        public static string Key2Pem(AsymmetricKeyParameter privateKey, string pemEncryptionAlgorithm, string password)
         {
+            if (privateKey is null)
+            {
+                throw new ArgumentNullException(nameof(privateKey));
+            }
+            if (password is null)
+            {
+                throw new ArgumentNullException(nameof(password));
+            }
             if (privateKey.IsPrivate)
             {
                 using (var writer = new StringWriter())
@@ -762,7 +820,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="pem">PEM 格式文本。</param>
         /// <returns></returns>
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static X509Certificate Pem2Cert(string pem)
+        public static X509Certificate Pem2Cert(string pem)
         {
             using (var reader = new StringReader(pem))
             {
@@ -777,7 +835,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="pem">PEM 格式文本。</param>
         /// <returns></returns>
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static Pkcs10CertificationRequest Pem2Csr(string pem)
+        public static Pkcs10CertificationRequest Pem2Csr(string pem)
         {
             using (var reader = new StringReader(pem))
             {
@@ -792,7 +850,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="pem">PEM 格式文本。</param>
         /// <returns></returns>
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static AsymmetricKeyParameter Pem2Key(string pem)
+        public static AsymmetricKeyParameter Pem2Key(string pem)
         {
             using (var reader = new StringReader(pem))
             {
@@ -807,7 +865,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="pem">PEM 格式文本。</param>
         /// <returns></returns>
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static AsymmetricCipherKeyPair Pem2KeyPair(string pem)
+        public static AsymmetricCipherKeyPair Pem2KeyPair(string pem)
         {
             using (var reader = new StringReader(pem))
             {
@@ -823,8 +881,13 @@ namespace LH.BouncyCastleHelpers
         /// <param name="password">设置密码。</param>
         /// <returns></returns>
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static AsymmetricCipherKeyPair Pem2KeyPair(string pem, string password)
+        public static AsymmetricCipherKeyPair Pem2KeyPair(string pem, string password)
         {
+            if (password is null)
+            {
+                throw new ArgumentNullException(nameof(password));
+            }
+
             using (var reader = new StringReader(pem))
             {
                 var obj = new PemReader(reader, new Password(password)).ReadObject();
@@ -851,7 +914,7 @@ namespace LH.BouncyCastleHelpers
     /// <summary>
     /// 签名辅助。
     /// </summary>
-    internal static class SignatureHelper
+    public static class SignatureHelper
     {
         /// <summary>
         /// 签名。
@@ -860,8 +923,13 @@ namespace LH.BouncyCastleHelpers
         /// <param name="privateKey">本地私钥。</param>
         /// <param name="data">要计算签名的数据。</param>
         /// <returns></returns>
-        internal static byte[] Sign(string algorithmName, AsymmetricKeyParameter privateKey, byte[] data)
+        public static byte[] Sign(string algorithmName, AsymmetricKeyParameter privateKey, byte[] data)
         {
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
             return Sign(algorithmName, privateKey, data, 0, data.Length);
         }
 
@@ -874,7 +942,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="offset">缓冲区偏移。</param>
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <returns></returns>
-        internal static byte[] Sign(string algorithmName, AsymmetricKeyParameter privateKey, byte[] buffer, int offset, int count)
+        public static byte[] Sign(string algorithmName, AsymmetricKeyParameter privateKey, byte[] buffer, int offset, int count)
         {
             var signer = SignerUtilities.InitSigner(algorithmName, true, privateKey, Common.SecureRandom);
             signer.BlockUpdate(buffer, offset, count);
@@ -889,8 +957,13 @@ namespace LH.BouncyCastleHelpers
         /// <param name="data">要计算签名的数据。</param>
         /// <param name="signature">对方发送的签名。</param>
         /// <returns></returns>
-        internal static bool Verify(string algorithmName, AsymmetricKeyParameter publicKey, byte[] data, byte[] signature)
+        public static bool Verify(string algorithmName, AsymmetricKeyParameter publicKey, byte[] data, byte[] signature)
         {
+            if (data is null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+
             return Verify(algorithmName, publicKey, data, 0, data.Length, signature);
         }
 
@@ -904,7 +977,7 @@ namespace LH.BouncyCastleHelpers
         /// <param name="count">从缓冲区读取的字节数。</param>
         /// <param name="signature">对方发送的签名。</param>
         /// <returns></returns>
-        internal static bool Verify(string algorithmName, AsymmetricKeyParameter publicKey, byte[] buffer, int offset, int count, byte[] signature)
+        public static bool Verify(string algorithmName, AsymmetricKeyParameter publicKey, byte[] buffer, int offset, int count, byte[] signature)
         {
             //var verifier = SignerUtilities.InitSigner(signatureAlgorithmOid, false, publicKey, null);
             var verifier = SignerUtilities.GetSigner(algorithmName);
@@ -921,7 +994,7 @@ namespace LH.BouncyCastleHelpers
     /// <summary>
     /// X509Name 创建器。
     /// </summary>
-    internal sealed class X509NameGenerator
+    public sealed class X509NameGenerator
     {
         #region 成员
 
@@ -930,7 +1003,7 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 创建器中是否有值。
         /// </summary>
-        internal bool IsEmpty => _attributes.Count == 0;
+        public bool IsEmpty => _attributes.Count == 0;
 
         #endregion 成员
 
@@ -939,7 +1012,7 @@ namespace LH.BouncyCastleHelpers
         /// </summary>
         /// <param name="oid">属性 oid。</param>
         /// <param name="value">属性值。</param>
-        internal void AddX509Name(DerObjectIdentifier oid, string value)
+        public void AddX509Name(DerObjectIdentifier oid, string value)
         {
             _attributes.Add(oid, value);
         }
@@ -948,7 +1021,7 @@ namespace LH.BouncyCastleHelpers
         /// 创建 X509Name。
         /// </summary>
         /// <returns></returns>
-        internal X509Name Generate()
+        public X509Name Generate()
         {
             var ordering = new DerObjectIdentifier[_attributes.Count];
             _attributes.Keys.CopyTo(ordering, 0);
@@ -958,7 +1031,7 @@ namespace LH.BouncyCastleHelpers
         /// <summary>
         /// 清除所有值。
         /// </summary>
-        internal void Reset()
+        public void Reset()
         {
             _attributes.Clear();
         }
@@ -971,96 +1044,101 @@ namespace LH.BouncyCastleHelpers
     /// <summary>
     /// 公共对象。
     /// </summary>
-    internal static class Common
+    public static class Common
     {
         /// <summary>
         /// 随机数生成器。
         /// </summary>
-        internal static readonly SecureRandom SecureRandom = new SecureRandom();
+        public static readonly SecureRandom SecureRandom = new SecureRandom();
     }
 
     /// <summary>
     /// 已命名非对称加密算法设置。
     /// </summary>
-    internal static class NamedAsymmetricCipherStrings
+    [SuppressMessage("Naming", "CA1707:标识符不应包含下划线", Justification = "<挂起>")]
+    public static class NamedAsymmetricCipherStrings
     {
-        internal const string RSA_OAEP = "RSA//OAEPPADDING";
-        internal const string RSA_PKCS1 = "RSA//PKCS1PADDING";
+        public const string RSA_OAEP = "RSA//OAEPPADDING";
+        public const string RSA_PKCS1 = "RSA//PKCS1PADDING";
     }
 
     /// <summary>
     /// 常用曲线。
     /// </summary>
-    internal static class NamedCurves
+    public static class NamedCurves
     {
-        internal const string SECP256R1 = "SecP256r1";
-        internal const string SECP384R1 = "SecP384r1";
-        internal const string SECP521R1 = "SecP521r1";
+        public const string SECP256R1 = "SecP256r1";
+        public const string SECP384R1 = "SecP384r1";
+        public const string SECP521R1 = "SecP521r1";
     }
 
     /// <summary>
     /// 已命名校验算法。
     /// </summary>
-    internal static class NamedHashAlgorithms
+    [SuppressMessage("Naming", "CA1707:标识符不应包含下划线", Justification = "<挂起>")]
+    public static class NamedHashAlgorithms
     {
-        internal const string MD5 = "MD5";
-        internal const string SHA1 = "SHA1";
-        internal const string SHA256 = "SHA256";
-        internal const string SHA3_256 = "SHA3-256";
-        internal const string SHA3_384 = "SHA3-384";
-        internal const string SHA3_512 = "SHA3-512";
-        internal const string SHA384 = "SHA384";
-        internal const string SHA512 = "SHA512";
-        internal const string SM3 = "SM3";
+        public const string MD5 = "MD5";
+        public const string SHA1 = "SHA1";
+        public const string SHA256 = "SHA256";
+        public const string SHA3_256 = "SHA3-256";
+        public const string SHA3_384 = "SHA3-384";
+        public const string SHA3_512 = "SHA3-512";
+        public const string SHA384 = "SHA384";
+        public const string SHA512 = "SHA512";
+        public const string SM3 = "SM3";
     }
 
     /// <summary>
     /// 已命名 PEM 加密算法。OpenSSL 定义的 DEK 格式。
     /// </summary>
-    internal static class NamedPemEncryptionAlgorithms
+    [SuppressMessage("Naming", "CA1707:标识符不应包含下划线", Justification = "<挂起>")]
+    public static class NamedPemEncryptionAlgorithms
     {
-        internal const string AES_128_CBC = "AES-128-CBC";
-        internal const string AES_128_ECB = "AES-128-ECB";
-        internal const string AES_192_CBC = "AES-192-CBC";
-        internal const string AES_192_ECB = "AES-192-ECB";
-        internal const string AES_256_CBC = "AES-256-CBC";
-        internal const string AES_256_ECB = "AES-256-ECB";
-        internal const string DES_CBC = "DES-CBC";
-        internal const string DES_ECB = "DES-ECB";
-        internal const string DES_EDE3_CBC = "DES-EDE3-CBC";
-        internal const string DES_EDE3_ECB = "DES-EDE3-ECB";
+        public const string AES_128_CBC = "AES-128-CBC";
+        public const string AES_128_ECB = "AES-128-ECB";
+        public const string AES_192_CBC = "AES-192-CBC";
+        public const string AES_192_ECB = "AES-192-ECB";
+        public const string AES_256_CBC = "AES-256-CBC";
+        public const string AES_256_ECB = "AES-256-ECB";
+        public const string DES_CBC = "DES-CBC";
+        public const string DES_ECB = "DES-ECB";
+        public const string DES_EDE3_CBC = "DES-EDE3-CBC";
+        public const string DES_EDE3_ECB = "DES-EDE3-ECB";
     }
 
     /// <summary>
     /// 已命名签名算法。
     /// </summary>
-    internal static class NamedSignatureAlgorithms
+    [SuppressMessage("Naming", "CA1707:标识符不应包含下划线", Justification = "<挂起>")]
+    public static class NamedSignatureAlgorithms
     {
-        internal const string SHA256_WITH_DSA = "SHA256WithDSA";
-        internal const string SHA256_WITH_ECDSA = "1.2.840.10045.4.3.2";
-        internal const string SHA256_WITH_RSA = "SHA256WithRSA";
-        internal const string SHA384_WITH_DSA = "SHA384WithDSA";
-        internal const string SHA384_WITH_ECDSA = "SHA384WithECDSA";
-        internal const string SHA384_WITH_RSA = "SHA384WithRSA";
-        internal const string SHA512_WITH_DSA = "SHA512WithDSA";
-        internal const string SHA512_WITH_ECDSA = "SHA512WithECDSA";
-        internal const string SHA512_WITH_RSA = "SHA512WithRSA";
-        internal const string SM3_WITH_SM2 = "1.2.156.10197.1.501";
+        public const string SHA256_WITH_DSA = "SHA256WithDSA";
+        public const string SHA256_WITH_ECDSA = "1.2.840.10045.4.3.2";
+        public const string SHA256_WITH_RSA = "SHA256WithRSA";
+        public const string SHA384_WITH_DSA = "SHA384WithDSA";
+        public const string SHA384_WITH_ECDSA = "SHA384WithECDSA";
+        public const string SHA384_WITH_RSA = "SHA384WithRSA";
+        public const string SHA512_WITH_DSA = "SHA512WithDSA";
+        public const string SHA512_WITH_ECDSA = "SHA512WithECDSA";
+        public const string SHA512_WITH_RSA = "SHA512WithRSA";
+        public const string SM3_WITH_SM2 = "1.2.156.10197.1.501";
     }
 
     /// <summary>
     /// 已命名对称加密算法设置。
     /// </summary>
-    internal static class NamedSymmetricCipherStrings
+    [SuppressMessage("Naming", "CA1707:标识符不应包含下划线", Justification = "<挂起>")]
+    public static class NamedSymmetricCipherStrings
     {
-        internal const string AES_CBC_PKCS7 = "AES/CBC/PKCS7PADDING";
-        internal const string AES_ECB_PKCS7 = "AES/ECB/PKCS7PADDING";
-        internal const string DES_CBC_PKCS7 = "DES/CBC/PKCS7PADDING";
-        internal const string DES_ECB_PKCS7 = "DES/ECB/PKCS7PADDING";
-        internal const string DESEDE_CBC_PKCS7 = "DESEDE/CBC/PKCS7PADDING";
-        internal const string DESEDE_ECB_PKCS7 = "DESEDE/ECB/PKCS7PADDING";
-        internal const string SM4_CBC_PKCS7 = "SM4/CBC/PKCS7PADDING";
-        internal const string SM4_ECB_PKCS7 = "SM4/ECB/PKCS7PADDING";
+        public const string AES_CBC_PKCS7 = "AES/CBC/PKCS7PADDING";
+        public const string AES_ECB_PKCS7 = "AES/ECB/PKCS7PADDING";
+        public const string DES_CBC_PKCS7 = "DES/CBC/PKCS7PADDING";
+        public const string DES_ECB_PKCS7 = "DES/ECB/PKCS7PADDING";
+        public const string DESEDE_CBC_PKCS7 = "DESEDE/CBC/PKCS7PADDING";
+        public const string DESEDE_ECB_PKCS7 = "DESEDE/ECB/PKCS7PADDING";
+        public const string SM4_CBC_PKCS7 = "SM4/CBC/PKCS7PADDING";
+        public const string SM4_ECB_PKCS7 = "SM4/ECB/PKCS7PADDING";
     }
 
     #endregion Common

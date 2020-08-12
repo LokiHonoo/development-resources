@@ -10,7 +10,7 @@ namespace LH.BouncyCastleHelpers
     /// <summary>
     /// 测试。
     /// </summary>
-    internal static class Test
+    public static class Test
     {
         /// <summary>
         /// 测试。
@@ -18,7 +18,7 @@ namespace LH.BouncyCastleHelpers
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:指定 StringComparison", Justification = "<挂起>")]
-        internal static void TestAll()
+        public static void TestAll()
         {
             //
             // ===========================  密钥测试  ===========================
@@ -30,13 +30,13 @@ namespace LH.BouncyCastleHelpers
             //
             // 密钥读写测试。
             //
-            KeyParametersHelper.ParseKey(caKeyPair.Public, out string publicKeyPem);
-            KeyParametersHelper.ParseKey(caKeyPair.Private, out string privateKeyPem);
-            KeyParametersHelper.ParseKey(caKeyPair.Private, NamedPemEncryptionAlgorithms.AES_256_CBC, "123456", out string privateKeyEncPem);
+            string publicKeyPem = PemHelper.Key2Pem(caKeyPair.Public);
+            string privateKeyPem = PemHelper.Key2Pem(caKeyPair.Private);
+            string privateKeyEncPem = PemHelper.Key2Pem(caKeyPair.Private, NamedPemEncryptionAlgorithms.AES_256_CBC, "123456");
             //
-            _ = KeyParametersHelper.ReadPublicKey(publicKeyPem);
-            caKeyPair = KeyParametersHelper.ReadKeyPair(privateKeyPem);
-            caKeyPair = KeyParametersHelper.ReadKeyPair(privateKeyEncPem, "123456");
+            _ = PemHelper.Pem2Key(publicKeyPem);
+            caKeyPair = PemHelper.Pem2KeyPair(privateKeyPem);
+            caKeyPair = PemHelper.Pem2KeyPair(privateKeyEncPem, "123456");
             //
             // ===========================  证书测试  ===========================
             //
@@ -66,8 +66,7 @@ namespace LH.BouncyCastleHelpers
             //
             //
             var namedCerts = new Dictionary<string, X509Certificate>() { { "CERT_1", caCert } };
-            byte[] p12Raw = CertificateHelper.GeneratePfx("KEY", caKeyPair.Private, namedCerts, "123456");
-            var store = CertificateHelper.ReadPfx(p12Raw, "123456");
+            var store = CertificateHelper.GeneratePfx("KEY", caKeyPair.Private, namedCerts, "123456");
             var pub = store.GetCertificate("CERT_1").Certificate.GetPublicKey();
             var pri = store.GetKey("KEY").Key;
             _ = store.GetCertificateChain("KEY");
@@ -85,10 +84,10 @@ namespace LH.BouncyCastleHelpers
             //
             // 证书请求读写测试。
             //
-            CertificateHelper.ParseCsr(serverCsr, out string serverCsrPem);
-            CertificateHelper.ParseCsr(clientCsr, out string clientCsrPem);
-            serverCsr = CertificateHelper.ReadCsr(serverCsrPem);
-            clientCsr = CertificateHelper.ReadCsr(clientCsrPem);
+            string serverCsrPem = PemHelper.Csr2Pem(serverCsr);
+            string clientCsrPem = PemHelper.Csr2Pem(clientCsr);
+            serverCsr = PemHelper.Pem2Csr(serverCsrPem);
+            clientCsr = PemHelper.Pem2Csr(clientCsrPem);
             //
             // 使用者证书。
             //
@@ -113,12 +112,12 @@ namespace LH.BouncyCastleHelpers
             //
             // 证书读写测试。
             //
-            CertificateHelper.ParseCert(caCert, out string caCertPem);
-            CertificateHelper.ParseCert(serverCert, out string serverCertPem);
-            CertificateHelper.ParseCert(clientCert, out string clientCertPem);
-            caCert = CertificateHelper.ReadCert(caCertPem);
-            serverCert = CertificateHelper.ReadCert(serverCertPem);
-            clientCert = CertificateHelper.ReadCert(clientCertPem);
+            string caCertPem = PemHelper.Cert2Pem(caCert);
+            string serverCertPem = PemHelper.Cert2Pem(serverCert);
+            string clientCertPem = PemHelper.Cert2Pem(clientCert);
+            caCert = PemHelper.Pem2Cert(caCertPem);
+            serverCert = PemHelper.Pem2Cert(serverCertPem);
+            clientCert = PemHelper.Pem2Cert(clientCertPem);
             //
             // 打印证书。
             //

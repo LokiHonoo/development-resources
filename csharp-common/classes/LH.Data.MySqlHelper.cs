@@ -25,29 +25,29 @@ namespace LH.Data
     /// <summary>
     /// MySql extension.
     /// </summary>
-    internal static class MySqlHelper
+    public static class MySqlHelper
     {
         #region ConnectionBehavior
 
         /// <summary>
         /// Connection open/close behavior when using DataAdapter. Default Auto.
         /// </summary>
-        internal static MySqlConnectionBehavior DataAdapterConnectionBehavior { get; set; } = MySqlConnectionBehavior.Auto;
+        public static MySqlConnectionBehavior DataAdapterConnectionBehavior { get; set; } = MySqlConnectionBehavior.Auto;
 
         /// <summary>
         /// Connection open/close behavior when using DataReader. Default Manual.
         /// </summary>
-        internal static MySqlConnectionBehavior DataReaderConnectionBehavior { get; set; } = MySqlConnectionBehavior.Manual;
+        public static MySqlConnectionBehavior DataReaderConnectionBehavior { get; set; } = MySqlConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Execute. Default Manual.
         /// </summary>
-        internal static MySqlConnectionBehavior ExecuteConnectionBehavior { get; set; } = MySqlConnectionBehavior.Manual;
+        public static MySqlConnectionBehavior ExecuteConnectionBehavior { get; set; } = MySqlConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Transaction. Default Manual.
         /// </summary>
-        internal static MySqlConnectionBehavior TransactionConnectionBehavior { get; set; } = MySqlConnectionBehavior.Manual;
+        public static MySqlConnectionBehavior TransactionConnectionBehavior { get; set; } = MySqlConnectionBehavior.Manual;
 
         #endregion ConnectionBehavior
 
@@ -58,9 +58,9 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        internal static MySqlConnection BuildConnection(MySqlConnectionStringBuilder connectionStringBuilder)
+        public static MySqlConnection BuildConnection(MySqlConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder == null)
+            if (connectionStringBuilder is null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -72,7 +72,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         /// <returns></returns>
-        internal static MySqlConnection BuildConnection(string connectionString)
+        public static MySqlConnection BuildConnection(string connectionString)
         {
             return new MySqlConnection(connectionString);
         }
@@ -85,7 +85,7 @@ namespace LH.Data
         /// <param name="password">Password.。</param>
         /// <param name="database">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        internal static MySqlConnection BuildConnection(string host, string userID, string password, string database)
+        public static MySqlConnection BuildConnection(string host, string userID, string password, string database)
         {
             if (string.IsNullOrEmpty(host))
             {
@@ -126,7 +126,7 @@ namespace LH.Data
         /// <param name="password">Password.。</param>
         /// <param name="database">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        internal static MySqlConnection BuildConnection(string server, uint port, string userID, string password, string database)
+        public static MySqlConnection BuildConnection(string server, uint port, string userID, string password, string database)
         {
             MySqlConnectionStringBuilder connectionStringBuilder = new MySqlConnectionStringBuilder()
             {
@@ -146,9 +146,9 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        internal static string BuildConnectionString(MySqlConnectionStringBuilder connectionStringBuilder)
+        public static string BuildConnectionString(MySqlConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder == null)
+            if (connectionStringBuilder is null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -163,7 +163,7 @@ namespace LH.Data
         /// <param name="password">Password.。</param>
         /// <param name="database">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        internal static string BuildConnectionString(string host, string userID, string password, string database)
+        public static string BuildConnectionString(string host, string userID, string password, string database)
         {
             if (string.IsNullOrEmpty(host))
             {
@@ -204,7 +204,7 @@ namespace LH.Data
         /// <param name="password">Password.。</param>
         /// <param name="database">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        internal static string BuildConnectionString(string server, uint port, string userID, string password, string database)
+        public static string BuildConnectionString(string server, uint port, string userID, string password, string database)
         {
             MySqlConnectionStringBuilder connectionStringBuilder = new MySqlConnectionStringBuilder()
             {
@@ -230,7 +230,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText)
+        public static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText)
         {
             return FillDataSet(dataSet, connection, selectCommandText, null);
         }
@@ -244,9 +244,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
+        public static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -270,7 +270,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText)
+        public static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText)
         {
             return FillDataTable(dataTable, connection, selectCommandText, null);
         }
@@ -284,9 +284,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
+        public static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -310,7 +310,7 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText)
+        public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText)
         {
             return new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
         }
@@ -323,7 +323,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
+        public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             MySqlDataAdapter result = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
             if (parameters != null && parameters.Length > 0) { result.SelectCommand.Parameters.AddRange(parameters); }
@@ -336,7 +336,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataSet GetDataSet(MySqlConnection connection, string selectCommandText)
+        public static DataSet GetDataSet(MySqlConnection connection, string selectCommandText)
         {
             return GetDataSet(connection, selectCommandText, null);
         }
@@ -349,9 +349,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static DataSet GetDataSet(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
+        public static DataSet GetDataSet(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -374,7 +374,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataTable GetDataTable(MySqlConnection connection, string selectCommandText)
+        public static DataTable GetDataTable(MySqlConnection connection, string selectCommandText)
         {
             return GetDataTable(connection, selectCommandText, null);
         }
@@ -387,9 +387,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static DataTable GetDataTable(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
+        public static DataTable GetDataTable(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -416,7 +416,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static MySqlDataReader GetDataReader(MySqlConnection connection, string commandText)
+        public static MySqlDataReader GetDataReader(MySqlConnection connection, string commandText)
         {
             return GetDataReader(connection, commandText, null);
         }
@@ -430,9 +430,9 @@ namespace LH.Data
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "<Pending>")]
-        internal static MySqlDataReader GetDataReader(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
+        public static MySqlDataReader GetDataReader(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -472,7 +472,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int ExecuteNonQuery(MySqlConnection connection, string commandText)
+        public static int ExecuteNonQuery(MySqlConnection connection, string commandText)
         {
             return ExecuteNonQuery(connection, commandText, null);
         }
@@ -485,9 +485,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int ExecuteNonQuery(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
+        public static int ExecuteNonQuery(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -513,7 +513,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void ExecuteProcedure(MySqlConnection connection, string procedure)
+        public static void ExecuteProcedure(MySqlConnection connection, string procedure)
         {
             ExecuteProcedure(connection, procedure, null);
         }
@@ -526,9 +526,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        internal static void ExecuteProcedure(MySqlConnection connection, string procedure, params MySqlParameter[] parameters)
+        public static void ExecuteProcedure(MySqlConnection connection, string procedure, params MySqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -552,7 +552,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object ExecuteScalar(MySqlConnection connection, string commandText)
+        public static object ExecuteScalar(MySqlConnection connection, string commandText)
         {
             return ExecuteScalar(connection, commandText, null);
         }
@@ -565,9 +565,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static object ExecuteScalar(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
+        public static object ExecuteScalar(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -599,7 +599,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText)
+        public static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText)
         {
             return TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, null);
         }
@@ -612,7 +612,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
+        public static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
             return TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, parameters);
         }
@@ -625,7 +625,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int TransactionExecuteNonQuery(MySqlConnection connection, IsolationLevel iso, string commandText)
+        public static int TransactionExecuteNonQuery(MySqlConnection connection, IsolationLevel iso, string commandText)
         {
             return TransactionExecuteNonQuery(connection, iso, commandText, null);
         }
@@ -641,9 +641,9 @@ namespace LH.Data
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-        internal static int TransactionExecuteNonQuery(MySqlConnection connection, IsolationLevel iso, string commandText, params MySqlParameter[] parameters)
+        public static int TransactionExecuteNonQuery(MySqlConnection connection, IsolationLevel iso, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -679,7 +679,7 @@ namespace LH.Data
                 }
             }
             if (state != ConnectionState.Open) { connection.Close(); }
-            if (exception == null)
+            if (exception is null)
             {
                 return result;
             }
@@ -695,7 +695,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static void TransactionExecuteProcedure(MySqlConnection connection, string procedure)
+        public static void TransactionExecuteProcedure(MySqlConnection connection, string procedure)
         {
             TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, null);
         }
@@ -707,7 +707,7 @@ namespace LH.Data
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static void TransactionExecuteProcedure(MySqlConnection connection, string procedure, params MySqlParameter[] parameters)
+        public static void TransactionExecuteProcedure(MySqlConnection connection, string procedure, params MySqlParameter[] parameters)
         {
             TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, parameters);
         }
@@ -719,7 +719,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static void TransactionExecuteProcedure(MySqlConnection connection, IsolationLevel iso, string procedure)
+        public static void TransactionExecuteProcedure(MySqlConnection connection, IsolationLevel iso, string procedure)
         {
             TransactionExecuteProcedure(connection, iso, procedure, null);
         }
@@ -734,9 +734,9 @@ namespace LH.Data
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-        internal static void TransactionExecuteProcedure(MySqlConnection connection, IsolationLevel iso, string procedure, params MySqlParameter[] parameters)
+        public static void TransactionExecuteProcedure(MySqlConnection connection, IsolationLevel iso, string procedure, params MySqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -784,7 +784,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static object TransactionExecuteScalar(MySqlConnection connection, string commandText)
+        public static object TransactionExecuteScalar(MySqlConnection connection, string commandText)
         {
             return TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, null);
         }
@@ -797,7 +797,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static object TransactionExecuteScalar(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
+        public static object TransactionExecuteScalar(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
             return TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, parameters);
         }
@@ -810,7 +810,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static object TransactionExecuteScalar(MySqlConnection connection, IsolationLevel iso, string commandText)
+        public static object TransactionExecuteScalar(MySqlConnection connection, IsolationLevel iso, string commandText)
         {
             return TransactionExecuteScalar(connection, iso, commandText, null);
         }
@@ -826,9 +826,9 @@ namespace LH.Data
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-        internal static object TransactionExecuteScalar(MySqlConnection connection, IsolationLevel iso, string commandText, params MySqlParameter[] parameters)
+        public static object TransactionExecuteScalar(MySqlConnection connection, IsolationLevel iso, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -863,7 +863,7 @@ namespace LH.Data
                 }
             }
             if (state != ConnectionState.Open) { connection.Close(); }
-            if (exception == null)
+            if (exception is null)
             {
                 return result;
             }
@@ -882,7 +882,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <returns></returns>
-        internal static string GetServerVersion(MySqlConnection connection)
+        public static string GetServerVersion(MySqlConnection connection)
         {
             return (string)ExecuteScalar(connection, "SELECT @@version;");
         }
@@ -896,7 +896,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="textWriter">TextWriter.</param>
-        internal static void Dump(MySqlConnection connection, TextWriter textWriter)
+        public static void Dump(MySqlConnection connection, TextWriter textWriter)
         {
             MySqlDumpSetting setting = GetDumpSetting(connection);
             Dump(connection, setting, textWriter, null, null, out _);
@@ -910,7 +910,7 @@ namespace LH.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        internal static void Dump(MySqlConnection connection, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
+        public static void Dump(MySqlConnection connection, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
         {
             MySqlDumpSetting setting = GetDumpSetting(connection);
             Dump(connection, setting, textWriter, written, userState, out cancelled);
@@ -922,7 +922,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="setting">Dump setting.</param>
         /// <param name="textWriter">TextWriter.</param>
-        internal static void Dump(MySqlConnection connection, MySqlDumpSetting setting, TextWriter textWriter)
+        public static void Dump(MySqlConnection connection, MySqlDumpSetting setting, TextWriter textWriter)
         {
             Dump(connection, setting, textWriter, null, null, out _);
         }
@@ -938,14 +938,14 @@ namespace LH.Data
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
-        internal static void Dump(MySqlConnection connection, MySqlDumpSetting setting, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
+        public static void Dump(MySqlConnection connection, MySqlDumpSetting setting, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (setting == null)
+            if (setting is null)
             {
                 throw new ArgumentNullException(nameof(setting));
             }
@@ -1222,7 +1222,7 @@ namespace LH.Data
         /// <param name="encoding">File encoding.</param>
         /// <param name="segmentSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        internal static void DumpToFiles(MySqlConnection connection, string folder, Encoding encoding, long segmentSize, out bool cancelled)
+        public static void DumpToFiles(MySqlConnection connection, string folder, Encoding encoding, long segmentSize, out bool cancelled)
         {
             MySqlDumpSetting setting = GetDumpSetting(connection);
             DumpToFiles(connection, setting, folder, encoding, segmentSize, out cancelled, null, null);
@@ -1239,7 +1239,7 @@ namespace LH.Data
         /// <param name="written">A delegate that report written progress.</param>
 
         /// <param name="userState">User state.</param>
-        internal static void DumpToFiles(MySqlConnection connection,
+        public static void DumpToFiles(MySqlConnection connection,
                                          string folder,
                                          Encoding encoding,
                                          long segmentSize,
@@ -1260,7 +1260,7 @@ namespace LH.Data
         /// <param name="encoding">File encoding.</param>
         /// <param name="segmentSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        internal static void DumpToFiles(MySqlConnection connection, MySqlDumpSetting setting, string folder, Encoding encoding, long segmentSize, out bool cancelled)
+        public static void DumpToFiles(MySqlConnection connection, MySqlDumpSetting setting, string folder, Encoding encoding, long segmentSize, out bool cancelled)
         {
             DumpToFiles(connection, setting, folder, encoding, segmentSize, out cancelled, null, null);
         }
@@ -1279,7 +1279,7 @@ namespace LH.Data
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
         [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
-        internal static void DumpToFiles(MySqlConnection connection,
+        public static void DumpToFiles(MySqlConnection connection,
                                          MySqlDumpSetting setting,
                                          string folder,
                                          Encoding encoding,
@@ -1288,11 +1288,11 @@ namespace LH.Data
                                          MySqlWrittenCallback written,
                                          object userState)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (setting == null)
+            if (setting is null)
             {
                 throw new ArgumentNullException(nameof(setting));
             }
@@ -1653,9 +1653,9 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <returns></returns>
-        internal static MySqlDumpSetting GetDumpSetting(MySqlConnection connection)
+        public static MySqlDumpSetting GetDumpSetting(MySqlConnection connection)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -1710,7 +1710,7 @@ namespace LH.Data
     /// <summary>
     /// The mode of the connection when querying.
     /// </summary>
-    internal enum MySqlConnectionBehavior
+    public enum MySqlConnectionBehavior
     {
         /// <summary>Does not open automatically. If the connection is not open  when the querying, an exception is thrown.</summary>
         Manual,
@@ -1732,13 +1732,13 @@ namespace LH.Data
     /// <param name="name">The name associated with dumping.</param>
     /// <param name="userState">User state.</param>
     /// <param name="cancel">Cancel dump.</param>
-    internal delegate void MySqlWrittenCallback(long written, long total, MySqlDumpType dumpType, string name, object userState, ref bool cancel);
+    public delegate void MySqlWrittenCallback(long written, long total, MySqlDumpType dumpType, string name, object userState, ref bool cancel);
 
     /// <summary>
     /// Note the type of dumping in the progress report.
     /// </summary>
     [SuppressMessage("Design", "CA1027:Mark enums with FlagsAttribute", Justification = "<Pending>")]
-    internal enum MySqlDumpType
+    public enum MySqlDumpType
     {
         /// <summary>Does not belong to any type. This type does not appear during the dumping process.</summary>
         None = 0,
@@ -1771,43 +1771,43 @@ namespace LH.Data
     /// <summary>
     /// Dump setting.
     /// </summary>
-    internal sealed class MySqlDumpSetting
+    public sealed class MySqlDumpSetting
     {
         /// <summary>
         /// Dump events at specified list.
         /// </summary>
-        internal List<string> Events { get; } = new List<string>();
+        public List<string> Events { get; } = new List<string>();
 
         /// <summary>
         /// Dump functions at specified list.
         /// </summary>
-        internal List<string> Functions { get; } = new List<string>();
+        public List<string> Functions { get; } = new List<string>();
 
         /// <summary>
         /// Dump procedures at specified list.
         /// </summary>
-        internal List<string> Procedures { get; } = new List<string>();
+        public List<string> Procedures { get; } = new List<string>();
 
         /// <summary>
         /// Dump table setting.
         /// </summary>
-        internal List<MySqlDumpTableSetting> Tables { get; } = new List<MySqlDumpTableSetting>();
+        public List<MySqlDumpTableSetting> Tables { get; } = new List<MySqlDumpTableSetting>();
 
         /// <summary>
         /// Dump triggers at specified list.
         /// </summary>
-        internal List<string> Triggers { get; } = new List<string>();
+        public List<string> Triggers { get; } = new List<string>();
 
         /// <summary>
         /// Dump views at specified list.
         /// </summary>
-        internal List<string> Views { get; } = new List<string>();
+        public List<string> Views { get; } = new List<string>();
     }
 
     /// <summary>
     /// Dump table setting.
     /// </summary>
-    internal sealed class MySqlDumpTableSetting
+    public sealed class MySqlDumpTableSetting
     {
         /// <summary>
         /// Dump table setting.
@@ -1815,7 +1815,7 @@ namespace LH.Data
         /// <param name="tableName">Table name.</param>
         /// <param name="autoIncrement">Reset AUTO_INCREMENT=value. Set to 0 without changing.</param>
         /// <param name="includingRecord">Dump records.</param>
-        internal MySqlDumpTableSetting(string tableName, int autoIncrement, bool includingRecord)
+        public MySqlDumpTableSetting(string tableName, int autoIncrement, bool includingRecord)
         {
             this.TableName = tableName;
             this.AutoIncrement = autoIncrement;
@@ -1825,17 +1825,17 @@ namespace LH.Data
         /// <summary>
         /// Reset AUTO_INCREMENT=value. Set to 0 without changing.
         /// </summary>
-        internal int AutoIncrement { get; }
+        public int AutoIncrement { get; }
 
         /// <summary>
         /// Dump records.
         /// </summary>
-        internal bool IncludingRecord { get; }
+        public bool IncludingRecord { get; }
 
         /// <summary>
         /// Table name.
         /// </summary>
-        internal string TableName { get; }
+        public string TableName { get; }
     }
 
     #endregion Dump
@@ -1845,7 +1845,7 @@ namespace LH.Data
     /// <summary>
     /// Return command text.
     /// </summary>
-    internal static class MySqlCommandText
+    public static class MySqlCommandText
     {
         #region Engine
 
@@ -1853,7 +1853,7 @@ namespace LH.Data
         /// Displays the storage engine and default engine available after installation.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowEngines()
+        public static string ShowEngines()
         {
             return "SHOW ENGINES;";
         }
@@ -1862,7 +1862,7 @@ namespace LH.Data
         /// Displays the error caused by the last execution statement.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowErrors()
+        public static string ShowErrors()
         {
             return "SHOW ERRORS;";
         }
@@ -1871,7 +1871,7 @@ namespace LH.Data
         /// Displays the name and value of the global system variable.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowGlobalVariables()
+        public static string ShowGlobalVariables()
         {
             return "SHOW GLOBAL VARIABLES;";
         }
@@ -1881,7 +1881,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="like">Part of the variable name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        internal static string ShowGlobalVariables(string like)
+        public static string ShowGlobalVariables(string like)
         {
             return "SHOW GLOBAL VARIABLES LIKE '" + like + "';";
         }
@@ -1890,7 +1890,7 @@ namespace LH.Data
         /// Displays the permissions for all user.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowGrants()
+        public static string ShowGrants()
         {
             return "SHOW GRANTS;";
         }
@@ -1901,7 +1901,7 @@ namespace LH.Data
         /// <param name="user">User.</param>
         /// <param name="host">Host.</param>
         /// <returns></returns>
-        internal static string ShowGrants(string user, string host)
+        public static string ShowGrants(string user, string host)
         {
             return "SHOW GRANTS FOR `" + user + "`@`" + host + "`;";
         }
@@ -1910,7 +1910,7 @@ namespace LH.Data
         /// Displays the status of the InnoDB storage engine.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowInnoDbStatus()
+        public static string ShowInnoDbStatus()
         {
             return "SHOW INNODB STATUS;";
         }
@@ -1919,7 +1919,7 @@ namespace LH.Data
         /// Displays the log.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowLogs()
+        public static string ShowLogs()
         {
             return "SHOW LOGS;";
         }
@@ -1928,7 +1928,7 @@ namespace LH.Data
         /// Displays the different permissions supported by the server.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowPrivileges()
+        public static string ShowPrivileges()
         {
             return "SHOW PRIVILEGES;";
         }
@@ -1937,7 +1937,7 @@ namespace LH.Data
         /// Displays all processes that are running in the system.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowProcesslist()
+        public static string ShowProcesslist()
         {
             return "SHOW PROCESSLIST;";
         }
@@ -1946,7 +1946,7 @@ namespace LH.Data
         /// Displays information about some system-specific resources, such as the number of threads running.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowStatus()
+        public static string ShowStatus()
         {
             return "SHOW STATUS;";
         }
@@ -1956,7 +1956,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="like">Part of the variable name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        internal static string ShowStatus(string like)
+        public static string ShowStatus(string like)
         {
             return "SHOW STATUS LIKE '" + like + "';";
         }
@@ -1965,7 +1965,7 @@ namespace LH.Data
         /// Displays the available storage engine and default engine after installation.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowStorageEngines()
+        public static string ShowStorageEngines()
         {
             return "SHOW STORAGE ENGINES;";
         }
@@ -1974,7 +1974,7 @@ namespace LH.Data
         /// Displays the name and value of the system variable.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowVariables()
+        public static string ShowVariables()
         {
             return "SHOW VARIABLES;";
         }
@@ -1984,7 +1984,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="like">Part of the variable name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        internal static string ShowVariables(string like)
+        public static string ShowVariables(string like)
         {
             return "SHOW VARIABLES LIKE '" + like + "';";
         }
@@ -1993,7 +1993,7 @@ namespace LH.Data
         /// Displays the warning generated by the last executed statement.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowWarnings()
+        public static string ShowWarnings()
         {
             return "SHOW WARNINGS;";
         }
@@ -2007,7 +2007,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="database">The name of the database to create.</param>
         /// <returns></returns>
-        internal static string CreateDatabase(string database)
+        public static string CreateDatabase(string database)
         {
             return "CREATE DATABASE `" + database + "`;";
         }
@@ -2019,7 +2019,7 @@ namespace LH.Data
         /// <param name="charset">Character set. Such for utf8.</param>
         /// <param name="collate">Collate. Such for utf8_general_ci.</param>
         /// <returns></returns>
-        internal static string CreateDatabase(string database, string charset, string collate)
+        public static string CreateDatabase(string database, string charset, string collate)
         {
             return "CREATE DATABASE `" + database + "` DEFAULT CHARSET " + charset + " COLLATE " + collate + ";";
         }
@@ -2029,7 +2029,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="database">The name of the database to delete.</param>
         /// <returns></returns>
-        internal static string DropDatabase(string database)
+        public static string DropDatabase(string database)
         {
             return "DROP DATABASE IF EXISTS `" + database + "`;";
         }
@@ -2039,7 +2039,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="database">Database name.</param>
         /// <returns></returns>
-        internal static string ShowCreateDatabase(string database)
+        public static string ShowCreateDatabase(string database)
         {
             return "SHOW CREATE DATABASE `" + database + "`;";
         }
@@ -2048,7 +2048,7 @@ namespace LH.Data
         /// Displays all visible database names.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowDatabases()
+        public static string ShowDatabases()
         {
             return "SHOW DATABASES;";
         }
@@ -2062,7 +2062,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        internal static string Desc(string table)
+        public static string Desc(string table)
         {
             return "DESC `" + table + "`;";
         }
@@ -2073,7 +2073,7 @@ namespace LH.Data
         /// <param name="event_">The name of the event.</param>
         /// <returns></returns>
         [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
-        internal static string DropEvent(string event_)
+        public static string DropEvent(string event_)
         {
             return "DROP EVENT IF EXISTS `" + event_ + "`;";
         }
@@ -2083,7 +2083,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="function">The name of the function.</param>
         /// <returns></returns>
-        internal static string DropFunction(string function)
+        public static string DropFunction(string function)
         {
             return "DROP FUNCTION IF EXISTS `" + function + "`;";
         }
@@ -2093,7 +2093,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="procedure">The name of the stored procedure.</param>
         /// <returns></returns>
-        internal static string DropProcedure(string procedure)
+        public static string DropProcedure(string procedure)
         {
             return "DROP PROCEDURE IF EXISTS `" + procedure + "`;";
         }
@@ -2103,7 +2103,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="trigger">The name of the trigger.</param>
         /// <returns></returns>
-        internal static string DropTrigger(string trigger)
+        public static string DropTrigger(string trigger)
         {
             return "DROP TRIGGER IF EXISTS `" + trigger + "`;";
         }
@@ -2113,7 +2113,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="view">The name of the view.</param>
         /// <returns></returns>
-        internal static string DropView(string view)
+        public static string DropView(string view)
         {
             return "DROP VIEW IF EXISTS `" + view + "`;";
         }
@@ -2123,7 +2123,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        internal static string ShowColumns(string table)
+        public static string ShowColumns(string table)
         {
             return "SHOW COLUMNS FROM `" + table + "`;";
         }
@@ -2134,7 +2134,7 @@ namespace LH.Data
         /// <param name="event_">The name of the event.</param>
         /// <returns></returns>
         [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
-        internal static string ShowCreateEvent(string event_)
+        public static string ShowCreateEvent(string event_)
         {
             return "SHOW CREATE EVENT `" + event_ + "`;";
         }
@@ -2144,7 +2144,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="function">The name of the function.</param>
         /// <returns></returns>
-        internal static string ShowCreateFunction(string function)
+        public static string ShowCreateFunction(string function)
         {
             return "SHOW CREATE FUNCTION `" + function + "`;";
         }
@@ -2154,7 +2154,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="procedure">The name of the stored procedure.</param>
         /// <returns></returns>
-        internal static string ShowCreateProcedure(string procedure)
+        public static string ShowCreateProcedure(string procedure)
         {
             return "SHOW CREATE PROCEDURE `" + procedure + "`;";
         }
@@ -2164,7 +2164,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        internal static string ShowCreateTable(string table)
+        public static string ShowCreateTable(string table)
         {
             return "SHOW CREATE TABLE `" + table + "`;";
         }
@@ -2174,7 +2174,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="trigger">The name of the trigger.</param>
         /// <returns></returns>
-        internal static string ShowCreateTrigger(string trigger)
+        public static string ShowCreateTrigger(string trigger)
         {
             return "SHOW CREATE TRIGGER `" + trigger + "`;";
         }
@@ -2184,7 +2184,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="view">The name of the table.</param>
         /// <returns></returns>
-        internal static string ShowCreateView(string view)
+        public static string ShowCreateView(string view)
         {
             return "SHOW CREATE VIEW `" + view + "`;";
         }
@@ -2193,7 +2193,7 @@ namespace LH.Data
         /// Displays basic information about all events in all databases.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowEvents()
+        public static string ShowEvents()
         {
             return "SHOW EVENTS;";
         }
@@ -2203,7 +2203,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="database">The name of the database.</param>
         /// <returns></returns>
-        internal static string ShowEvents(string database)
+        public static string ShowEvents(string database)
         {
             return "SHOW EVENTS WHERE `Db` = '" + database + "';";
         }
@@ -2212,7 +2212,7 @@ namespace LH.Data
         /// Displays basic information about all functions in all databases.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowFunctionStatus()
+        public static string ShowFunctionStatus()
         {
             return "SHOW FUNCTION STATUS;";
         }
@@ -2222,7 +2222,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="database">The name of the database.</param>
         /// <returns></returns>
-        internal static string ShowFunctionStatus(string database)
+        public static string ShowFunctionStatus(string database)
         {
             return "SHOW FUNCTION STATUS WHERE `Db` = '" + database + "';";
         }
@@ -2232,7 +2232,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        internal static string ShowIndex(string table)
+        public static string ShowIndex(string table)
         {
             return "SHOW INDEX FROM `" + table + "`;";
         }
@@ -2241,7 +2241,7 @@ namespace LH.Data
         /// Displays basic information about stored procedures.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowProcedureStatus()
+        public static string ShowProcedureStatus()
         {
             return "SHOW PROCEDURE STATUS;";
         }
@@ -2251,7 +2251,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="database">The name of the database.</param>
         /// <returns></returns>
-        internal static string ShowProcedureStatus(string database)
+        public static string ShowProcedureStatus(string database)
         {
             return "SHOW PROCEDURE STATUS WHERE `Db` = '" + database + "';";
         }
@@ -2260,7 +2260,7 @@ namespace LH.Data
         /// Displays tables and views in the current database.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowTables()
+        public static string ShowTables()
         {
             return "SHOW TABLES;";
         }
@@ -2270,7 +2270,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="like">Part of the table name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        internal static string ShowTables(string like)
+        public static string ShowTables(string like)
         {
             return "SHOW TABLES LIKE '" + like + "';";
         }
@@ -2279,7 +2279,7 @@ namespace LH.Data
         /// Displays the details of the tables and views in the current database.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowTableStatus()
+        public static string ShowTableStatus()
         {
             return "SHOW TABLE STATUS;";
         }
@@ -2289,7 +2289,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="like">Part of the table name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        internal static string ShowTableStatus(string like)
+        public static string ShowTableStatus(string like)
         {
             return "SHOW TABLE STATUS LIKE '" + like + "';";
         }
@@ -2298,7 +2298,7 @@ namespace LH.Data
         /// Displays triggers in the current database.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowTriggers()
+        public static string ShowTriggers()
         {
             return "SHOW TRIGGERS;";
         }
@@ -2308,7 +2308,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="like">Part of the trigger name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        internal static string ShowTriggers(string like)
+        public static string ShowTriggers(string like)
         {
             return "SHOW TRIGGERS LIKE '" + like + "';";
         }
@@ -2319,7 +2319,7 @@ namespace LH.Data
         /// <param name="like">Part of the trigger name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        internal static string ShowTriggers(string like, string table)
+        public static string ShowTriggers(string like, string table)
         {
             return "SHOW TRIGGERS WHERE `Table` = '" + table + "' AND `Trigger` LIKE '" + like + "';";
         }
@@ -2329,7 +2329,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        internal static string Truncate(string table)
+        public static string Truncate(string table)
         {
             return "TRUNCATE TABLE `" + table + "`;";
         }

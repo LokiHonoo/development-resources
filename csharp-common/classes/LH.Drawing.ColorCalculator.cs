@@ -19,7 +19,7 @@ namespace LH.Drawing
     /// <summary>
     /// RGB/XYZ 调整器。
     /// </summary>
-    internal enum Adaptation
+    public enum Adaptation
     {
         None,
         Bradford,
@@ -30,7 +30,7 @@ namespace LH.Drawing
     /// <summary>
     /// 光源。
     /// </summary>
-    internal enum Illuminant
+    public enum Illuminant
     {
         A,
         B,
@@ -57,7 +57,7 @@ namespace LH.Drawing
     /// <summary>
     /// 观测角度。
     /// </summary>
-    internal enum Observer
+    public enum Observer
     {
         /// <summary>CIE1931 标准。角度 2°。</summary>
         CIE1931,
@@ -70,7 +70,7 @@ namespace LH.Drawing
     /// RGB 模型。
     /// </summary>
     [SuppressMessage("Naming", "CA1707:标识符不应包含下划线", Justification = "<挂起>")]
-    internal enum RGBModel
+    public enum RGBModel
     {
         Adobe1998,
         Apple,
@@ -93,7 +93,7 @@ namespace LH.Drawing
     /// <summary>
     /// 颜色计算器。
     /// </summary>
-    internal static class ColorCalculator
+    public static class ColorCalculator
     {
         #region 成员
 
@@ -120,9 +120,9 @@ namespace LH.Drawing
         /// <param name="CCT">CCT 值。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        internal static double[] CCT2XYZ(double CCT, Reference reference)
+        public static double[] CCT2XYZ(double CCT, Reference reference)
         {
-            if (reference == null)
+            if (reference is null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -164,14 +164,14 @@ namespace LH.Drawing
         /// <param name="exception">错误信息。无法转换时输出错误原因。</param>
         /// <returns></returns>
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal static double DominantWavelength(double[] xyY, Reference reference, out Exception exception)
+        public static double DominantWavelength(double[] xyY, Reference reference, out Exception exception)
         {
-            if (xyY == null)
+            if (xyY is null)
             {
                 throw new ArgumentNullException(nameof(xyY));
             }
 
-            if (reference == null)
+            if (reference is null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -245,9 +245,9 @@ namespace LH.Drawing
         /// </summary>
         /// <param name="Lab">Lab 值的数组。</param>
         /// <returns></returns>
-        internal static double[] Lab2LCHab(double[] Lab)
+        public static double[] Lab2LCHab(double[] Lab)
         {
-            if (Lab == null)
+            if (Lab is null)
             {
                 throw new ArgumentNullException(nameof(Lab));
             }
@@ -270,14 +270,14 @@ namespace LH.Drawing
         /// <param name="Lab">Lab 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        internal static double[] Lab2XYZ(double[] Lab, Reference reference)
+        public static double[] Lab2XYZ(double[] Lab, Reference reference)
         {
-            if (Lab == null)
+            if (Lab is null)
             {
                 throw new ArgumentNullException(nameof(Lab));
             }
 
-            if (reference == null)
+            if (reference is null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -301,9 +301,9 @@ namespace LH.Drawing
         /// </summary>
         /// <param name="LCHab">LCHab 值的数组。</param>
         /// <returns></returns>
-        internal static double[] LCHab2Lab(double[] LCHab)
+        public static double[] LCHab2Lab(double[] LCHab)
         {
-            if (LCHab == null)
+            if (LCHab is null)
             {
                 throw new ArgumentNullException(nameof(LCHab));
             }
@@ -316,9 +316,9 @@ namespace LH.Drawing
         /// </summary>
         /// <param name="LCHuv">LCHab 值的数组。</param>
         /// <returns></returns>
-        internal static double[] LCHuv2Luv(double[] LCHuv)
+        public static double[] LCHuv2Luv(double[] LCHuv)
         {
-            if (LCHuv == null)
+            if (LCHuv is null)
             {
                 throw new ArgumentNullException(nameof(LCHuv));
             }
@@ -331,9 +331,9 @@ namespace LH.Drawing
         /// </summary>
         /// <param name="Luv">Luv 值的数组。</param>
         /// <returns></returns>
-        internal static double[] Luv2LCHuv(double[] Luv)
+        public static double[] Luv2LCHuv(double[] Luv)
         {
-            if (Luv == null)
+            if (Luv is null)
             {
                 throw new ArgumentNullException(nameof(Luv));
             }
@@ -356,14 +356,14 @@ namespace LH.Drawing
         /// <param name="Luv">Luv 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        internal static double[] Luv2XYZ(double[] Luv, Reference reference)
+        public static double[] Luv2XYZ(double[] Luv, Reference reference)
         {
-            if (Luv == null)
+            if (Luv is null)
             {
                 throw new ArgumentNullException(nameof(Luv));
             }
 
-            if (reference == null)
+            if (reference is null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -394,9 +394,9 @@ namespace LH.Drawing
         /// </summary>
         /// <param name="RGB">RGB(0-255) 值的数组。</param>
         /// <returns></returns>
-        internal static double[] RGB2RGB(byte[] RGB)
+        public static double[] RGB2RGB(byte[] RGB)
         {
-            if (RGB == null)
+            if (RGB is null)
             {
                 throw new ArgumentNullException(nameof(RGB));
             }
@@ -409,9 +409,9 @@ namespace LH.Drawing
         /// </summary>
         /// <param name="RGB">RGB(0-1.0) 值的数组。</param>
         /// <returns></returns>
-        internal static byte[] RGB2RGB(double[] RGB)
+        public static byte[] RGB2RGB(double[] RGB)
         {
-            if (RGB == null)
+            if (RGB is null)
             {
                 throw new ArgumentNullException(nameof(RGB));
             }
@@ -429,14 +429,14 @@ namespace LH.Drawing
         /// <param name="RGB">RGB(0-1.0) 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        internal static double[] RGB2XYZ(double[] RGB, Reference reference)
+        public static double[] RGB2XYZ(double[] RGB, Reference reference)
         {
-            if (RGB == null)
+            if (RGB is null)
             {
                 throw new ArgumentNullException(nameof(RGB));
             }
 
-            if (reference == null)
+            if (reference is null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -493,9 +493,9 @@ namespace LH.Drawing
         /// <param name="xyY">xyY 值的数组。</param>
         /// <returns></returns>
         [SuppressMessage("样式", "IDE1006:命名样式", Justification = "<挂起>")]
-        internal static double[] xyY2XYZ(double[] xyY)
+        public static double[] xyY2XYZ(double[] xyY)
         {
-            if (xyY == null)
+            if (xyY is null)
             {
                 throw new ArgumentNullException(nameof(xyY));
             }
@@ -518,13 +518,13 @@ namespace LH.Drawing
         /// <param name="exception">错误信息。无法转换时输出错误原因。</param>
         /// <returns></returns>
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal static double XYZ2CCT(double[] XYZ, Reference reference, out Exception exception)
+        public static double XYZ2CCT(double[] XYZ, Reference reference, out Exception exception)
         {
-            if (XYZ == null)
+            if (XYZ is null)
             {
                 throw new ArgumentNullException(nameof(XYZ));
             }
-            if (reference == null)
+            if (reference is null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -568,13 +568,13 @@ namespace LH.Drawing
         /// <param name="XYZ">XYZ 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        internal static double[] XYZ2Lab(double[] XYZ, Reference reference)
+        public static double[] XYZ2Lab(double[] XYZ, Reference reference)
         {
-            if (XYZ == null)
+            if (XYZ is null)
             {
                 throw new ArgumentNullException(nameof(XYZ));
             }
-            if (reference == null)
+            if (reference is null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -595,13 +595,13 @@ namespace LH.Drawing
         /// <param name="XYZ">XYZ 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        internal static double[] XYZ2Luv(double[] XYZ, Reference reference)
+        public static double[] XYZ2Luv(double[] XYZ, Reference reference)
         {
-            if (XYZ == null)
+            if (XYZ is null)
             {
                 throw new ArgumentNullException(nameof(XYZ));
             }
-            if (reference == null)
+            if (reference is null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -628,13 +628,13 @@ namespace LH.Drawing
         /// <param name="XYZ">XYZ 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        internal static double[] XYZ2RGB(double[] XYZ, Reference reference)
+        public static double[] XYZ2RGB(double[] XYZ, Reference reference)
         {
-            if (XYZ == null)
+            if (XYZ is null)
             {
                 throw new ArgumentNullException(nameof(XYZ));
             }
-            if (reference == null)
+            if (reference is null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -688,13 +688,13 @@ namespace LH.Drawing
         /// <param name="XYZ">XYZ 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        internal static double[] XYZ2xyY(double[] XYZ, Reference reference)
+        public static double[] XYZ2xyY(double[] XYZ, Reference reference)
         {
-            if (XYZ == null)
+            if (XYZ is null)
             {
                 throw new ArgumentNullException(nameof(XYZ));
             }
-            if (reference == null)
+            if (reference is null)
             {
                 throw new ArgumentNullException(nameof(reference));
             }
@@ -802,21 +802,21 @@ namespace LH.Drawing
     /// 转换参照值。
     /// </summary>
     [SuppressMessage("Performance", "CA1812:避免未实例化的内部类", Justification = "<挂起>")]
-    internal sealed class Reference
+    public sealed class Reference
     {
         #region 成员
 
         /// <summary>
         /// 调整器。
         /// </summary>
-        internal Adaptation Adaptation { get; }
+        public Adaptation Adaptation { get; }
 
         /// <summary>
         /// 波长转换常量。360nm 至 830nm，5nm 间隔。
         /// </summary>
         [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[,] CIE1931StandardObserver { get; } = new double[3, 95] {
+        public double[,] CIE1931StandardObserver { get; } = new double[3, 95] {
             {
                 0.000129900000d, 0.000232100000d, 0.000414900000d, 0.000741600000d, 0.001368000000d, 0.002236000000d,
                 0.004243000000d, 0.007650000000d, 0.014310000000d, 0.023190000000d, 0.043510000000d, 0.077630000000d,
@@ -878,7 +878,7 @@ namespace LH.Drawing
         /// </summary>
         [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[,] CIE1964StandardObserver { get; } = new double[3, 95] {
+        public double[,] CIE1964StandardObserver { get; } = new double[3, 95] {
             {
                 0.000000122200d, 0.000000919270d, 0.000005958600d, 0.000033266000d, 0.000159952000d, 0.000662440000d,
                 0.002361600000d, 0.007242300000d, 0.019109700000d, 0.043400000000d, 0.084736000000d, 0.140638000000d,
@@ -938,56 +938,56 @@ namespace LH.Drawing
         /// <summary>
         /// Gamma。
         /// </summary>
-        internal double Gamma { get; }
+        public double Gamma { get; }
 
         /// <summary>
         /// 光源。
         /// </summary>
-        internal Illuminant Illuminant { get; }
+        public Illuminant Illuminant { get; }
 
         /// <summary>
         /// 调整器矩阵。
         /// </summary>
         [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[,] MtxAdaptation { get; }
+        public double[,] MtxAdaptation { get; }
 
         /// <summary>
         /// 调整器逆矩阵。
         /// </summary>
         [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[,] MtxAdaptationI { get; }
+        public double[,] MtxAdaptationI { get; }
 
         /// <summary>
         /// RGB 转换 XYZ 矩阵。
         /// </summary>
         [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[,] MtxRGB2XYZ { get; }
+        public double[,] MtxRGB2XYZ { get; }
 
         /// <summary>
         /// XYZ 转换 RGB 矩阵。
         /// </summary>
         [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[,] MtxXYZ2RGB { get; }
+        public double[,] MtxXYZ2RGB { get; }
 
         /// <summary>
         /// 观测角度。
         /// </summary>
-        internal Observer Observer { get; }
+        public Observer Observer { get; }
 
         /// <summary>
         /// RGB 模型。
         /// </summary>
-        internal RGBModel RGBModel { get; }
+        public RGBModel RGBModel { get; }
 
         /// <summary>
         /// 波长转换常量。
         /// </summary>
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[] RT { get; } = {
+        public double[] RT { get; } = {
                       0.0e-6, 10.0e-6, 20.0e-6, 30.0e-6, 40.0e-6, 50.0e-6,
                       60.0e-6, 70.0e-6, 80.0e-6, 90.0e-6, 100.0e-6, 125.0e-6,
                       150.0e-6, 175.0e-6, 200.0e-6, 225.0e-6, 250.0e-6, 275.0e-6,
@@ -1000,7 +1000,7 @@ namespace LH.Drawing
         /// 波长转换常量。
         /// </summary>
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[] T { get; } = {
+        public double[] T { get; } = {
                      -0.24341d, -0.25479d, -0.26876d, -0.28539d, -0.30470d, -0.32675d,
                      -0.35156d, -0.37915d, -0.40955d, -0.44278d, -0.47888d, -0.58204d,
                      -0.70471d, -0.84901d, -1.0182d, -1.2168d, -1.4512d, -1.7298d,
@@ -1013,7 +1013,7 @@ namespace LH.Drawing
         /// 波长转换常量。
         /// </summary>
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[] U { get; } = {
+        public double[] U { get; } = {
                      0.18006d, 0.18066d, 0.18133d, 0.18208d, 0.18293d, 0.18388d,
                      0.18494d, 0.18611d, 0.18740d, 0.18880d, 0.19032d, 0.19462d,
                      0.19962d, 0.20525d, 0.21142d, 0.21807d, 0.22511d, 0.23247d,
@@ -1026,7 +1026,7 @@ namespace LH.Drawing
         /// 波长转换常量。
         /// </summary>
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[] V { get; } = {
+        public double[] V { get; } = {
                      0.26352d, 0.26589d, 0.26846d, 0.27119d, 0.27407d, 0.27709d,
                      0.28021d, 0.28342d, 0.28668d, 0.28997d, 0.29326d, 0.30141d,
                      0.30921d, 0.31647d, 0.32312d, 0.32909d, 0.33439d, 0.33904d,
@@ -1039,13 +1039,13 @@ namespace LH.Drawing
         /// 白光参照。
         /// </summary>
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[] White { get; }
+        public double[] White { get; }
 
         /// <summary>
         /// RGB 白光参照。
         /// </summary>
         [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
-        internal double[] WhiteRGB { get; }
+        public double[] WhiteRGB { get; }
 
         #endregion 成员
 
@@ -1058,7 +1058,7 @@ namespace LH.Drawing
         /// <param name="adaptation">调整器。</param>
         [SuppressMessage("样式", "IDE0066:将 switch 语句转换为表达式", Justification = "<挂起>")]
         [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
-        internal Reference(Illuminant illuminant, Observer observer, RGBModel model, Adaptation adaptation)
+        public Reference(Illuminant illuminant, Observer observer, RGBModel model, Adaptation adaptation)
         {
             this.Illuminant = illuminant;
             this.Observer = observer;

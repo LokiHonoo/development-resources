@@ -19,29 +19,29 @@ namespace LH.Data
     /// <summary>
     /// Sql extension.
     /// </summary>
-    internal static class SqlHelper
+    public static class SqlHelper
     {
         #region ConnectionBehavior
 
         /// <summary>
         /// Connection open/close behavior when using DataAdapter. Default Auto.
         /// </summary>
-        internal static SqlConnectionBehavior DataAdapterConnectionBehavior { get; set; } = SqlConnectionBehavior.Auto;
+        public static SqlConnectionBehavior DataAdapterConnectionBehavior { get; set; } = SqlConnectionBehavior.Auto;
 
         /// <summary>
         /// Connection open/close behavior when using DataReader. Default Manual.
         /// </summary>
-        internal static SqlConnectionBehavior DataReaderConnectionBehavior { get; set; } = SqlConnectionBehavior.Manual;
+        public static SqlConnectionBehavior DataReaderConnectionBehavior { get; set; } = SqlConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Execute, XmlReader. Default Manual.
         /// </summary>
-        internal static SqlConnectionBehavior ExecuteConnectionBehavior { get; set; } = SqlConnectionBehavior.Manual;
+        public static SqlConnectionBehavior ExecuteConnectionBehavior { get; set; } = SqlConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Transaction. Default Manual.
         /// </summary>
-        internal static SqlConnectionBehavior TransactionConnectionBehavior { get; set; } = SqlConnectionBehavior.Manual;
+        public static SqlConnectionBehavior TransactionConnectionBehavior { get; set; } = SqlConnectionBehavior.Manual;
 
         #endregion ConnectionBehavior
 
@@ -52,9 +52,9 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        internal static SqlConnection BuildConnection(SqlConnectionStringBuilder connectionStringBuilder)
+        public static SqlConnection BuildConnection(SqlConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder == null)
+            if (connectionStringBuilder is null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -67,7 +67,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         /// <returns></returns>
-        internal static SqlConnection BuildConnection(string connectionString)
+        public static SqlConnection BuildConnection(string connectionString)
         {
             return new SqlConnection(connectionString);
         }
@@ -80,7 +80,7 @@ namespace LH.Data
         /// <param name="password">Password.。</param>
         /// <param name="catalog">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        internal static SqlConnection BuildConnection(string dataSource, string userID, string password, string catalog)
+        public static SqlConnection BuildConnection(string dataSource, string userID, string password, string catalog)
         {
             SqlConnectionStringBuilder connectionStringBuilder = new SqlConnectionStringBuilder()
             {
@@ -103,7 +103,7 @@ namespace LH.Data
         /// <param name="password">Password.。</param>
         /// <param name="catalog">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        internal static SqlConnection BuildConnection(string server, uint port, string userID, string password, string catalog)
+        public static SqlConnection BuildConnection(string server, uint port, string userID, string password, string catalog)
         {
             string dataSource = string.Format(CultureInfo.InvariantCulture, "{0},{1}", server, port);
             SqlConnectionStringBuilder connectionStringBuilder = new SqlConnectionStringBuilder()
@@ -123,9 +123,9 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        internal static string BuildConnectionString(SqlConnectionStringBuilder connectionStringBuilder)
+        public static string BuildConnectionString(SqlConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder == null)
+            if (connectionStringBuilder is null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
@@ -141,7 +141,7 @@ namespace LH.Data
         /// <param name="password">Password.。</param>
         /// <param name="catalog">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        internal static string BuildConnectionString(string dataSource, string userID, string password, string catalog)
+        public static string BuildConnectionString(string dataSource, string userID, string password, string catalog)
         {
             SqlConnectionStringBuilder connectionStringBuilder = new SqlConnectionStringBuilder()
             {
@@ -164,7 +164,7 @@ namespace LH.Data
         /// <param name="password">Password.。</param>
         /// <param name="catalog">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        internal static string BuildConnectionString(string server, uint port, string userID, string password, string catalog)
+        public static string BuildConnectionString(string server, uint port, string userID, string password, string catalog)
         {
             string dataSource = string.Format(CultureInfo.InvariantCulture, "{0},{1}", server, port);
             SqlConnectionStringBuilder connectionStringBuilder = new SqlConnectionStringBuilder()
@@ -190,7 +190,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText)
+        public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText)
         {
             return FillDataSet(dataSet, connection, selectCommandText, null);
         }
@@ -204,9 +204,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
+        public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -231,7 +231,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText)
+        public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText)
         {
             return FillDataTable(dataTable, connection, selectCommandText, null);
         }
@@ -245,9 +245,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
+        public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -272,7 +272,7 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText)
+        public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText)
         {
             return new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
         }
@@ -285,7 +285,7 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
+        public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
             SqlDataAdapter result = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
             if (parameters != null && parameters.Length > 0) { result.SelectCommand.Parameters.AddRange(parameters); }
@@ -298,7 +298,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataSet GetDataSet(SqlConnection connection, string selectCommandText)
+        public static DataSet GetDataSet(SqlConnection connection, string selectCommandText)
         {
             return GetDataSet(connection, selectCommandText, null);
         }
@@ -311,9 +311,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static DataSet GetDataSet(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
+        public static DataSet GetDataSet(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -337,7 +337,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        internal static DataTable GetDataTable(SqlConnection connection, string selectCommandText)
+        public static DataTable GetDataTable(SqlConnection connection, string selectCommandText)
         {
             return GetDataTable(connection, selectCommandText, null);
         }
@@ -350,9 +350,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static DataTable GetDataTable(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
+        public static DataTable GetDataTable(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -380,7 +380,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static SqlDataReader GetDataReader(SqlConnection connection, string commandText)
+        public static SqlDataReader GetDataReader(SqlConnection connection, string commandText)
         {
             return GetDataReader(connection, commandText, null);
         }
@@ -394,9 +394,9 @@ namespace LH.Data
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "<Pending>")]
-        internal static SqlDataReader GetDataReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        public static SqlDataReader GetDataReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -437,7 +437,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static XmlReader GetXmlReader(SqlConnection connection, string commandText)
+        public static XmlReader GetXmlReader(SqlConnection connection, string commandText)
         {
             return GetXmlReader(connection, commandText, null);
         }
@@ -450,9 +450,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static XmlReader GetXmlReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        public static XmlReader GetXmlReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -484,7 +484,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int ExecuteNonQuery(SqlConnection connection, string commandText)
+        public static int ExecuteNonQuery(SqlConnection connection, string commandText)
         {
             return ExecuteNonQuery(connection, commandText, null);
         }
@@ -497,9 +497,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static int ExecuteNonQuery(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        public static int ExecuteNonQuery(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -526,7 +526,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void ExecuteProcedure(SqlConnection connection, string procedure)
+        public static void ExecuteProcedure(SqlConnection connection, string procedure)
         {
             ExecuteProcedure(connection, procedure, null);
         }
@@ -539,9 +539,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        internal static void ExecuteProcedure(SqlConnection connection, string procedure, params SqlParameter[] parameters)
+        public static void ExecuteProcedure(SqlConnection connection, string procedure, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -566,7 +566,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object ExecuteScalar(SqlConnection connection, string commandText)
+        public static object ExecuteScalar(SqlConnection connection, string commandText)
         {
             return ExecuteScalar(connection, commandText, null);
         }
@@ -579,9 +579,9 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        internal static object ExecuteScalar(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        public static object ExecuteScalar(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -613,7 +613,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(SqlConnection connection, string commandText)
+        public static int TransactionExecuteNonQuery(SqlConnection connection, string commandText)
         {
             return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, null);
         }
@@ -625,7 +625,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        public static int TransactionExecuteNonQuery(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
             return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, parameters);
         }
@@ -637,7 +637,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static int TransactionExecuteNonQuery(SqlConnection connection, IsolationLevel iso, string commandText)
+        public static int TransactionExecuteNonQuery(SqlConnection connection, IsolationLevel iso, string commandText)
         {
             return TransactionExecuteNonQuery(connection, iso, commandText, null);
         }
@@ -653,9 +653,9 @@ namespace LH.Data
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        internal static int TransactionExecuteNonQuery(SqlConnection connection, IsolationLevel iso, string commandText, params SqlParameter[] parameters)
+        public static int TransactionExecuteNonQuery(SqlConnection connection, IsolationLevel iso, string commandText, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -691,7 +691,7 @@ namespace LH.Data
                 }
             }
             if (state != ConnectionState.Open) { connection.Close(); }
-            if (exception == null)
+            if (exception is null)
             {
                 return result;
             }
@@ -706,7 +706,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void TransactionExecuteProcedure(SqlConnection connection, string procedure)
+        public static void TransactionExecuteProcedure(SqlConnection connection, string procedure)
         {
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, null);
         }
@@ -717,7 +717,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        internal static void TransactionExecuteProcedure(SqlConnection connection, string procedure, params SqlParameter[] parameters)
+        public static void TransactionExecuteProcedure(SqlConnection connection, string procedure, params SqlParameter[] parameters)
         {
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, parameters);
         }
@@ -728,7 +728,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        internal static void TransactionExecuteProcedure(SqlConnection connection, IsolationLevel iso, string procedure)
+        public static void TransactionExecuteProcedure(SqlConnection connection, IsolationLevel iso, string procedure)
         {
             TransactionExecuteProcedure(connection, iso, procedure, null);
         }
@@ -743,9 +743,9 @@ namespace LH.Data
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        internal static void TransactionExecuteProcedure(SqlConnection connection, IsolationLevel iso, string procedure, params SqlParameter[] parameters)
+        public static void TransactionExecuteProcedure(SqlConnection connection, IsolationLevel iso, string procedure, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -793,7 +793,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(SqlConnection connection, string commandText)
+        public static object TransactionExecuteScalar(SqlConnection connection, string commandText)
         {
             return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, null);
         }
@@ -805,7 +805,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        public static object TransactionExecuteScalar(SqlConnection connection, string commandText, params SqlParameter[] parameters)
         {
             return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, parameters);
         }
@@ -817,7 +817,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        internal static object TransactionExecuteScalar(SqlConnection connection, IsolationLevel iso, string commandText)
+        public static object TransactionExecuteScalar(SqlConnection connection, IsolationLevel iso, string commandText)
         {
             return TransactionExecuteScalar(connection, iso, commandText, null);
         }
@@ -833,9 +833,9 @@ namespace LH.Data
         [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        internal static object TransactionExecuteScalar(SqlConnection connection, IsolationLevel iso, string commandText, params SqlParameter[] parameters)
+        public static object TransactionExecuteScalar(SqlConnection connection, IsolationLevel iso, string commandText, params SqlParameter[] parameters)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
@@ -871,7 +871,7 @@ namespace LH.Data
                 }
             }
             if (state != ConnectionState.Open) { connection.Close(); }
-            if (exception == null)
+            if (exception is null)
             {
                 return result;
             }
@@ -889,7 +889,7 @@ namespace LH.Data
     /// <summary>
     /// The mode of the connection when querying.
     /// </summary>
-    internal enum SqlConnectionBehavior
+    public enum SqlConnectionBehavior
     {
         /// <summary>Does not open automatically. If the connection is not open  when the querying, an exception is thrown.</summary>
         Manual,
@@ -905,14 +905,14 @@ namespace LH.Data
     /// <summary>
     /// Return command text.
     /// </summary>
-    internal static class SqlCommandText
+    public static class SqlCommandText
     {
         #region Engine
 
         /// <summary>
         /// Displays database files.
         /// </summary>
-        internal static string ShowAltFiles()
+        public static string ShowAltFiles()
         {
             return "SELECT * FROM sysaltfiles";
         }
@@ -920,7 +920,7 @@ namespace LH.Data
         /// <summary>
         /// Displays character set and collation.
         /// </summary>
-        internal static string ShowCharsets()
+        public static string ShowCharsets()
         {
             return "SELECT * FROM syscharsets";
         }
@@ -928,7 +928,7 @@ namespace LH.Data
         /// <summary>
         /// Displays configuration options.
         /// </summary>
-        internal static string ShowConfigures()
+        public static string ShowConfigures()
         {
             return "SELECT * FROM sysconfigures";
         }
@@ -936,7 +936,7 @@ namespace LH.Data
         /// <summary>
         /// Displays current config options.
         /// </summary>
-        internal static string ShowCurConfigs()
+        public static string ShowCurConfigs()
         {
             return "SELECT * FROM syscurconfigs";
         }
@@ -944,7 +944,7 @@ namespace LH.Data
         /// <summary>
         /// Displays file groups.
         /// </summary>
-        internal static string ShowFileGroups()
+        public static string ShowFileGroups()
         {
             return "SELECT * FROM sysfilegroups";
         }
@@ -952,7 +952,7 @@ namespace LH.Data
         /// <summary>
         /// Displays file, sysfiles is a virtual table.
         /// </summary>
-        internal static string ShowFiles()
+        public static string ShowFiles()
         {
             return "SELECT * FROM sysfiles";
         }
@@ -960,7 +960,7 @@ namespace LH.Data
         /// <summary>
         /// Displays external Keywords.
         /// </summary>
-        internal static string ShowForeignKeys()
+        public static string ShowForeignKeys()
         {
             return "SELECT * FROM sysforeignkeys";
         }
@@ -968,7 +968,7 @@ namespace LH.Data
         /// <summary>
         /// Displays languages.
         /// </summary>
-        internal static string ShowLanguages()
+        public static string ShowLanguages()
         {
             return "SELECT * FROM syslanguages";
         }
@@ -976,7 +976,7 @@ namespace LH.Data
         /// <summary>
         /// Displays login account information.
         /// </summary>
-        internal static string ShowLogins()
+        public static string ShowLogins()
         {
             return "SELECT * FROM syslogins";
         }
@@ -984,7 +984,7 @@ namespace LH.Data
         /// <summary>
         /// Displays members.
         /// </summary>
-        internal static string ShowMembers()
+        public static string ShowMembers()
         {
             return "SELECT * FROM sysmembers";
         }
@@ -992,7 +992,7 @@ namespace LH.Data
         /// <summary>
         /// Displays objects of all types.
         /// </summary>
-        internal static string ShowObjects()
+        public static string ShowObjects()
         {
             return "SELECT * FROM sysobjects;";
         }
@@ -1000,7 +1000,7 @@ namespace LH.Data
         /// <summary>
         /// Displays server login information.
         /// </summary>
-        internal static string ShowOleDbUsers()
+        public static string ShowOleDbUsers()
         {
             return "SELECT * FROM sysoledbusers";
         }
@@ -1008,7 +1008,7 @@ namespace LH.Data
         /// <summary>
         /// Displays permissions.
         /// </summary>
-        internal static string ShowPermissions()
+        public static string ShowPermissions()
         {
             return "SELECT * FROM syspermissions;";
         }
@@ -1016,7 +1016,7 @@ namespace LH.Data
         /// <summary>
         /// Displays processes.
         /// </summary>
-        internal static string ShowProcesses()
+        public static string ShowProcesses()
         {
             return "SELECT * FROM sysprocesses;";
         }
@@ -1024,7 +1024,7 @@ namespace LH.Data
         /// <summary>
         /// Displays Remote login account.
         /// </summary>
-        internal static string ShowRemoteLogins()
+        public static string ShowRemoteLogins()
         {
             return "SELECT * FROM sysremotelogins;";
         }
@@ -1038,7 +1038,7 @@ namespace LH.Data
         /// <para>RF = Replication filter stored procedure. S = System table. TF = table function. TR = Trigger.</para>
         /// <para>U = User table. UQ = UNIQUE .V = View. X = Extended stored procedure.</para>
         /// </param>
-        internal static string ShowSysObject(string xType)
+        public static string ShowSysObject(string xType)
         {
             return "SELECT * FROM sysobjects WHERE xtype = N'" + xType + "';";
         }
@@ -1046,7 +1046,7 @@ namespace LH.Data
         /// <summary>
         /// Displays system data types and user defined data types.
         /// </summary>
-        internal static string ShowTypes()
+        public static string ShowTypes()
         {
             return "SELECT * FROM systypes;";
         }
@@ -1054,7 +1054,7 @@ namespace LH.Data
         /// <summary>
         /// Displays users.
         /// </summary>
-        internal static string ShowUsers()
+        public static string ShowUsers()
         {
             return "SELECT * FROM sysusers;";
         }
@@ -1068,7 +1068,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="database">The name of the database to create.</param>
         /// <returns></returns>
-        internal static string CreateDatabase(string database)
+        public static string CreateDatabase(string database)
         {
             return "CREATE DATABASE [" + database + "];";
         }
@@ -1078,7 +1078,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="database">The name of the database to delete.</param>
         /// <returns></returns>
-        internal static string DropDatabase(string database)
+        public static string DropDatabase(string database)
         {
             return "IF EXISTS (SELECT name FROM sysdatabases WHERE name = N'" + database + "') DROP DATABASE [" + database + "];";
         }
@@ -1087,7 +1087,7 @@ namespace LH.Data
         /// Displays all visible database names.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowDatabases()
+        public static string ShowDatabases()
         {
             return "SELECT * FROM sysdatabases;";
         }
@@ -1099,7 +1099,7 @@ namespace LH.Data
         /// <summary>
         /// Displays all types of columns.
         /// </summary>
-        internal static string ShowColumns()
+        public static string ShowColumns()
         {
             return "SELECT * FROM syscolumns;";
         }
@@ -1108,7 +1108,7 @@ namespace LH.Data
         /// Displays the columns of the specified type, and the data types provided by the current data server or data source can be queried through the systypes table.
         /// </summary>
         /// <param name="xType">syscolumns xtype。</param>
-        internal static string ShowColumns(int xType)
+        public static string ShowColumns(int xType)
         {
             return "SELECT * FROM syscolumns WHERE xtype = " + xType + ";";
         }
@@ -1118,7 +1118,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="procedure">The name of the stored procedure.</param>
         /// <returns></returns>
-        internal static string ShowCreateProcedure(string procedure)
+        public static string ShowCreateProcedure(string procedure)
         {
             return "EXEC sp_helptext N'" + procedure + "';";
         }
@@ -1128,7 +1128,7 @@ namespace LH.Data
         /// </summary>
         /// <returns></returns>
         /// <param name="category">Set to 0 to represent the user stored procedure.</param>
-        internal static string ShowProcedures(int category)
+        public static string ShowProcedures(int category)
         {
             return "SELECT * FROM sysobjects WHERE xtype= N'P' AND category = " + category + ";";
         }
@@ -1137,7 +1137,7 @@ namespace LH.Data
         /// Display basic information for all stored procedures.
         /// </summary>
         /// <returns></returns>
-        internal static string ShowProcedures()
+        public static string ShowProcedures()
         {
             return "SELECT * FROM sysobjects WHERE xtype= N'P';";
         }

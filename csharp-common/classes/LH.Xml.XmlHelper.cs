@@ -18,7 +18,7 @@ namespace LH.Xml
     /// <summary>
     /// Xml 辅助。
     /// </summary>
-    internal static class XmlHelper
+    public static class XmlHelper
     {
         /// <summary>
         /// 格式化设置。
@@ -35,7 +35,7 @@ namespace LH.Xml
         /// </summary>
         /// <param name="doc">XmlDocument 文档。</param>
         /// <returns></returns>
-        internal static string GetFormattedString(XmlDocument doc)
+        public static string GetFormattedString(XmlDocument doc)
         {
             return GetFormattedString(doc, _writerSettings);
         }
@@ -46,9 +46,9 @@ namespace LH.Xml
         /// <param name="doc">XmlDocument 文档。</param>
         /// <param name="settings">格式化设置。</param>
         /// <returns></returns>
-        internal static string GetFormattedString(XmlDocument doc, XmlWriterSettings settings)
+        public static string GetFormattedString(XmlDocument doc, XmlWriterSettings settings)
         {
-            if (doc == null)
+            if (doc is null)
             {
                 throw new ArgumentNullException(nameof(doc));
             }
@@ -66,7 +66,7 @@ namespace LH.Xml
         /// </summary>
         /// <param name="path">文件路径。</param>
         /// <returns></returns>
-        internal static XmlDocument LoadFromFile(string path)
+        public static XmlDocument LoadFromFile(string path)
         {
             return LoadFromFile(path, null, _readerSettings);
         }
@@ -79,7 +79,7 @@ namespace LH.Xml
         /// <param name="settings">格式化设置。</param>
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static XmlDocument LoadFromFile(string path, XmlResolver resolver, XmlReaderSettings settings)
+        public static XmlDocument LoadFromFile(string path, XmlResolver resolver, XmlReaderSettings settings)
         {
             XmlDocument doc = new XmlDocument() { XmlResolver = resolver };
             using (TextReader reader = new StreamReader(path))
@@ -97,7 +97,7 @@ namespace LH.Xml
         /// </summary>
         /// <param name="xml">Xml 文本。</param>
         /// <returns></returns>
-        internal static XmlDocument Parse(string xml)
+        public static XmlDocument Parse(string xml)
         {
             return Parse(xml, null, _readerSettings);
         }
@@ -110,7 +110,7 @@ namespace LH.Xml
         /// <param name="settings">格式化设置。</param>
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static XmlDocument Parse(string xml, XmlResolver resolver, XmlReaderSettings settings)
+        public static XmlDocument Parse(string xml, XmlResolver resolver, XmlReaderSettings settings)
         {
             XmlDocument doc = new XmlDocument() { XmlResolver = resolver };
             using (StringReader reader = new StringReader(xml))
@@ -128,7 +128,7 @@ namespace LH.Xml
         /// </summary>
         /// <param name="path">保存的文件路径。</param>
         /// <param name="doc">XmlDocument 文档。</param>
-        internal static void SaveFormattedToFile(string path, XmlDocument doc)
+        public static void SaveFormattedToFile(string path, XmlDocument doc)
         {
             SaveFormattedToFile(path, doc, _writerSettings);
         }
@@ -140,9 +140,9 @@ namespace LH.Xml
         /// <param name="doc">XmlDocument 文档。</param>
         /// <param name="settings">格式化设置。</param>
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static void SaveFormattedToFile(string path, XmlDocument doc, XmlWriterSettings settings)
+        public static void SaveFormattedToFile(string path, XmlDocument doc, XmlWriterSettings settings)
         {
-            if (doc == null)
+            if (doc is null)
             {
                 throw new ArgumentNullException(nameof(doc));
             }

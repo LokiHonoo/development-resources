@@ -16,12 +16,12 @@ namespace LH.Windows
     /// 系统休眠。
     /// </summary>
     [SuppressMessage("Design", "CA1060:将 pinvoke 移到本机方法类", Justification = "<挂起>")]
-    internal static class SystemSleep
+    public static class SystemSleep
     {
         #region Native
 
         [DllImport("kernel32.dll")]
-        internal static extern uint SetThreadExecutionState(uint Flags);
+        private static extern uint SetThreadExecutionState(uint Flags);
 
         #endregion Native
 
@@ -35,15 +35,16 @@ namespace LH.Windows
         ///阻止系统休眠，直到恢复休眠策略。
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
-        internal static void PreventSleep(bool includeDisplay)
+        [SuppressMessage("Performance", "CA1806:不要忽略方法结果", Justification = "<挂起>")]
+        public static void PreventSleep(bool includeDisplay)
         {
             if (includeDisplay)
             {
-                _ = SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
+                SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
             }
             else
             {
-                _ = SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
+                SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
             }
         }
 
@@ -51,24 +52,26 @@ namespace LH.Windows
         ///重置系统休眠计时器。
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
-        internal static void ResetSleepTimer(bool includeDisplay)
+        [SuppressMessage("Performance", "CA1806:不要忽略方法结果", Justification = "<挂起>")]
+        public static void ResetSleepTimer(bool includeDisplay)
         {
             if (includeDisplay)
             {
-                _ = SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+                SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
             }
             else
             {
-                _ = SetThreadExecutionState(ES_SYSTEM_REQUIRED);
+                SetThreadExecutionState(ES_SYSTEM_REQUIRED);
             }
         }
 
         /// <summary>
         ///恢复系统休眠策略。
         /// </summary>
-        internal static void ResotreSleep()
+        [SuppressMessage("Performance", "CA1806:不要忽略方法结果", Justification = "<挂起>")]
+        public static void ResotreSleep()
         {
-            _ = SetThreadExecutionState(ES_CONTINUOUS);
+            SetThreadExecutionState(ES_CONTINUOUS);
         }
     }
 }

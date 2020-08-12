@@ -18,7 +18,7 @@ namespace LH.Collections.Generic
     /// 求数组组合。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
-    internal class Combination<T>
+    public class Combination<T>
     {
         #region 成员
 
@@ -34,7 +34,7 @@ namespace LH.Collections.Generic
         /// </summary>
         /// <param name="result">组合完成后的一组元素集合。</param>
         /// <param name="userState">传递用户参数。</param>
-        internal delegate void CreatedCallback(T[] result, object userState);
+        public delegate void CreatedCallback(T[] result, object userState);
 
         #endregion 委托
 
@@ -45,8 +45,10 @@ namespace LH.Collections.Generic
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal Combination(IList<T> array, int m)
+        public Combination(IList<T> array, int m)
         {
+            _array = array ?? throw new ArgumentNullException(nameof(array));
+            _m = m;
             if (array.Count == 0)
             {
                 throw new Exception("元素数组不能是空数组。");
@@ -55,15 +57,13 @@ namespace LH.Collections.Generic
             {
                 throw new Exception("m 的不能小于 1 或大于元素数组的最大长度。");
             }
-            _array = array;
-            _m = m;
         }
 
         /// <summary>
         /// 计算可组合数量。
         /// </summary>
         /// <returns></returns>
-        internal BigInteger GetCount()
+        public BigInteger GetCount()
         {
             return C(_array.Count, _m);
         }
@@ -74,7 +74,7 @@ namespace LH.Collections.Generic
         /// <returns></returns>
         /// <exception cref="Exception" />
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal List<T[]> Output()
+        public List<T[]> Output()
         {
             BigInteger count = GetCount();
             if (count > int.MaxValue)
@@ -91,7 +91,7 @@ namespace LH.Collections.Generic
         /// </summary>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        internal void Output(CreatedCallback created, object userState)
+        public void Output(CreatedCallback created, object userState)
         {
             Combine(_array, _m, 0, _m, created, userState);
         }
@@ -161,7 +161,7 @@ namespace LH.Collections.Generic
     /// 求数组排列。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
-    internal class Permutation<T>
+    public class Permutation<T>
     {
         #region 成员
 
@@ -177,7 +177,7 @@ namespace LH.Collections.Generic
         /// </summary>
         /// <param name="result">排列完成后的一组元素集合。</param>
         /// <param name="userState">传递用户参数。</param>
-        internal delegate void CreatedCallback(T[] result, object userState);
+        public delegate void CreatedCallback(T[] result, object userState);
 
         #endregion 委托
 
@@ -188,8 +188,10 @@ namespace LH.Collections.Generic
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal Permutation(IList<T> array, int m)
+        public Permutation(IList<T> array, int m)
         {
+            _array = array ?? throw new ArgumentNullException(nameof(array));
+            _m = m;
             if (array.Count == 0)
             {
                 throw new Exception("元素数组不能是空数组。");
@@ -198,15 +200,13 @@ namespace LH.Collections.Generic
             {
                 throw new Exception("m 的值不能小于 1 或大于元素数组的最大长度。");
             }
-            _array = array;
-            _m = m;
         }
 
         /// <summary>
         /// 计算可排列数量。
         /// </summary>
         /// <returns></returns>
-        internal BigInteger GetCount()
+        public BigInteger GetCount()
         {
             return P(_array.Count, _m);
         }
@@ -217,7 +217,7 @@ namespace LH.Collections.Generic
         /// <returns></returns>
         /// <exception cref="Exception" />
         [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
-        internal List<T[]> Output()
+        public List<T[]> Output()
         {
             BigInteger count = GetCount();
             if (count > int.MaxValue)
@@ -234,7 +234,7 @@ namespace LH.Collections.Generic
         /// </summary>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        internal void Output(CreatedCallback created, object userState)
+        public void Output(CreatedCallback created, object userState)
         {
             if (_m == _array.Count)
             {

@@ -17,7 +17,7 @@ namespace LH
     /// <summary>
     /// 二进制对象辅助。
     /// </summary>
-    internal static class BinaryHelper
+    public static class BinaryHelper
     {
         #region 压缩
 
@@ -34,7 +34,7 @@ namespace LH
         /// <returns></returns>
         /// <exception cref="Exception" />
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static byte[] GZipCompress(byte[] bytes, int offset, int count)
+        public static byte[] GZipCompress(byte[] bytes, int offset, int count)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -51,8 +51,13 @@ namespace LH
         /// </summary>
         /// <param name="bytes">要压缩的字节数组。</param>
         /// <returns></returns>
-        internal static byte[] GZipCompress(byte[] bytes)
+        public static byte[] GZipCompress(byte[] bytes)
         {
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
+
             return GZipCompress(bytes, 0, bytes.Length);
         }
 
@@ -61,9 +66,9 @@ namespace LH
         /// </summary>
         /// <param name="bytes">使用 GZip 压缩过的字节数组。</param>
         /// <returns></returns>
-        internal static byte[] GZipDecompress(byte[] bytes)
+        public static byte[] GZipDecompress(byte[] bytes)
         {
-            if (bytes == null)
+            if (bytes is null)
             {
                 throw new ArgumentNullException(nameof(bytes));
             }
@@ -79,7 +84,7 @@ namespace LH
         /// <returns></returns>
         /// <exception cref="Exception" />
         [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        internal static byte[] GZipDecompress(byte[] bytes, int offset, int count)
+        public static byte[] GZipDecompress(byte[] bytes, int offset, int count)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -101,7 +106,7 @@ namespace LH
         /// <param name="hex">无分隔符的十六进制字符串。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        internal static byte[] GetHexBytes(string hex)
+        public static byte[] GetHexBytes(string hex)
         {
             if (string.IsNullOrEmpty(hex))
             {
@@ -123,7 +128,7 @@ namespace LH
         /// <returns></returns>
         /// <exception cref="Exception" />
         [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
-        internal static byte[] GetHexBytes(string hex, string remove)
+        public static byte[] GetHexBytes(string hex, string remove)
         {
             if (string.IsNullOrEmpty(hex))
             {
