@@ -9,7 +9,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace LH.Collections.Generic
@@ -44,7 +43,6 @@ namespace LH.Collections.Generic
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public Combination(IList<T> array, int m)
         {
             _array = array ?? throw new ArgumentNullException(nameof(array));
@@ -73,7 +71,6 @@ namespace LH.Collections.Generic
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public List<T[]> Output()
         {
             BigInteger count = GetCount();
@@ -187,7 +184,6 @@ namespace LH.Collections.Generic
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public Permutation(IList<T> array, int m)
         {
             _array = array ?? throw new ArgumentNullException(nameof(array));
@@ -216,7 +212,6 @@ namespace LH.Collections.Generic
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public List<T[]> Output()
         {
             BigInteger count = GetCount();

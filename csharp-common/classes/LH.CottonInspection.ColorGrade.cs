@@ -535,7 +535,7 @@ namespace LH.CottonInspection
         {
             StringBuilder sb = new StringBuilder();
             double b = 4d;
-            sb.Append(",");
+            sb.Append(',');
             for (int i = 0; i < 141; i++)
             {
                 sb.Append(i < 141 ? b.ToString("f1", CultureInfo.InvariantCulture) + "," : b.ToString("f1", CultureInfo.InvariantCulture));

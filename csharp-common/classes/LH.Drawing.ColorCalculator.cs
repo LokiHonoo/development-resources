@@ -163,7 +163,6 @@ namespace LH.Drawing
         /// <param name="reference">转换参照值。</param>
         /// <param name="exception">错误信息。无法转换时输出错误原因。</param>
         /// <returns></returns>
-        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public static double DominantWavelength(double[] xyY, Reference reference, out Exception exception)
         {
             if (xyY is null)
@@ -517,7 +516,6 @@ namespace LH.Drawing
         /// <param name="reference">转换参照值。</param>
         /// <param name="exception">错误信息。无法转换时输出错误原因。</param>
         /// <returns></returns>
-        [SuppressMessage("Globalization", "CA1303:请不要将文本作为本地化参数传递", Justification = "<挂起>")]
         public static double XYZ2CCT(double[] XYZ, Reference reference, out Exception exception)
         {
             if (XYZ is null)
@@ -814,8 +812,6 @@ namespace LH.Drawing
         /// <summary>
         /// 波长转换常量。360nm 至 830nm，5nm 间隔。
         /// </summary>
-        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[,] CIE1931StandardObserver { get; } = new double[3, 95] {
             {
                 0.000129900000d, 0.000232100000d, 0.000414900000d, 0.000741600000d, 0.001368000000d, 0.002236000000d,
@@ -876,8 +872,6 @@ namespace LH.Drawing
         /// <summary>
         /// 波长转换常量。360nm 至 830nm，5nm 间隔。
         /// </summary>
-        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[,] CIE1964StandardObserver { get; } = new double[3, 95] {
             {
                 0.000000122200d, 0.000000919270d, 0.000005958600d, 0.000033266000d, 0.000159952000d, 0.000662440000d,
@@ -948,29 +942,21 @@ namespace LH.Drawing
         /// <summary>
         /// 调整器矩阵。
         /// </summary>
-        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[,] MtxAdaptation { get; }
 
         /// <summary>
         /// 调整器逆矩阵。
         /// </summary>
-        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[,] MtxAdaptationI { get; }
 
         /// <summary>
         /// RGB 转换 XYZ 矩阵。
         /// </summary>
-        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[,] MtxRGB2XYZ { get; }
 
         /// <summary>
         /// XYZ 转换 RGB 矩阵。
         /// </summary>
-        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[,] MtxXYZ2RGB { get; }
 
         /// <summary>
@@ -986,7 +972,6 @@ namespace LH.Drawing
         /// <summary>
         /// 波长转换常量。
         /// </summary>
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[] RT { get; } = {
                       0.0e-6, 10.0e-6, 20.0e-6, 30.0e-6, 40.0e-6, 50.0e-6,
                       60.0e-6, 70.0e-6, 80.0e-6, 90.0e-6, 100.0e-6, 125.0e-6,
@@ -999,7 +984,6 @@ namespace LH.Drawing
         /// <summary>
         /// 波长转换常量。
         /// </summary>
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[] T { get; } = {
                      -0.24341d, -0.25479d, -0.26876d, -0.28539d, -0.30470d, -0.32675d,
                      -0.35156d, -0.37915d, -0.40955d, -0.44278d, -0.47888d, -0.58204d,
@@ -1012,7 +996,6 @@ namespace LH.Drawing
         /// <summary>
         /// 波长转换常量。
         /// </summary>
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[] U { get; } = {
                      0.18006d, 0.18066d, 0.18133d, 0.18208d, 0.18293d, 0.18388d,
                      0.18494d, 0.18611d, 0.18740d, 0.18880d, 0.19032d, 0.19462d,
@@ -1025,7 +1008,6 @@ namespace LH.Drawing
         /// <summary>
         /// 波长转换常量。
         /// </summary>
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[] V { get; } = {
                      0.26352d, 0.26589d, 0.26846d, 0.27119d, 0.27407d, 0.27709d,
                      0.28021d, 0.28342d, 0.28668d, 0.28997d, 0.29326d, 0.30141d,
@@ -1038,13 +1020,11 @@ namespace LH.Drawing
         /// <summary>
         /// 白光参照。
         /// </summary>
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[] White { get; }
 
         /// <summary>
         /// RGB 白光参照。
         /// </summary>
-        [SuppressMessage("Performance", "CA1819:属性不应返回数组", Justification = "<挂起>")]
         public double[] WhiteRGB { get; }
 
         #endregion 成员
@@ -1057,7 +1037,6 @@ namespace LH.Drawing
         /// <param name="model">RGB 模型。</param>
         /// <param name="adaptation">调整器。</param>
         [SuppressMessage("样式", "IDE0066:将 switch 语句转换为表达式", Justification = "<挂起>")]
-        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
         public Reference(Illuminant illuminant, Observer observer, RGBModel model, Adaptation adaptation)
         {
             this.Illuminant = illuminant;
@@ -1462,31 +1441,10 @@ namespace LH.Drawing
         }
 
         /// <summary>
-        /// 3x3 矩阵轴对换。
-        /// </summary>
-        /// <param name="m">3x3 矩阵。</param>
-        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
-        private static void Transpose3x3(double[,] m)
-        {
-            double tmp = m[0, 1];
-            m[0, 1] = m[1, 0];
-            m[1, 0] = tmp;
-
-            tmp = m[0, 2];
-            m[0, 2] = m[2, 0];
-            m[2, 0] = tmp;
-
-            tmp = m[1, 2];
-            m[1, 2] = m[2, 1];
-            m[2, 1] = tmp;
-        }
-
-        /// <summary>
         /// 获取 3x3 矩阵的行列式。
         /// </summary>
         /// <param name="m">3x3 矩阵。</param>
         /// <returns></returns>
-        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
         private static double Determinant3x3(double[,] m)
         {
             return m[0, 0] * (m[2, 2] * m[1, 1] - m[2, 1] * m[1, 2]) -
@@ -1499,7 +1457,6 @@ namespace LH.Drawing
         /// </summary>
         /// <param name="m">3x3 矩阵。</param>
         /// <returns></returns>
-        [SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
         private static double[,] Invert3x3(double[,] m)
         {
             double scale = 1d / Determinant3x3(m);
@@ -1514,6 +1471,25 @@ namespace LH.Drawing
             mi[2, 1] = -scale * (m[2, 1] * m[0, 0] - m[2, 0] * m[0, 1]);
             mi[2, 2] = scale * (m[1, 1] * m[0, 0] - m[1, 0] * m[0, 1]);
             return mi;
+        }
+
+        /// <summary>
+        /// 3x3 矩阵轴对换。
+        /// </summary>
+        /// <param name="m">3x3 矩阵。</param>
+        private static void Transpose3x3(double[,] m)
+        {
+            double tmp = m[0, 1];
+            m[0, 1] = m[1, 0];
+            m[1, 0] = tmp;
+
+            tmp = m[0, 2];
+            m[0, 2] = m[2, 0];
+            m[2, 0] = tmp;
+
+            tmp = m[1, 2];
+            m[1, 2] = m[2, 1];
+            m[2, 1] = tmp;
         }
     }
 }

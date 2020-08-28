@@ -784,6 +784,10 @@ namespace LH.Data
             {
                 throw new ArgumentNullException(nameof(setting));
             }
+            if (textWriter is null)
+            {
+                throw new ArgumentNullException(nameof(textWriter));
+            }
             if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -958,7 +962,7 @@ namespace LH.Data
                                     while (reader.Read())
                                     {
                                         tmp.Append("INSERT INTO `" + table.TableName + "` VALUES");
-                                        tmp.Append("(");
+                                        tmp.Append('(');
                                         for (int i = 0; i < reader.FieldCount; i++)
                                         {
                                             object val = reader.GetValue(i);
@@ -978,7 +982,7 @@ namespace LH.Data
                                             }
                                             if (i < reader.FieldCount - 1)
                                             {
-                                                tmp.Append(",");
+                                                tmp.Append(',');
                                             }
                                         }
                                         tmp.AppendLine(");");
@@ -1073,7 +1077,6 @@ namespace LH.Data
     /// <summary>
     /// Note the type of dumping in the progress report.
     /// </summary>
-    [SuppressMessage("Design", "CA1027:Mark enums with FlagsAttribute", Justification = "<Pending>")]
     public enum SQLiteDumpType
     {
         /// <summary>Does not belong to any type. This type does not appear during the dumping process.</summary>

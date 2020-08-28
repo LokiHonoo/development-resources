@@ -15,7 +15,6 @@ namespace LH.Windows
     /// <summary>
     /// 系统休眠。
     /// </summary>
-    [SuppressMessage("Design", "CA1060:将 pinvoke 移到本机方法类", Justification = "<挂起>")]
     public static class SystemSleep
     {
         #region Native

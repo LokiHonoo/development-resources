@@ -127,7 +127,6 @@ namespace LH
         /// <param name="remove">要移除的分隔符。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
         public static byte[] GetHexBytes(string hex, string remove)
         {
             if (string.IsNullOrEmpty(hex))

@@ -11,7 +11,9 @@
  * PackageReference: MySqlConnector OR MySql.Data
  */
 
-using MySql.Data.MySqlClient;
+//
+// using MySql.Data.MySqlClient; // MySql.Data
+using MySqlConnector; // MySqlConnector
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -243,7 +245,6 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -283,7 +284,6 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -309,7 +309,6 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText)
         {
             return new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -322,7 +321,6 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             MySqlDataAdapter result = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -348,7 +346,6 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataSet GetDataSet(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -386,7 +383,6 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static DataTable GetDataTable(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -428,8 +424,6 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
-        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "<Pending>")]
         public static MySqlDataReader GetDataReader(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -484,7 +478,6 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int ExecuteNonQuery(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -524,7 +517,6 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(MySqlConnection connection, string procedure, params MySqlParameter[] parameters)
         {
@@ -564,7 +556,6 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object ExecuteScalar(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -598,7 +589,6 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText)
         {
             return TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, null);
@@ -611,7 +601,6 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
             return TransactionExecuteNonQuery(connection, IsolationLevel.RepeatableRead, commandText, parameters);
@@ -624,7 +613,6 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(MySqlConnection connection, IsolationLevel iso, string commandText)
         {
             return TransactionExecuteNonQuery(connection, iso, commandText, null);
@@ -638,9 +626,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(MySqlConnection connection, IsolationLevel iso, string commandText, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -694,7 +680,6 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(MySqlConnection connection, string procedure)
         {
             TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, null);
@@ -706,7 +691,6 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(MySqlConnection connection, string procedure, params MySqlParameter[] parameters)
         {
             TransactionExecuteProcedure(connection, IsolationLevel.RepeatableRead, procedure, parameters);
@@ -718,7 +702,6 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(MySqlConnection connection, IsolationLevel iso, string procedure)
         {
             TransactionExecuteProcedure(connection, iso, procedure, null);
@@ -731,9 +714,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(MySqlConnection connection, IsolationLevel iso, string procedure, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -783,7 +764,6 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(MySqlConnection connection, string commandText)
         {
             return TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, null);
@@ -796,7 +776,6 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
         {
             return TransactionExecuteScalar(connection, IsolationLevel.RepeatableRead, commandText, parameters);
@@ -809,7 +788,6 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(MySqlConnection connection, IsolationLevel iso, string commandText)
         {
             return TransactionExecuteScalar(connection, iso, commandText, null);
@@ -823,9 +801,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "<Pending>")]
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(MySqlConnection connection, IsolationLevel iso, string commandText, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -937,17 +913,19 @@ namespace LH.Data
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
         public static void Dump(MySqlConnection connection, MySqlDumpSetting setting, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-
             if (setting is null)
             {
                 throw new ArgumentNullException(nameof(setting));
+            }
+            if (textWriter is null)
+            {
+                throw new ArgumentNullException(nameof(textWriter));
             }
             if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
@@ -1159,7 +1137,7 @@ namespace LH.Data
                                 while (reader.Read())
                                 {
                                     tmp.Append("INSERT INTO `" + tableName + "` VALUES");
-                                    tmp.Append("(");
+                                    tmp.Append('(');
                                     for (int i = 0; i < reader.FieldCount; i++)
                                     {
                                         object val = reader.GetValue(i);
@@ -1188,7 +1166,7 @@ namespace LH.Data
                                         }
                                         if (i < reader.FieldCount - 1)
                                         {
-                                            tmp.Append(",");
+                                            tmp.Append(',');
                                         }
                                     }
                                     tmp.AppendLine(");");
@@ -1277,8 +1255,6 @@ namespace LH.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        [SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "<Pending>")]
-        [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
         public static void DumpToFiles(MySqlConnection connection,
                                          MySqlDumpSetting setting,
                                          string folder,
@@ -1295,6 +1271,10 @@ namespace LH.Data
             if (setting is null)
             {
                 throw new ArgumentNullException(nameof(setting));
+            }
+            if (encoding is null)
+            {
+                throw new ArgumentNullException(nameof(encoding));
             }
             if (!Directory.Exists(folder))
             {
@@ -1580,7 +1560,7 @@ namespace LH.Data
                                 while (reader.Read())
                                 {
                                     tmp.Append("INSERT INTO `" + table.TableName + "` VALUES");
-                                    tmp.Append("(");
+                                    tmp.Append('(');
                                     for (int i = 0; i < reader.FieldCount; i++)
                                     {
                                         object val = reader.GetValue(i);
@@ -1609,7 +1589,7 @@ namespace LH.Data
                                         }
                                         if (i < reader.FieldCount - 1)
                                         {
-                                            tmp.Append(",");
+                                            tmp.Append(',');
                                         }
                                     }
                                     tmp.AppendLine(");");
@@ -1737,7 +1717,6 @@ namespace LH.Data
     /// <summary>
     /// Note the type of dumping in the progress report.
     /// </summary>
-    [SuppressMessage("Design", "CA1027:Mark enums with FlagsAttribute", Justification = "<Pending>")]
     public enum MySqlDumpType
     {
         /// <summary>Does not belong to any type. This type does not appear during the dumping process.</summary>

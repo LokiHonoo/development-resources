@@ -656,15 +656,6 @@ namespace LH.Net.UPnP
         }
 
         /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.FriendlyName, this.DeviceType);
-        }
-
-        /// <summary>
         /// Find the specified type of device.
         /// </summary>
         /// <param name="deviceType">Device type.</param>
@@ -703,6 +694,15 @@ namespace LH.Net.UPnP
                 services.AddRange(childDevice.FindServices(serviceType));
             }
             return services.ToArray();
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.FriendlyName, this.DeviceType);
         }
     }
 
@@ -758,15 +758,6 @@ namespace LH.Net.UPnP
         }
 
         /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.Device.FriendlyName, this.Device.DeviceType);
-        }
-
-        /// <summary>
         /// Find the specified type of device.
         /// </summary>
         /// <param name="deviceType">Device type.</param>
@@ -784,6 +775,15 @@ namespace LH.Net.UPnP
         public UPnPService[] FindServices(string serviceType)
         {
             return this.Device.FindServices(serviceType);
+        }
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.Device.FriendlyName, this.Device.DeviceType);
         }
     }
 
