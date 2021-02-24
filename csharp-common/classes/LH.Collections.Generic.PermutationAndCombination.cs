@@ -53,7 +53,7 @@ namespace LH.Collections.Generic
             }
             if (m < 1 || m > array.Count)
             {
-                throw new Exception("m 的不能小于 1 或大于元素数组的最大长度。");
+                throw new Exception("m 的值不能小于 1 或大于元素数组的最大长度。");
             }
         }
 

@@ -7,7 +7,6 @@
  * This code page is published under the terms of the MIT license.
  */
 
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace LH.Windows
@@ -34,16 +33,16 @@ namespace LH.Windows
         ///阻止系统休眠，直到恢复休眠策略。
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
-        [SuppressMessage("Performance", "CA1806:不要忽略方法结果", Justification = "<挂起>")]
-        public static void PreventSleep(bool includeDisplay)
+        /// <returns></returns>
+        public static uint PreventSleep(bool includeDisplay)
         {
             if (includeDisplay)
             {
-                SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
+                return SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
             }
             else
             {
-                SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
+                return SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_CONTINUOUS);
             }
         }
 
@@ -51,26 +50,26 @@ namespace LH.Windows
         ///重置系统休眠计时器。
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
-        [SuppressMessage("Performance", "CA1806:不要忽略方法结果", Justification = "<挂起>")]
-        public static void ResetSleepTimer(bool includeDisplay)
+        /// <returns></returns>
+        public static uint ResetSleepTimer(bool includeDisplay)
         {
             if (includeDisplay)
             {
-                SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+                return SetThreadExecutionState(ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
             }
             else
             {
-                SetThreadExecutionState(ES_SYSTEM_REQUIRED);
+                return SetThreadExecutionState(ES_SYSTEM_REQUIRED);
             }
         }
 
         /// <summary>
         ///恢复系统休眠策略。
         /// </summary>
-        [SuppressMessage("Performance", "CA1806:不要忽略方法结果", Justification = "<挂起>")]
-        public static void ResotreSleep()
+        /// <returns></returns>
+        public static uint ResotreSleep()
         {
-            SetThreadExecutionState(ES_CONTINUOUS);
+            return SetThreadExecutionState(ES_CONTINUOUS);
         }
     }
 }

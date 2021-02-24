@@ -6,7 +6,6 @@ namespace CSharpCommon
     {
         private static void Main()
         {
-            LH.BouncyCastleHelpers.Test1.TestAll();
             Console.ReadKey(true);
         }
     }

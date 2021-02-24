@@ -39,13 +39,17 @@ namespace LH.Windows
         /// <summary>
         /// 关闭控制台快速编辑模式，防止阻塞现象。
         /// </summary>
-        public static void DisableQuickEditMode()
+        /// <returns></returns>
+        public static bool DisableQuickEditMode()
         {
             IntPtr hStdin = GetStdHandle(STD_INPUT_HANDLE);
-            GetConsoleMode(hStdin, out uint mode);
-            mode &= ~ENABLE_INSERT_MODE;
-            mode &= ~ENABLE_QUICK_EDIT_MODE;
-            SetConsoleMode(hStdin, mode);
+            if (GetConsoleMode(hStdin, out uint mode))
+            {
+                mode &= ~ENABLE_INSERT_MODE;
+                mode &= ~ENABLE_QUICK_EDIT_MODE;
+                return SetConsoleMode(hStdin, mode);
+            }
+            return false;
         }
     }
 }

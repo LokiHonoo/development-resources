@@ -219,8 +219,6 @@ namespace LH.Net.UPnP
         /// <param name="mx">Maximum search time. Unit is seconds.</param>
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
-        [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
         public static UPnPRootDevice[] Discover(AddressFamily addressFamilyFilter, int mx)
         {
             List<UPnPRootDevice> dis = new List<UPnPRootDevice>();
@@ -374,7 +372,6 @@ namespace LH.Net.UPnP
         /// <param name="index">The mapping index.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        [SuppressMessage("Usage", "CA2200:Rethrow to preserve stack details.", Justification = "<Pending>")]
         public static PortMappingEntry GetSpecificPortMappingEntry(UPnPService service, bool man, int index)
         {
             try
@@ -533,7 +530,6 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Child devices.
         /// </summary>
-        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
         public UPnPDevice[] Devices { get; }
 
         /// <summary>
@@ -554,7 +550,6 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Manufacturer url.
         /// </summary>
-        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string ManufacturerUrl { get; }
 
         /// <summary>
@@ -575,7 +570,6 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Model url.
         /// </summary>
-        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string ModelUrl { get; }
 
         /// <summary>
@@ -597,7 +591,6 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Services.
         /// </summary>
-        [SuppressMessage("Performance", "CA1819:Properties should not return arrays", Justification = "<Pending>")]
         public UPnPService[] Services { get; }
 
         /// <summary>
@@ -616,7 +609,6 @@ namespace LH.Net.UPnP
         /// <param name="deviceNode">Device XmlNode.</param>
         /// <param name="nm">XmlNamespaceManager.</param>
         /// <exception cref="Exception"/>
-        [SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "<Pending>")]
         public UPnPDevice(Uri uri, UPnPRootDevice root, UPnPDevice parent, XmlNode deviceNode, XmlNamespaceManager nm)
         {
             if (deviceNode is null)
@@ -716,7 +708,6 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Description Url. This parameter is used only for records.
         /// </summary>
-        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string DescriptionUrl { get; }
 
         /// <summary>
@@ -742,7 +733,6 @@ namespace LH.Net.UPnP
         /// <param name="descriptionUrl">Specify root device escription full url.</param>
         /// <param name="descriptionXmlString">Root device escription xml string.</param>
         /// <exception cref="Exception"/>
-        [SuppressMessage("Design", "CA1054:Uri parameters should not be strings", Justification = "<Pending>")]
         public UPnPRootDevice(string descriptionUrl, string descriptionXmlString)
         {
             XmlDocument doc = new XmlDocument();
@@ -797,13 +787,11 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Control url.
         /// </summary>
-        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string ControlUrl { get; }
 
         /// <summary>
         /// Event sub url.
         /// </summary>
-        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string EventSubUrl { get; }
 
         /// <summary>
@@ -820,7 +808,6 @@ namespace LH.Net.UPnP
         /// <summary>
         /// Scpd url.
         /// </summary>
-        [SuppressMessage("Design", "CA1056:Uri properties should not be strings", Justification = "<Pending>")]
         public string ScpdUrl { get; }
 
         /// <summary>
