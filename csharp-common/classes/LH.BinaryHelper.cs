@@ -112,10 +112,6 @@ namespace LH
         /// <exception cref="Exception" />
         public static byte[] GetHexBytes(string hex)
         {
-            if (string.IsNullOrEmpty(hex))
-            {
-                throw new ArgumentNullException(nameof(hex));
-            }
             byte[] result = new byte[hex.Length / 2];
             for (int i = 0; i < result.Length; i++)
             {
@@ -133,10 +129,6 @@ namespace LH
         /// <exception cref="Exception" />
         public static byte[] GetHexBytes(string hex, string remove)
         {
-            if (string.IsNullOrEmpty(hex))
-            {
-                throw new ArgumentNullException(nameof(hex));
-            }
             return GetHexBytes(hex.Replace(remove, string.Empty));
         }
 
@@ -147,6 +139,16 @@ namespace LH
         /*
          * NET40 不支持设置压缩级，默认使用 LEVEL 1 fast compress.
          */
+
+        /// <summary>
+        /// 使用 GZip 压缩字节数组。
+        /// </summary>
+        /// <param name="bytes">要压缩的字节数组。</param>
+        /// <returns></returns>
+        public static byte[] GZipCompress(byte[] bytes)
+        {
+            return GZipCompress(bytes, 0, bytes.Length);
+        }
 
         /// <summary>
         /// 使用 GZip 压缩字节数组的指定区段。
@@ -170,31 +172,12 @@ namespace LH
         }
 
         /// <summary>
-        /// 使用 GZip 压缩字节数组。
-        /// </summary>
-        /// <param name="bytes">要压缩的字节数组。</param>
-        /// <returns></returns>
-        public static byte[] GZipCompress(byte[] bytes)
-        {
-            if (bytes is null)
-            {
-                throw new ArgumentNullException(nameof(bytes));
-            }
-
-            return GZipCompress(bytes, 0, bytes.Length);
-        }
-
-        /// <summary>
         /// 使用 GZip 解压缩字节数组。
         /// </summary>
         /// <param name="bytes">使用 GZip 压缩过的字节数组。</param>
         /// <returns></returns>
         public static byte[] GZipDecompress(byte[] bytes)
         {
-            if (bytes is null)
-            {
-                throw new ArgumentNullException(nameof(bytes));
-            }
             return GZipDecompress(bytes, 0, bytes.Length);
         }
 

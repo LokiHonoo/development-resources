@@ -14,7 +14,7 @@ using System.Numerics;
 namespace LH.Collections.Generic
 {
     /// <summary>
-    /// 求数组组合。
+    /// 求数组组合。如果元素的类型是引用类型，组合的结果是元素的浅表复制。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
     public class Combination<T>
@@ -38,7 +38,7 @@ namespace LH.Collections.Generic
         #endregion 委托
 
         /// <summary>
-        /// 求数组 m 个元素的组合。
+        /// 求数组 m 个元素的组合。如果元素的类型是引用类型，组合的结果是元素的浅表复制。
         /// </summary>
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
@@ -67,7 +67,7 @@ namespace LH.Collections.Generic
         }
 
         /// <summary>
-        /// 输出组合的集合。
+        /// 输出组合的集合。如果元素的类型是引用类型，组合的结果是元素的浅表复制。
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
@@ -84,7 +84,7 @@ namespace LH.Collections.Generic
         }
 
         /// <summary>
-        /// 每生成一组集合后调用回调函数。
+        /// 每生成一组集合后调用回调函数。如果元素的类型是引用类型，组合的结果是元素的浅表复制。
         /// </summary>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
@@ -158,7 +158,7 @@ namespace LH.Collections.Generic
     }
 
     /// <summary>
-    /// 求数组排列。
+    /// 求数组排列。如果元素的类型是引用类型，排列的结果是元素的浅表复制。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
     public class Permutation<T>
@@ -182,7 +182,7 @@ namespace LH.Collections.Generic
         #endregion 委托
 
         /// <summary>
-        /// 求数组 m 个元素的排列。
+        /// 求数组 m 个元素的排列。如果元素的类型是引用类型，排列的结果是元素的浅表复制。
         /// </summary>
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
@@ -211,7 +211,7 @@ namespace LH.Collections.Generic
         }
 
         /// <summary>
-        /// 输出排列的集合。
+        /// 输出排列的集合。如果元素的类型是引用类型，排列的结果是元素的浅表复制。
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
@@ -228,7 +228,7 @@ namespace LH.Collections.Generic
         }
 
         /// <summary>
-        /// 每生成一组集合后调用回调函数。
+        /// 每生成一组集合后调用回调函数。如果元素的类型是引用类型，排列的结果是元素的浅表复制。
         /// </summary>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>

@@ -16,7 +16,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Xml;
 
-namespace LH.Net.UPnP
+namespace LH.Net
 {
     /// <summary>
     /// UPnP.
