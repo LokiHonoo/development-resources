@@ -2,7 +2,7 @@
  * Copyright
  *
  * https://github.com/LokiHonoo/development-resources
- * Copyright (C) LH.Studio 2015. All rights reserved.
+ * Copyright (C) Loki Honoo 2015. All rights reserved.
  *
  * This code page is published under the terms of the MIT license.
  */
@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace LH.Collections.Generic
+namespace Honoo.Collections.Generic
 {
     /// <summary>
     /// 求数组组合。如果元素的类型是引用类型，组合的结果是元素的浅表复制。

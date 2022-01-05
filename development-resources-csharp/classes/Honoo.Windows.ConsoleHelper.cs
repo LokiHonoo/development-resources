@@ -2,7 +2,7 @@
  * Copyright
  *
  * https://github.com/LokiHonoo/development-resources
- * Copyright (C) LH.Studio 2015. All rights reserved.
+ * Copyright (C) Loki Honoo 2015. All rights reserved.
  *
  * This code page is published under the terms of the MIT license.
  */
@@ -10,7 +10,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace LH.Windows
+namespace Honoo.Windows
 {
     /// <summary>
     /// Windows 控制台控制。

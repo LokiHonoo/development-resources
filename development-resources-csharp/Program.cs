@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CSharpCommon
+namespace Honoo
 {
     internal class Program
     {

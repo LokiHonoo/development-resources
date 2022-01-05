@@ -2,7 +2,7 @@
  * Copyright
  *
  * https://github.com/LokiHonoo/development-resources
- * Copyright (C) LH.Studio 2015. All rights reserved.
+ * Copyright (C) Loki Honoo 2015. All rights reserved.
  *
  * This code page is published under the terms of the MIT license.
  */
@@ -20,7 +20,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace LH.Data
+namespace Honoo.Data
 {
     /// <summary>
     /// SQLite extension.
@@ -686,82 +686,115 @@ namespace LH.Data
 
         #endregion Transaction
 
-        #region Features
-
-        /// <summary>
-        /// Get real-time server version with Execute connection behavior.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <returns></returns>
-        public static string GetServerVersion(SQLiteConnection connection)
-        {
-            return (string)ExecuteScalar(connection, "SELECT SQLITE_VERSION();");
-        }
-
-        #endregion Features
-
         #region Dump
 
         /// <summary>
-        /// Dump database with DataAdapter connection behavior. In order by Table, Trigger, View, Record.
+        /// Dump database with DataAdapter connection behavior. Specify items to dump.
         /// </summary>
         /// <param name="connection">Connection.</param>
+        /// <param name="manifest">Dump manifest.</param>
         /// <param name="textWriter">TextWriter.</param>
-        public static void Dump(SQLiteConnection connection, TextWriter textWriter)
+        public static void Dump(SQLiteConnection connection, SQLiteDumpManifest manifest, TextWriter textWriter)
         {
-            SQLiteDumpSetting setting = GetDumpSetting(connection);
-            Dump(connection, setting, textWriter, null, null, out _);
+            Dump(connection, manifest, textWriter, null, null, out _);
         }
 
-        /// <summary>
-        /// Dump database with DataAdapter connection behavior. In order by Table, Trigger, View, Record.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="textWriter">TextWriter.</param>
-        /// <param name="written">A delegate that report written progress.</param>
-        /// <param name="userState">User state.</param>
-        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        public static void Dump(SQLiteConnection connection, TextWriter textWriter, SQLiteWrittenCallback written, object userState, out bool cancelled)
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        private static string BuildSummary(SQLiteConnection connection,
+                                           SQLiteDumpManifest manifest,
+                                           out long tableCount,
+                                           out long viewCount,
+                                           out long triggerCount,
+                                           out long recordCount,
+                                           out long total)
         {
-            SQLiteDumpSetting setting = GetDumpSetting(connection);
-            Dump(connection, setting, textWriter, written, userState, out cancelled);
+            StringBuilder tmp = new StringBuilder();
+            tableCount = 0;
+            viewCount = 0;
+            triggerCount = 0;
+            recordCount = 0;
+            List<string> union = new List<string>();
+            foreach (SQLiteTableDumpProject table in manifest.Tables)
+            {
+                if (!table.Ignore)
+                {
+                    if (table.IncludingRecord)
+                    {
+                        union.Add("SELECT COUNT(*) AS `count` FROM `" + table.TableName + "`");
+                    }
+                    tableCount++;
+                }
+            }
+            if (union.Count > 0)
+            {
+                using (DataTable dt = GetDataTable(connection, string.Join(" UNION ALL ", union) + ";"))
+                {
+                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
+                }
+            }
+            foreach (SQLiteDumpProject view in manifest.Views)
+            {
+                if (!view.Ignore)
+                {
+                    viewCount++;
+                }
+            }
+            foreach (SQLiteDumpProject trigger in manifest.Triggers)
+            {
+                if (!trigger.Ignore)
+                {
+                    triggerCount++;
+                }
+            }
+            total = tableCount + viewCount + triggerCount + recordCount;
+            //
+            tmp.AppendLine("/*");
+            tmp.AppendLine("Dump by Honoo.Data.SQLiteHelper");
+            tmp.AppendLine("https://github.com/LokiHonoo/development-resources");
+            tmp.AppendLine("This code page is published under the terms of the MIT license.");
+            tmp.AppendLine();
+            tmp.AppendLine("DataSource     : " + connection.DataSource);
+            tmp.AppendLine("Server Version : " + connection.ServerVersion);
+            tmp.AppendLine("Database       : " + connection.Database);
+            tmp.AppendLine();
+            tmp.AppendLine("Table          : " + tableCount.ToString("n0", CultureInfo.InvariantCulture));
+            tmp.AppendLine("Trigger        : " + triggerCount.ToString("n0", CultureInfo.InvariantCulture));
+            tmp.AppendLine("View           : " + viewCount.ToString("n0", CultureInfo.InvariantCulture));
+            tmp.AppendLine("Record         : " + recordCount.ToString("n0", CultureInfo.InvariantCulture));
+            tmp.AppendLine();
+            tmp.AppendLine("Dump Time      : " + DateTime.Now);
+            tmp.AppendLine();
+            tmp.AppendLine("Use the console or database tool to recover data.");
+            tmp.AppendLine("If the target database has a table with the same name, the table data is overwritten.");
+            tmp.AppendLine("*/");
+            tmp.AppendLine();
+            return tmp.ToString();
         }
 
         /// <summary>
         /// Dump database with DataAdapter connection behavior. Specify items to dump.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="setting">Dump setting.</param>
-        /// <param name="textWriter">TextWriter.</param>
-        public static void Dump(SQLiteConnection connection, SQLiteDumpSetting setting, TextWriter textWriter)
-        {
-            Dump(connection, setting, textWriter, null, null, out _);
-        }
-
-        /// <summary>
-        /// Dump database with DataAdapter connection behavior. Specify items to dump.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="setting">Dump setting.</param>
+        /// <param name="manifest">Dump manifest.</param>
         /// <param name="textWriter">TextWriter.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void Dump(SQLiteConnection connection,
-                                  SQLiteDumpSetting setting,
-                                  TextWriter textWriter,
-                                  SQLiteWrittenCallback written,
-                                  object userState,
-                                  out bool cancelled)
+                                SQLiteDumpManifest manifest,
+                                TextWriter textWriter,
+                                SQLiteWrittenCallback written,
+                                object userState,
+                                out bool cancelled)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (setting is null)
+            if (manifest is null)
             {
-                throw new ArgumentNullException(nameof(setting));
+                throw new ArgumentNullException(nameof(manifest));
             }
             if (textWriter is null)
             {
@@ -803,7 +836,7 @@ namespace LH.Data
             if (cancel) { goto end; }
             //
             tmp.AppendLine("/*");
-            tmp.AppendLine("Dump by LH.Data.SQLiteHelper");
+            tmp.AppendLine("Dump by Honoo.Data.SQLiteHelper");
             tmp.AppendLine();
             tmp.AppendLine("DataSource     : " + connection.DataSource);
             tmp.AppendLine("Server Version : " + connection.ServerVersion);
@@ -989,13 +1022,17 @@ namespace LH.Data
         }
 
         /// <summary>
-        /// Get dump setting.
+        /// Get dump manifest.
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <returns></returns>
-        public static SQLiteDumpSetting GetDumpSetting(SQLiteConnection connection)
+        public static SQLiteDumpManifest GetDumpManifest(SQLiteConnection connection)
         {
-            SQLiteDumpSetting setting = new SQLiteDumpSetting();
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+            SQLiteDumpManifest manifest = new SQLiteDumpManifest();
             using (DataTable dt = GetDataTable(connection, "SELECT type, name FROM `sqlite_master`;"))
             {
                 if (dt.Rows.Count > 0)
@@ -1005,20 +1042,20 @@ namespace LH.Data
                         string type = (string)dr["type"];
                         if (type == "table")
                         {
-                            setting.Tables.Add(new SQLiteDumpTableSetting((string)dr["name"], 0, true));
+                            manifest.Tables.Add(new SQLiteTableDumpProject((string)dr["name"], false, 0, true));
                         }
                         else if (type == "view")
                         {
-                            setting.Views.Add((string)dr["name"]);
+                            manifest.Views.Add(new SQLiteDumpProject((string)dr["name"], false));
                         }
                         else
                         {
-                            setting.Triggers.Add((string)dr["name"]);
+                            manifest.Triggers.Add(new SQLiteDumpProject((string)dr["name"], false));
                         }
                     }
                 }
             }
-            return setting;
+            return manifest;
         }
 
         #endregion Dump
@@ -1047,84 +1084,116 @@ namespace LH.Data
     /// </summary>
     /// <param name="written">Block index written.</param>
     /// <param name="total">The amount of dumping block.</param>
-    /// <param name="dumpType">The type of dumping.</param>
-    /// <param name="name">The name associated with dumping.</param>
+    /// <param name="projectType">The project type of dumping.</param>
+    /// <param name="association">The name associated with dumping.</param>
     /// <param name="userState">User state.</param>
     /// <param name="cancel">Cancel dump.</param>
-    public delegate void SQLiteWrittenCallback(long written, long total, SQLiteDumpType dumpType, string name, object userState, ref bool cancel);
+    public delegate void SQLiteWrittenCallback(long written, long total, SQLiteDumpProjectType projectType, string association, object userState, ref bool cancel);
 
     /// <summary>
     /// Note the type of dumping in the progress report.
     /// </summary>
-    public enum SQLiteDumpType
+    [Flags]
+    public enum SQLiteDumpProjectType
     {
-        /// <summary>Does not belong to any type. This type does not appear during the dumping process.</summary>
-        None = 0,
-
-        /// <summary>Got dumping summary at the beginning.</summary>
+        /// <summary>Summary header.</summary>
         Summary = 1,
 
         /// <summary>Table schema.</summary>
         Table = 2,
 
-        /// <summary>Record.</summary>
-        Record = 4,
-
         /// <summary>Trigger.</summary>
-        Trigger = 8,
+        Trigger = 4,
 
         /// <summary>View.</summary>
-        View = 16
+        View = 8,
+
+        /// <summary>Record.</summary>
+        Record = 16,
     }
 
     /// <summary>
-    /// Dump setting.
+    /// Dump manifest.
     /// </summary>
-    public sealed class SQLiteDumpSetting
+    public sealed class SQLiteDumpManifest
     {
         /// <summary>
-        /// Dump table setting.
+        /// Tables dump project.
         /// </summary>
-        public List<SQLiteDumpTableSetting> Tables { get; } = new List<SQLiteDumpTableSetting>();
+        public List<SQLiteTableDumpProject> Tables { get; } = new List<SQLiteTableDumpProject>();
 
         /// <summary>
-        /// Dump triggers at specified list.
+        /// Triggers dump project.
         /// </summary>
-        public List<string> Triggers { get; } = new List<string>();
+        public List<SQLiteDumpProject> Triggers { get; } = new List<SQLiteDumpProject>();
 
         /// <summary>
-        /// Dump views at specified list.
+        /// Views dump project.
         /// </summary>
-        public List<string> Views { get; } = new List<string>();
+        public List<SQLiteDumpProject> Views { get; } = new List<SQLiteDumpProject>();
     }
 
     /// <summary>
-    /// Dump table setting.
+    /// Dump project.
     /// </summary>
-    public sealed class SQLiteDumpTableSetting
+    public sealed class SQLiteDumpProject
     {
         /// <summary>
-        /// Dump table setting.
+        /// Dump project.
+        /// </summary>
+        /// <param name="name">Project name.</param>
+        /// <param name="ignore">Ignore this project.</param>
+        internal SQLiteDumpProject(string name, bool ignore)
+        {
+            this.Name = name;
+            this.Ignore = ignore;
+        }
+
+        /// <summary>
+        /// Ignore this project. Default false.
+        /// </summary>
+        public bool Ignore { get; set; }
+
+        /// <summary>
+        /// Project name.
+        /// </summary>
+        public string Name { get; }
+    }
+
+    /// <summary>
+    /// Table dump project.
+    /// </summary>
+    public sealed class SQLiteTableDumpProject
+    {
+        /// <summary>
+        /// Table dump project.
         /// </summary>
         /// <param name="tableName">Table name.</param>
+        /// <param name="ignore">Ignore this project.</param>
         /// <param name="sequence">Reset Sequence=value. Set to 0 without changing.</param>
         /// <param name="includingRecord">Dump records.</param>
-        public SQLiteDumpTableSetting(string tableName, int? sequence, bool includingRecord)
+        internal SQLiteTableDumpProject(string tableName, bool ignore, int? sequence, bool includingRecord)
         {
             this.TableName = tableName;
+            this.Ignore = ignore;
             this.Sequence = sequence;
             this.IncludingRecord = includingRecord;
         }
 
         /// <summary>
-        /// Dump records.
-        /// </summary>
-        public bool IncludingRecord { get; }
-
-        /// <summary>
         /// Reset Sequence=value. Set to 0 without changing.
         /// </summary>
         public int? Sequence { get; }
+
+        /// <summary>
+        /// Ignore this project. Default false.
+        /// </summary>
+        public bool Ignore { get; set; }
+
+        /// <summary>
+        /// Dump including records.
+        /// </summary>
+        public bool IncludingRecord { get; set; }
 
         /// <summary>
         /// Table name.
@@ -1141,6 +1210,19 @@ namespace LH.Data
     /// </summary>
     public static class SQLiteCommandText
     {
+        #region Database
+
+        /// <summary>
+        /// Displays the database version.
+        /// </summary>
+        /// <returns></returns>
+        public static string ShowVersion()
+        {
+            return "SELECT SQLITE_VERSION();";
+        }
+
+        #endregion Database
+
         #region Table
 
         /// <summary>

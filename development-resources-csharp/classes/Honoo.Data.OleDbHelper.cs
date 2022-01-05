@@ -2,44 +2,44 @@
  * Copyright
  *
  * https://github.com/LokiHonoo/development-resources
- * Copyright (C) LH.Studio 2015. All rights reserved.
+ * Copyright (C) Loki Honoo 2015. All rights reserved.
  *
  * This code page is published under the terms of the MIT license.
  */
 
 using System;
 using System.Data;
-using System.Data.Odbc;
+using System.Data.OleDb;
 using System.Diagnostics.CodeAnalysis;
 
-namespace LH.Data
+namespace Honoo.Data
 {
     /// <summary>
-    /// Odbc extension.
+    /// OleDb extension.
     /// </summary>
-    public static class OdbcHelper
+    public static class OleDbHelper
     {
         #region ConnectionBehavior
 
         /// <summary>
         /// Connection open/close behavior when using DataAdapter. Default Auto.
         /// </summary>
-        public static OdbcConnectionBehavior DataAdapterConnectionBehavior { get; set; } = OdbcConnectionBehavior.Auto;
+        public static OleDbConnectionBehavior DataAdapterConnectionBehavior { get; set; } = OleDbConnectionBehavior.Auto;
 
         /// <summary>
         /// Connection open/close behavior when using DataReader. Default Manual.
         /// </summary>
-        public static OdbcConnectionBehavior DataReaderConnectionBehavior { get; set; } = OdbcConnectionBehavior.Manual;
+        public static OleDbConnectionBehavior DataReaderConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Execute. Default Manual.
         /// </summary>
-        public static OdbcConnectionBehavior ExecuteConnectionBehavior { get; set; } = OdbcConnectionBehavior.Manual;
+        public static OleDbConnectionBehavior ExecuteConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
 
         /// <summary>
         /// Connection open/close behavior when using Transaction. Default Manual.
         /// </summary>
-        public static OdbcConnectionBehavior TransactionConnectionBehavior { get; set; } = OdbcConnectionBehavior.Manual;
+        public static OleDbConnectionBehavior TransactionConnectionBehavior { get; set; } = OleDbConnectionBehavior.Manual;
 
         #endregion ConnectionBehavior
 
@@ -50,14 +50,14 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static OdbcConnection BuildConnection(OdbcConnectionStringBuilder connectionStringBuilder)
+        public static OleDbConnection BuildConnection(OleDbConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder is null)
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
 
-            return new OdbcConnection(connectionStringBuilder.ConnectionString);
+            return new OleDbConnection(connectionStringBuilder.ConnectionString);
         }
 
         /// <summary>
@@ -65,9 +65,9 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         /// <returns></returns>
-        public static OdbcConnection BuildConnection(string connectionString)
+        public static OleDbConnection BuildConnection(string connectionString)
         {
-            return new OdbcConnection(connectionString);
+            return new OleDbConnection(connectionString);
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(OdbcConnectionStringBuilder connectionStringBuilder)
+        public static string BuildConnectionString(OleDbConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder is null)
             {
@@ -96,7 +96,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static int FillDataSet(DataSet dataSet, OdbcConnection connection, string selectCommandText)
+        public static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText)
         {
             return FillDataSet(dataSet, connection, selectCommandText, null);
         }
@@ -109,19 +109,19 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int FillDataSet(DataSet dataSet, OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
+        public static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (DataAdapterConnectionBehavior == OdbcConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (DataAdapterConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
             int result;
-            using (OdbcDataAdapter dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            using (OleDbDataAdapter dataAdapter = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 result = dataAdapter.Fill(dataSet);
@@ -136,7 +136,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static int FillDataTable(DataTable dataTable, OdbcConnection connection, string selectCommandText)
+        public static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText)
         {
             return FillDataTable(dataTable, connection, selectCommandText, null);
         }
@@ -149,19 +149,19 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int FillDataTable(DataTable dataTable, OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
+        public static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (DataAdapterConnectionBehavior == OdbcConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (DataAdapterConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
             int result;
-            using (OdbcDataAdapter dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            using (OleDbDataAdapter dataAdapter = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 result = dataAdapter.Fill(dataTable);
@@ -175,9 +175,9 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static OdbcDataAdapter GetDataAdapter(OdbcConnection connection, string selectCommandText)
+        public static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText)
         {
-            return new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+            return new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
         }
 
         /// <summary>
@@ -187,9 +187,9 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static OdbcDataAdapter GetDataAdapter(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
+        public static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
-            OdbcDataAdapter result = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+            OleDbDataAdapter result = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
             if (parameters != null && parameters.Length > 0) { result.SelectCommand.Parameters.AddRange(parameters); }
             return result;
         }
@@ -200,7 +200,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static DataSet GetDataSet(OdbcConnection connection, string selectCommandText)
+        public static DataSet GetDataSet(OleDbConnection connection, string selectCommandText)
         {
             return GetDataSet(connection, selectCommandText, null);
         }
@@ -212,19 +212,19 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static DataSet GetDataSet(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
+        public static DataSet GetDataSet(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (DataAdapterConnectionBehavior == OdbcConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (DataAdapterConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
             DataSet result = new DataSet();
-            using (OdbcDataAdapter dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            using (OleDbDataAdapter dataAdapter = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 dataAdapter.Fill(result);
@@ -238,7 +238,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql query.</param>
         /// <returns></returns>
-        public static DataTable GetDataTable(OdbcConnection connection, string selectCommandText)
+        public static DataTable GetDataTable(OleDbConnection connection, string selectCommandText)
         {
             return GetDataTable(connection, selectCommandText, null);
         }
@@ -250,19 +250,19 @@ namespace LH.Data
         /// <param name="selectCommandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static DataTable GetDataTable(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
+        public static DataTable GetDataTable(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (DataAdapterConnectionBehavior == OdbcConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (DataAdapterConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
             DataTable result = new DataTable();
-            using (OdbcDataAdapter dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            using (OleDbDataAdapter dataAdapter = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 dataAdapter.Fill(result);
@@ -280,7 +280,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static OdbcDataReader GetDataReader(OdbcConnection connection, string commandText)
+        public static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText)
         {
             return GetDataReader(connection, commandText, null);
         }
@@ -292,7 +292,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static OdbcDataReader GetDataReader(OdbcConnection connection, string commandText, params OdbcParameter[] parameters)
+        public static OleDbDataReader GetDataReader(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
             if (connection is null)
             {
@@ -300,7 +300,7 @@ namespace LH.Data
             }
 
             CommandBehavior commandBehavior;
-            if (DataReaderConnectionBehavior == OdbcConnectionBehavior.Manual)
+            if (DataReaderConnectionBehavior == OleDbConnectionBehavior.Manual)
             {
                 if (connection.State != ConnectionState.Open)
                 {
@@ -320,7 +320,7 @@ namespace LH.Data
                     commandBehavior = CommandBehavior.Default;
                 }
             }
-            OdbcCommand command = new OdbcCommand(commandText, connection);
+            OleDbCommand command = new OleDbCommand(commandText, connection);
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
             return command.ExecuteReader(commandBehavior);
         }
@@ -335,7 +335,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(OdbcConnection connection, string commandText)
+        public static int ExecuteNonQuery(OleDbConnection connection, string commandText)
         {
             return ExecuteNonQuery(connection, commandText, null);
         }
@@ -347,19 +347,19 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(OdbcConnection connection, string commandText, params OdbcParameter[] parameters)
+        public static int ExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (ExecuteConnectionBehavior == OdbcConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (ExecuteConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
             int result;
-            using (OdbcCommand command = connection.CreateCommand())
+            using (OleDbCommand command = connection.CreateCommand())
             {
                 command.CommandText = commandText;
                 if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
@@ -376,7 +376,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        public static void ExecuteProcedure(OdbcConnection connection, string procedure)
+        public static void ExecuteProcedure(OleDbConnection connection, string procedure)
         {
             ExecuteProcedure(connection, procedure, null);
         }
@@ -388,18 +388,18 @@ namespace LH.Data
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static void ExecuteProcedure(OdbcConnection connection, string procedure, params OdbcParameter[] parameters)
+        public static void ExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (ExecuteConnectionBehavior == OdbcConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (ExecuteConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
-            using (OdbcCommand command = new OdbcCommand(procedure, connection) { CommandType = CommandType.StoredProcedure })
+            using (OleDbCommand command = new OleDbCommand(procedure, connection) { CommandType = CommandType.StoredProcedure })
             {
                 if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                 ConnectionState state = connection.State;
@@ -415,7 +415,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(OdbcConnection connection, string commandText)
+        public static object ExecuteScalar(OleDbConnection connection, string commandText)
         {
             return ExecuteScalar(connection, commandText, null);
         }
@@ -427,19 +427,19 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(OdbcConnection connection, string commandText, params OdbcParameter[] parameters)
+        public static object ExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (ExecuteConnectionBehavior == OdbcConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (ExecuteConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
             object result;
-            using (OdbcCommand command = connection.CreateCommand())
+            using (OleDbCommand command = connection.CreateCommand())
             {
                 command.CommandText = commandText;
                 if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
@@ -461,7 +461,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, string commandText)
+        public static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText)
         {
             return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, null);
         }
@@ -473,7 +473,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, string commandText, params OdbcParameter[] parameters)
+        public static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
             return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, parameters);
         }
@@ -485,7 +485,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, IsolationLevel iso, string commandText)
+        public static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText)
         {
             return TransactionExecuteNonQuery(connection, iso, commandText, null);
         }
@@ -499,14 +499,14 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, IsolationLevel iso, string commandText, params OdbcParameter[] parameters)
+        public static int TransactionExecuteNonQuery(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (TransactionConnectionBehavior == OdbcConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (TransactionConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -514,9 +514,9 @@ namespace LH.Data
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (OdbcTransaction transaction = connection.BeginTransaction(iso))
+            using (OleDbTransaction transaction = connection.BeginTransaction(iso))
             {
-                using (OdbcCommand command = connection.CreateCommand())
+                using (OleDbCommand command = connection.CreateCommand())
                 {
                     command.CommandText = commandText;
                     if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
@@ -552,7 +552,7 @@ namespace LH.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        public static void TransactionExecuteProcedure(OdbcConnection connection, string procedure)
+        public static void TransactionExecuteProcedure(OleDbConnection connection, string procedure)
         {
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, null);
         }
@@ -563,7 +563,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        public static void TransactionExecuteProcedure(OdbcConnection connection, string procedure, params OdbcParameter[] parameters)
+        public static void TransactionExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters)
         {
             TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, parameters);
         }
@@ -574,7 +574,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        public static void TransactionExecuteProcedure(OdbcConnection connection, IsolationLevel iso, string procedure)
+        public static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure)
         {
             TransactionExecuteProcedure(connection, iso, procedure, null);
         }
@@ -587,23 +587,23 @@ namespace LH.Data
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static void TransactionExecuteProcedure(OdbcConnection connection, IsolationLevel iso, string procedure, params OdbcParameter[] parameters)
+        public static void TransactionExecuteProcedure(OleDbConnection connection, IsolationLevel iso, string procedure, params OleDbParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (TransactionConnectionBehavior == OdbcConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (TransactionConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (OdbcTransaction transaction = connection.BeginTransaction(iso))
+            using (OleDbTransaction transaction = connection.BeginTransaction(iso))
             {
-                using (OdbcCommand command = connection.CreateCommand())
+                using (OleDbCommand command = connection.CreateCommand())
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.CommandText = procedure;
@@ -637,7 +637,7 @@ namespace LH.Data
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(OdbcConnection connection, string commandText)
+        public static object TransactionExecuteScalar(OleDbConnection connection, string commandText)
         {
             return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, null);
         }
@@ -649,7 +649,7 @@ namespace LH.Data
         /// <param name="commandText">Sql query.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(OdbcConnection connection, string commandText, params OdbcParameter[] parameters)
+        public static object TransactionExecuteScalar(OleDbConnection connection, string commandText, params OleDbParameter[] parameters)
         {
             return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, parameters);
         }
@@ -661,7 +661,7 @@ namespace LH.Data
         /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="commandText">Sql query.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(OdbcConnection connection, IsolationLevel iso, string commandText)
+        public static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText)
         {
             return TransactionExecuteScalar(connection, iso, commandText, null);
         }
@@ -675,13 +675,14 @@ namespace LH.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static object TransactionExecuteScalar(OdbcConnection connection, IsolationLevel iso, string commandText, params OdbcParameter[] parameters)
+        public static object TransactionExecuteScalar(OleDbConnection connection, IsolationLevel iso, string commandText, params OleDbParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (TransactionConnectionBehavior == OdbcConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+
+            if (TransactionConnectionBehavior == OleDbConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -689,9 +690,9 @@ namespace LH.Data
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (OdbcTransaction transaction = connection.BeginTransaction(iso))
+            using (OleDbTransaction transaction = connection.BeginTransaction(iso))
             {
-                using (OdbcCommand command = connection.CreateCommand())
+                using (OleDbCommand command = connection.CreateCommand())
                 {
                     command.CommandText = commandText;
                     if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
@@ -730,7 +731,7 @@ namespace LH.Data
     /// <summary>
     /// The mode of the connection when querying.
     /// </summary>
-    public enum OdbcConnectionBehavior
+    public enum OleDbConnectionBehavior
     {
         /// <summary>Does not open automatically. If the connection is not open  when the querying, an exception is thrown.</summary>
         Manual,

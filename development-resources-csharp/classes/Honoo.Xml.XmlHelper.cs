@@ -2,7 +2,7 @@
  * Copyright
  *
  * https://github.com/LokiHonoo/development-resources
- * Copyright (C) LH.Studio 2015. All rights reserved.
+ * Copyright (C) Loki Honoo 2015. All rights reserved.
  *
  * This code page is published under the terms of the MIT license.
  */
@@ -13,7 +13,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-namespace LH.Xml
+namespace Honoo.Xml
 {
     /// <summary>
     /// Xml 辅助。

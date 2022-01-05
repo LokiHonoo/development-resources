@@ -2,7 +2,7 @@
  * Copyright
  *
  * https://github.com/LokiHonoo/development-resources
- * Copyright (C) LH.Studio 2015. All rights reserved.
+ * Copyright (C) Loki Honoo 2015. All rights reserved.
  *
  * This code page is published under the terms of the MIT license.
  */
@@ -22,7 +22,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace LH.Data
+namespace Honoo.Data
 {
     /// <summary>
     /// MySql extension.
@@ -851,77 +851,37 @@ namespace LH.Data
 
         #endregion Transaction
 
-        #region Features
-
-        /// <summary>
-        /// Get real-time server version with Execute connection behavior.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <returns></returns>
-        public static string GetServerVersion(MySqlConnection connection)
-        {
-            return (string)ExecuteScalar(connection, "SELECT @@version;");
-        }
-
-        #endregion Features
-
         #region Dump
 
         /// <summary>
-        /// Dump database with DataAdapter connection behavior. In order by Table, Trigger, View, Function, Procedure, Event, Record.
+        /// Dump database.
         /// </summary>
         /// <param name="connection">Connection.</param>
+        /// <param name="manifest">Dump manifest.</param>
         /// <param name="textWriter">TextWriter.</param>
-        public static void Dump(MySqlConnection connection, TextWriter textWriter)
+        public static void Dump(MySqlConnection connection, MySqlDumpManifest manifest, TextWriter textWriter)
         {
-            MySqlDumpSetting setting = GetDumpSetting(connection);
-            Dump(connection, setting, textWriter, null, null, out _);
+            Dump(connection, manifest, textWriter, null, null, out _);
         }
 
         /// <summary>
-        /// Dump database with DataAdapter connection behavior. In order by Table, Trigger, View, Function, Procedure, Event, Record.
+        /// Dump database.
         /// </summary>
         /// <param name="connection">Connection.</param>
+        /// <param name="manifest">Dump manifest.</param>
         /// <param name="textWriter">TextWriter.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        public static void Dump(MySqlConnection connection, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
-        {
-            MySqlDumpSetting setting = GetDumpSetting(connection);
-            Dump(connection, setting, textWriter, written, userState, out cancelled);
-        }
-
-        /// <summary>
-        /// Dump database with DataAdapter connection behavior. Specify items to dump.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="setting">Dump setting.</param>
-        /// <param name="textWriter">TextWriter.</param>
-        public static void Dump(MySqlConnection connection, MySqlDumpSetting setting, TextWriter textWriter)
-        {
-            Dump(connection, setting, textWriter, null, null, out _);
-        }
-
-        /// <summary>
-        /// Dump database with DataAdapter connection behavior. Specify items to dump.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="setting">Dump setting.</param>
-        /// <param name="textWriter">TextWriter.</param>
-        /// <param name="written">A delegate that report written progress.</param>
-        /// <param name="userState">User state.</param>
-        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static void Dump(MySqlConnection connection, MySqlDumpSetting setting, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
+        public static void Dump(MySqlConnection connection, MySqlDumpManifest manifest, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (setting is null)
+            if (manifest is null)
             {
-                throw new ArgumentNullException(nameof(setting));
+                throw new ArgumentNullException(nameof(manifest));
             }
             if (textWriter is null)
             {
@@ -935,342 +895,102 @@ namespace LH.Data
             if (connectionState != ConnectionState.Open) { connection.Open(); }
             //
             long index = 0;
-            long total = 0;
-            long recordCount = 0;
-            List<string> union = new List<string>();
-            foreach (MySqlDumpTableSetting table in setting.Tables)
-            {
-                if (table.IncludingRecord)
-                {
-                    union.Add("SELECT COUNT(*) AS `count` FROM `" + table.TableName + "`");
-                }
-            }
-            if (union.Count > 0)
-            {
-                using (DataTable dt = GetDataTable(connection, string.Join(" UNION ALL ", union) + ";"))
-                {
-                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
-                    total += recordCount;
-                }
-            }
-            total += setting.Tables.Count;
-            total += setting.Views.Count;
-            total += setting.Triggers.Count;
-            total += setting.Functions.Count;
-            total += setting.Procedures.Count;
-            total += setting.Events.Count;
-            //
             bool cancel = false;
-            StringBuilder tmp = new StringBuilder();
-            written?.Invoke(index, total, MySqlDumpType.Summary, string.Empty, userState, ref cancel);
+            string summary = BuildSummary(connection,
+                                          manifest,
+                                          out long tableCount,
+                                          out long viewCount,
+                                          out long triggerCount,
+                                          out long functionCount,
+                                          out long procedureCount,
+                                          out long eventCount,
+                                          out long recordCount,
+                                          out long total);
+            textWriter.Write(summary);
+            written?.Invoke(0, total, MySqlDumpProjectType.Summary, string.Empty, userState, ref cancel);
             if (cancel) { goto end; }
-            //
-            using (DataTable dt = GetDataTable(connection, "SELECT @@version, @@character_set_server, @@collation_server;"))
+            if (tableCount > 0)
             {
-                tmp.AppendLine("/*");
-                tmp.AppendLine("Dump by LH.Data.MySqlHelper");
-                tmp.AppendLine();
-                tmp.AppendLine("DataSource     : " + connection.DataSource);
-                tmp.AppendLine("Server Version : " + (string)dt.Rows[0][0]);
-                tmp.AppendLine("Character_set  : " + (string)dt.Rows[0][1]);
-                tmp.AppendLine("Collation      : " + (string)dt.Rows[0][2]);
-                tmp.AppendLine("Database       : " + connection.Database);
-                tmp.AppendLine();
-                tmp.AppendLine("Table          : " + setting.Tables.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Record         : " + recordCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Trigger        : " + setting.Triggers.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("View           : " + setting.Views.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Function       : " + setting.Functions.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Procedure      : " + setting.Procedures.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Event          : " + setting.Events.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine();
-                tmp.AppendLine("Dump Time      : " + DateTime.Now);
-                tmp.AppendLine();
-                tmp.AppendLine("Use the console or database tool to recover data.");
-                tmp.AppendLine("If the target database has a table with the same name, the table data is overwritten.");
-                tmp.AppendLine("*/");
-                tmp.AppendLine();
-                textWriter.Write(tmp.ToString());
-                tmp.Clear();
+                DumpTables(connection, manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
+                if (cancel) { goto end; }
             }
-            //
-            foreach (MySqlDumpTableSetting table in setting.Tables)
+            if (viewCount > 0)
             {
-                using (DataSet info = GetDataSet(connection, MySqlCommandText.ShowCreateTable(table.TableName) + MySqlCommandText.ShowTableStatus(table.TableName)))
-                {
-                    string tableCreate = (string)info.Tables[0].Rows[0][1];
-                    if (table.AutoIncrement > 0)
-                    {
-                        if (info.Tables[1].Rows[0]["Auto_increment"] != null)
-                        {
-                            tableCreate = tableCreate.Replace("AUTO_INCREMENT=" + (int)info.Tables[1].Rows[0]["Auto_increment"], "AUTO_INCREMENT=" + table.AutoIncrement);
-                        }
-                    }
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- Table structure for " + table.TableName);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP TABLE IF EXISTS `" + table.TableName + "`;");
-                    tmp.AppendLine(tableCreate + ";");
-                    textWriter.Write(tmp.ToString());
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.Table, table.TableName, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
+                DumpViews(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                if (cancel) { goto end; }
             }
-            foreach (string trigger in setting.Triggers)
+            if (triggerCount > 0)
             {
-                using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateTrigger(trigger)))
-                {
-                    string triggerCreate = (string)create.Rows[0][2];
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- Trigger structure for " + trigger);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP TRIGGER IF EXISTS `" + trigger + "`;");
-                    tmp.AppendLine("DELIMITER ;;");
-                    tmp.AppendLine(triggerCreate + ";;");
-                    tmp.AppendLine("DELIMITER ;");
-                    textWriter.Write(tmp.ToString());
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.Trigger, trigger, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
+                DumpTriggers(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                if (cancel) { goto end; }
             }
-            foreach (string view in setting.Views)
+            if (functionCount > 0)
             {
-                using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateView(view)))
-                {
-                    string viewCreate = (string)create.Rows[0][1];
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- View structure for " + view);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP VIEW IF EXISTS `" + view + "`;");
-                    tmp.AppendLine(viewCreate + ";");
-                    textWriter.Write(tmp.ToString());
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.View, view, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
+                DumpFunctions(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                if (cancel) { goto end; }
             }
-            foreach (string function in setting.Functions)
+            if (procedureCount > 0)
             {
-                using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateFunction(function)))
-                {
-                    string functionCreate = (string)create.Rows[0][2];
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- Function structure for " + function);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP FUNCTION IF EXISTS `" + function + "`;");
-                    tmp.AppendLine("DELIMITER ;;");
-                    tmp.AppendLine(functionCreate + ";;");
-                    tmp.AppendLine("DELIMITER ;");
-                    textWriter.Write(tmp.ToString());
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.Function, function, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
+                DumpProcedures(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                if (cancel) { goto end; }
             }
-            foreach (string procedure in setting.Procedures)
+            if (eventCount > 0)
             {
-                using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateProcedure(procedure)))
-                {
-                    string procedureCreate = (string)create.Rows[0][2];
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- Procedure structure for " + procedure);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP PROCEDURE IF EXISTS `" + procedure + "`;");
-                    tmp.AppendLine("DELIMITER ;;");
-                    tmp.AppendLine(procedureCreate + ";;");
-                    tmp.AppendLine("DELIMITER ;");
-                    textWriter.Write(tmp.ToString());
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.Procedure, procedure, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
-            }
-            foreach (string event_ in setting.Events)
-            {
-                using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateEvent(event_)))
-                {
-                    string eventCreate = (string)create.Rows[0][3];
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- Event structure for " + event_);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP EVENT IF EXISTS `" + event_ + "`;");
-                    tmp.AppendLine("DELIMITER ;;");
-                    tmp.AppendLine(eventCreate + ";;");
-                    tmp.AppendLine("DELIMITER ;");
-                    textWriter.Write(tmp.ToString());
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.Event, event_, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
+                DumpEvents(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                if (cancel) { goto end; }
             }
             if (recordCount > 0)
             {
-                textWriter.WriteLine();
-                textWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
-                foreach (MySqlDumpTableSetting table in setting.Tables)
-                {
-                    if (table.IncludingRecord)
-                    {
-                        string tableName = table.TableName;
-                        using (MySqlDataReader reader = GetDataReader(connection, "SELECT * FROM `" + tableName + "`;"))
-                        {
-                            if (reader.HasRows)
-                            {
-                                tmp.AppendLine();
-                                tmp.AppendLine("-- ----------------------------");
-                                tmp.AppendLine("-- Records of " + tableName);
-                                tmp.AppendLine("-- ----------------------------");
-                                while (reader.Read())
-                                {
-                                    tmp.Append("INSERT INTO `" + tableName + "` VALUES");
-                                    tmp.Append('(');
-                                    for (int i = 0; i < reader.FieldCount; i++)
-                                    {
-                                        object val = reader.GetValue(i);
-                                        if (val == DBNull.Value)
-                                        {
-                                            tmp.Append("NULL");
-                                        }
-                                        else
-                                        {
-                                            switch (val)
-                                            {
-                                                case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
-                                                case bool value: tmp.Append(value ? 1 : 0); break;
-                                                case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case uint value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case long value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case ulong value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                default: tmp.Append("'" + val.ToString() + "'"); break;
-                                            }
-                                        }
-                                        if (i < reader.FieldCount - 1)
-                                        {
-                                            tmp.Append(',');
-                                        }
-                                    }
-                                    tmp.AppendLine(");");
-                                    textWriter.Write(tmp.ToString());
-                                    tmp.Clear();
-                                    index++;
-                                    written?.Invoke(index, total, MySqlDumpType.Record, tableName, userState, ref cancel);
-                                    if (cancel) { goto recordEnd; }
-                                }
-                            }
-                            //reader.Close();
-                        }
-                    }
-                }
-            recordEnd:
-                textWriter.WriteLine();
-                textWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
+                DumpRecords(connection, manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
+                if (cancel) { goto end; }
             }
         end:
             textWriter.Flush();
             if (connectionState != ConnectionState.Open) { connection.Close(); }
-            //
             cancelled = cancel;
         }
 
         /// <summary>
-        /// Dump database with DataAdapter connection behavior. In order by Table, Trigger, View, Function, Procedure, Event, Record.
+        /// Dump database to file(s).
         /// </summary>
         /// <param name="connection">Connection.</param>
+        /// <param name="manifest">Dump manifest.</param>
         /// <param name="folder">Save to folder.</param>
+        /// <param name="fileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
         /// <param name="encoding">File encoding.</param>
-        /// <param name="segmentSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
-        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        public static void DumpToFiles(MySqlConnection connection, string folder, Encoding encoding, long segmentSize, out bool cancelled)
+        public static void DumpToFiles(MySqlConnection connection, MySqlDumpManifest manifest, string folder, long fileSize, Encoding encoding)
         {
-            MySqlDumpSetting setting = GetDumpSetting(connection);
-            DumpToFiles(connection, setting, folder, encoding, segmentSize, out cancelled, null, null);
+            DumpToFiles(connection, manifest, folder, fileSize, encoding, null, null, out _);
         }
 
         /// <summary>
-        /// Dump database with DataAdapter connection behavior. In order by Table, Trigger, View, Function, Procedure, Event, Record.
+        /// Dump database to file(s).
         /// </summary>
         /// <param name="connection">Connection.</param>
+        /// <param name="manifest">Dump manifest.</param>
         /// <param name="folder">Save to folder.</param>
+        /// <param name="fileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
         /// <param name="encoding">File encoding.</param>
-        /// <param name="segmentSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
-        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        /// <param name="written">A delegate that report written progress.</param>
-
-        /// <param name="userState">User state.</param>
-        public static void DumpToFiles(MySqlConnection connection,
-                                         string folder,
-                                         Encoding encoding,
-                                         long segmentSize,
-                                         out bool cancelled,
-                                         MySqlWrittenCallback written,
-                                         object userState)
-        {
-            MySqlDumpSetting setting = GetDumpSetting(connection);
-            DumpToFiles(connection, setting, folder, encoding, segmentSize, out cancelled, written, userState);
-        }
-
-        /// <summary>
-        /// Dump database with DataAdapter connection behavior. Specify items to dump.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="setting">Dump setting.</param>
-        /// <param name="folder">Save to folder.</param>
-        /// <param name="encoding">File encoding.</param>
-        /// <param name="segmentSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
-        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        public static void DumpToFiles(MySqlConnection connection, MySqlDumpSetting setting, string folder, Encoding encoding, long segmentSize, out bool cancelled)
-        {
-            DumpToFiles(connection, setting, folder, encoding, segmentSize, out cancelled, null, null);
-        }
-
-        /// <summary>
-        /// Dump database with DataAdapter connection behavior. Specify items to dump.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="setting">Dump setting.</param>
-        /// <param name="folder">Save to folder.</param>
-        /// <param name="encoding">File encoding.</param>
-        /// <param name="segmentSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
-        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
+        /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void DumpToFiles(MySqlConnection connection,
-                                         MySqlDumpSetting setting,
-                                         string folder,
-                                         Encoding encoding,
-                                         long segmentSize,
-                                         out bool cancelled,
-                                         MySqlWrittenCallback written,
-                                         object userState)
+                                       MySqlDumpManifest manifest,
+                                       string folder,
+                                       long fileSize,
+                                       Encoding encoding,
+                                       MySqlWrittenCallback written,
+                                       object userState,
+                                       out bool cancelled)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (setting is null)
+            if (manifest is null)
             {
-                throw new ArgumentNullException(nameof(setting));
+                throw new ArgumentNullException(nameof(manifest));
             }
             if (encoding is null)
             {
@@ -1280,9 +1000,9 @@ namespace LH.Data
             {
                 Directory.CreateDirectory(folder);
             }
-            if (segmentSize < 1024 * 1024)
+            if (fileSize < 1024 * 1024)
             {
-                throw new ArgumentException("Segment size cannot be less than 1 MB.");
+                throw new ArgumentException("File size cannot be less than 1 MB.");
             }
             if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
@@ -1292,354 +1012,81 @@ namespace LH.Data
             if (connectionState != ConnectionState.Open) { connection.Open(); }
             //
             long index = 0;
-            long total = 0;
-            long recordCount = 0;
-            List<string> union = new List<string>();
-            foreach (MySqlDumpTableSetting table in setting.Tables)
-            {
-                if (table.IncludingRecord)
-                {
-                    union.Add("SELECT COUNT(*) AS `count` FROM `" + table.TableName + "`");
-                }
-            }
-            if (union.Count > 0)
-            {
-                using (DataTable dt = GetDataTable(connection, string.Join(" UNION ALL ", union) + ";"))
-                {
-                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
-                    total += recordCount;
-                }
-            }
-            total += setting.Tables.Count;
-            total += setting.Views.Count;
-            total += setting.Triggers.Count;
-            total += setting.Functions.Count;
-            total += setting.Procedures.Count;
-            total += setting.Events.Count;
-            //
             bool cancel = false;
-            StringBuilder tmp = new StringBuilder();
-            byte[] tmpBytes;
-            string file;
-            FileStream fileStream = null;
-            int sn;
-            written?.Invoke(index, total, MySqlDumpType.Summary, string.Empty, userState, ref cancel);
-            if (cancel) { goto end; }
-            //
-            file = Path.Combine(folder, "!schema.sql");
-            fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Read);
-            sn = 0;
-            using (DataTable dt = GetDataTable(connection, "SELECT @@version, @@character_set_server, @@collation_server;"))
+            long recordCount;
+            long total;
+            string file = Path.Combine(folder, "!schema.sql");
+            using (FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
             {
-                tmp.AppendLine("/*");
-                tmp.AppendLine("Dump by LH.Data.MySqlHelper");
-                tmp.AppendLine();
-                tmp.AppendLine("DataSource     : " + connection.DataSource);
-                tmp.AppendLine("Server Version : " + (string)dt.Rows[0][0]);
-                tmp.AppendLine("Character_set  : " + (string)dt.Rows[0][1]);
-                tmp.AppendLine("Collation      : " + (string)dt.Rows[0][2]);
-                tmp.AppendLine("Database       : " + connection.Database);
-                tmp.AppendLine();
-                tmp.AppendLine("Table          : " + setting.Tables.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Record         : " + recordCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Trigger        : " + setting.Triggers.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("View           : " + setting.Views.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Function       : " + setting.Functions.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Procedure      : " + setting.Procedures.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Event          : " + setting.Events.Count.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine();
-                tmp.AppendLine("Dump Time      : " + DateTime.Now);
-                tmp.AppendLine();
-                tmp.AppendLine("Use the console or database tool to recover data.");
-                tmp.AppendLine("If the target database has a table with the same name, the table data is overwritten.");
-                tmp.AppendLine("*/");
-                tmp.AppendLine();
-                tmpBytes = encoding.GetBytes(tmp.ToString());
-                fileStream.Write(tmpBytes, 0, tmpBytes.Length);
-                tmp.Clear();
-            }
-            //
-            foreach (MySqlDumpTableSetting table in setting.Tables)
-            {
-                using (DataSet info = GetDataSet(connection, MySqlCommandText.ShowCreateTable(table.TableName) + MySqlCommandText.ShowTableStatus(table.TableName)))
+                using (StreamWriter textWriter = new StreamWriter(stream, encoding))
                 {
-                    string tableCreate = (string)info.Tables[0].Rows[0][1];
-                    if (table.AutoIncrement > 0)
+                    string summary = BuildSummary(connection,
+                                                  manifest,
+                                                  out long tableCount,
+                                                  out long viewCount,
+                                                  out long triggerCount,
+                                                  out long functionCount,
+                                                  out long procedureCount,
+                                                  out long eventCount,
+                                                  out recordCount,
+                                                  out total);
+                    textWriter.Write(summary);
+                    written?.Invoke(0, total, MySqlDumpProjectType.Summary, string.Empty, userState, ref cancel);
+                    if (cancel) { textWriter.Flush(); goto end; }
+                    if (tableCount > 0)
                     {
-                        if (info.Tables[1].Rows[0]["Auto_increment"] != null)
-                        {
-                            tableCreate = tableCreate.Replace("AUTO_INCREMENT=" + (int)info.Tables[1].Rows[0]["Auto_increment"], "AUTO_INCREMENT=" + table.AutoIncrement);
-                        }
+                        DumpTables(connection, manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
+                        if (cancel) { textWriter.Flush(); goto end; }
                     }
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- Table structure for " + table.TableName);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP TABLE IF EXISTS `" + table.TableName + "`;");
-                    tmp.AppendLine(tableCreate + ";");
-                    tmpBytes = encoding.GetBytes(tmp.ToString());
-                    if (fileStream.Length + tmpBytes.Length > segmentSize)
+                    if (viewCount > 0)
                     {
-                        fileStream.Close();
-                        fileStream.Dispose();
-                        sn++;
-                        file = Path.Combine(folder, "!schema_" + sn + ".sql");
-                        fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Read);
+                        DumpViews(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                        if (cancel) { textWriter.Flush(); goto end; }
                     }
-                    fileStream.Write(tmpBytes, 0, tmpBytes.Length);
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.Table, table.TableName, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
-            }
-            foreach (string trigger in setting.Triggers)
-            {
-                using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateTrigger(trigger)))
-                {
-                    string triggerCreate = (string)create.Rows[0][2];
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- Trigger structure for " + trigger);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP TRIGGER IF EXISTS `" + trigger + "`;");
-                    tmp.AppendLine("DELIMITER ;;");
-                    tmp.AppendLine(triggerCreate + ";;");
-                    tmp.AppendLine("DELIMITER ;");
-                    tmpBytes = encoding.GetBytes(tmp.ToString());
-                    if (fileStream.Length + tmpBytes.Length > segmentSize)
+                    if (triggerCount > 0)
                     {
-                        fileStream.Close();
-                        fileStream.Dispose();
-                        sn++;
-                        file = Path.Combine(folder, "!schema_" + sn + ".sql");
-                        fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Read);
+                        DumpTriggers(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                        if (cancel) { textWriter.Flush(); goto end; }
                     }
-                    fileStream.Write(tmpBytes, 0, tmpBytes.Length);
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.Trigger, trigger, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
-            }
-            foreach (string view in setting.Views)
-            {
-                using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateView(view)))
-                {
-                    string viewCreate = (string)create.Rows[0][1];
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- View structure for " + view);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP VIEW IF EXISTS `" + view + "`;");
-                    tmp.AppendLine(viewCreate + ";");
-                    tmpBytes = encoding.GetBytes(tmp.ToString());
-                    if (fileStream.Length + tmpBytes.Length > segmentSize)
+                    if (functionCount > 0)
                     {
-                        fileStream.Close();
-                        fileStream.Dispose();
-                        sn++;
-                        file = Path.Combine(folder, "!schema_" + sn + ".sql");
-                        fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Read);
+                        DumpFunctions(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                        if (cancel) { textWriter.Flush(); goto end; }
                     }
-                    fileStream.Write(tmpBytes, 0, tmpBytes.Length);
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.View, view, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
-            }
-            foreach (string function in setting.Functions)
-            {
-                using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateFunction(function)))
-                {
-                    string functionCreate = (string)create.Rows[0][2];
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- Function structure for " + function);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP FUNCTION IF EXISTS `" + function + "`;");
-                    tmp.AppendLine("DELIMITER ;;");
-                    tmp.AppendLine(functionCreate + ";;");
-                    tmp.AppendLine("DELIMITER ;");
-                    tmpBytes = encoding.GetBytes(tmp.ToString());
-                    if (fileStream.Length + tmpBytes.Length > segmentSize)
+                    if (procedureCount > 0)
                     {
-                        fileStream.Close();
-                        fileStream.Dispose();
-                        sn++;
-                        file = Path.Combine(folder, "!schema_" + sn + ".sql");
-                        fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Read);
+                        DumpProcedures(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                        if (cancel) { textWriter.Flush(); goto end; }
                     }
-                    fileStream.Write(tmpBytes, 0, tmpBytes.Length);
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.Function, function, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
-            }
-            foreach (string procedure in setting.Procedures)
-            {
-                using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateProcedure(procedure)))
-                {
-                    string procedureCreate = (string)create.Rows[0][2];
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- Procedure structure for " + procedure);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP PROCEDURE IF EXISTS `" + procedure + "`;");
-                    tmp.AppendLine("DELIMITER ;;");
-                    tmp.AppendLine(procedureCreate + ";;");
-                    tmp.AppendLine("DELIMITER ;");
-                    tmpBytes = encoding.GetBytes(tmp.ToString());
-                    if (fileStream.Length + tmpBytes.Length > segmentSize)
+                    if (eventCount > 0)
                     {
-                        fileStream.Close();
-                        fileStream.Dispose();
-                        sn++;
-                        file = Path.Combine(folder, "!schema_" + sn + ".sql");
-                        fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Read);
+                        DumpEvents(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                        if (cancel) { textWriter.Flush(); goto end; }
                     }
-                    fileStream.Write(tmpBytes, 0, tmpBytes.Length);
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.Procedure, procedure, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
-            }
-            foreach (string event_ in setting.Events)
-            {
-                using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateEvent(event_)))
-                {
-                    string eventCreate = (string)create.Rows[0][3];
-                    tmp.AppendLine();
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("-- Event structure for " + event_);
-                    tmp.AppendLine("-- ----------------------------");
-                    tmp.AppendLine("DROP EVENT IF EXISTS `" + event_ + "`;");
-                    tmp.AppendLine("DELIMITER ;;");
-                    tmp.AppendLine(eventCreate + ";;");
-                    tmp.AppendLine("DELIMITER ;");
-                    tmpBytes = encoding.GetBytes(tmp.ToString());
-                    if (fileStream.Length + tmpBytes.Length > segmentSize)
-                    {
-                        fileStream.Close();
-                        fileStream.Dispose();
-                        sn++;
-                        file = Path.Combine(folder, "!schema_" + sn + ".sql");
-                        fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Read);
-                    }
-                    fileStream.Write(tmpBytes, 0, tmpBytes.Length);
-                    tmp.Clear();
-                    index++;
-                    written?.Invoke(index, total, MySqlDumpType.Event, event_, userState, ref cancel);
-                    if (cancel) { goto end; }
                 }
             }
             if (recordCount > 0)
             {
-                byte[] foreignKeyChecksOffBytes = encoding.GetBytes("SET FOREIGN_KEY_CHECKS = 0;" + Environment.NewLine);
-                byte[] foreignKeyChecksOnBytes = encoding.GetBytes(Environment.NewLine + "SET FOREIGN_KEY_CHECKS = 1;");
-                foreach (MySqlDumpTableSetting table in setting.Tables)
-                {
-                    if (table.IncludingRecord)
-                    {
-                        using (MySqlDataReader reader = GetDataReader(connection, "SELECT * FROM `" + table.TableName + "`;"))
-                        {
-                            if (reader.HasRows)
-                            {
-                                file = Path.Combine(folder, "record_" + table.TableName + ".sql");
-                                fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Read);
-                                sn = 0;
-                                //
-                                fileStream.Write(foreignKeyChecksOffBytes, 0, foreignKeyChecksOffBytes.Length);
-                                tmp.AppendLine();
-                                tmp.AppendLine("-- ----------------------------");
-                                tmp.AppendLine("-- Records of " + table.TableName);
-                                tmp.AppendLine("-- ----------------------------");
-                                while (reader.Read())
-                                {
-                                    tmp.Append("INSERT INTO `" + table.TableName + "` VALUES");
-                                    tmp.Append('(');
-                                    for (int i = 0; i < reader.FieldCount; i++)
-                                    {
-                                        object val = reader.GetValue(i);
-                                        if (val == DBNull.Value)
-                                        {
-                                            tmp.Append("NULL");
-                                        }
-                                        else
-                                        {
-                                            switch (val)
-                                            {
-                                                case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
-                                                case bool value: tmp.Append(value ? 1 : 0); break;
-                                                case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case uint value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case long value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case ulong value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                default: tmp.Append("'" + val.ToString() + "'"); break;
-                                            }
-                                        }
-                                        if (i < reader.FieldCount - 1)
-                                        {
-                                            tmp.Append(',');
-                                        }
-                                    }
-                                    tmp.AppendLine(");");
-                                    tmpBytes = encoding.GetBytes(tmp.ToString());
-                                    if (fileStream.Length + tmpBytes.Length > segmentSize)
-                                    {
-                                        fileStream.Close();
-                                        fileStream.Dispose();
-                                        sn++;
-                                        file = Path.Combine(folder, "record_" + table.TableName + "_" + sn + ".sql");
-                                        fileStream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.Read);
-                                    }
-                                    fileStream.Write(tmpBytes, 0, tmpBytes.Length);
-                                    tmp.Clear();
-                                    index++;
-                                    written?.Invoke(index, total, MySqlDumpType.Record, table.TableName, userState, ref cancel);
-                                    if (cancel) { goto recordEnd; }
-                                }
-                            recordEnd:
-                                fileStream.Write(foreignKeyChecksOnBytes, 0, foreignKeyChecksOnBytes.Length);
-                                if (cancel) { goto end; }
-                            }
-                            //reader.Close();
-                        }
-                    }
-                }
+                DumpRecords(connection, manifest.Tables, folder, fileSize, encoding, ref index, total, written, userState, ref cancel);
+                if (cancel) { goto end; }
             }
         end:
-            if (fileStream != null)
-            {
-                fileStream.Close();
-                fileStream.Dispose();
-            }
             if (connectionState != ConnectionState.Open) { connection.Close(); }
-            //
             cancelled = cancel;
         }
 
         /// <summary>
-        /// Get dump setting.
+        /// Get dump manifest.
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <returns></returns>
-        public static MySqlDumpSetting GetDumpSetting(MySqlConnection connection)
+        public static MySqlDumpManifest GetDumpManifest(MySqlConnection connection)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            MySqlDumpSetting setting = new MySqlDumpSetting();
+            MySqlDumpManifest manifest = new MySqlDumpManifest();
             StringBuilder sql = new StringBuilder();
             sql.AppendLine(MySqlCommandText.ShowTableStatus());
             sql.AppendLine(MySqlCommandText.ShowTriggers());
@@ -1654,32 +1101,548 @@ namespace LH.Data
                     {
                         if (dr["ENGINE"] != DBNull.Value)
                         {
-                            setting.Tables.Add(new MySqlDumpTableSetting((string)dr["Name"], 0, true));
+                            manifest.Tables.Add(new MySqlTableDumpProject((string)dr["Name"], false, 0, true));
                         }
                         else
                         {
-                            setting.Views.Add((string)dr["Name"]);
+                            manifest.Views.Add(new MySqlDumpProject((string)dr["Name"], false));
                         }
                     }
                 }
                 foreach (DataRow dr in ds.Tables[1].Rows)
                 {
-                    setting.Triggers.Add((string)dr["Trigger"]);
+                    manifest.Triggers.Add(new MySqlDumpProject((string)dr["Trigger"], false));
                 }
                 foreach (DataRow dr in ds.Tables[2].Rows)
                 {
-                    setting.Functions.Add((string)dr["Name"]);
+                    manifest.Functions.Add(new MySqlDumpProject((string)dr["Name"], false));
                 }
                 foreach (DataRow dr in ds.Tables[3].Rows)
                 {
-                    setting.Procedures.Add((string)dr["Name"]);
+                    manifest.Procedures.Add(new MySqlDumpProject((string)dr["Name"], false));
                 }
                 foreach (DataRow dr in ds.Tables[4].Rows)
                 {
-                    setting.Events.Add((string)dr["Name"]);
+                    manifest.Events.Add(new MySqlDumpProject((string)dr["Name"], false));
                 }
             }
-            return setting;
+            return manifest;
+        }
+
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        private static string BuildSummary(MySqlConnection connection,
+                                           MySqlDumpManifest manifest,
+                                           out long tableCount,
+                                           out long viewCount,
+                                           out long triggerCount,
+                                           out long functionCount,
+                                           out long procedureCount,
+                                           out long eventCount,
+                                           out long recordCount,
+                                           out long total)
+        {
+            StringBuilder tmp = new StringBuilder();
+            tableCount = 0;
+            viewCount = 0;
+            triggerCount = 0;
+            functionCount = 0;
+            procedureCount = 0;
+            eventCount = 0;
+            recordCount = 0;
+            List<string> union = new List<string>();
+            foreach (MySqlTableDumpProject table in manifest.Tables)
+            {
+                if (!table.Ignore)
+                {
+                    if (table.IncludingRecord)
+                    {
+                        union.Add("SELECT COUNT(*) AS `count` FROM `" + table.TableName + "`");
+                    }
+                    tableCount++;
+                }
+            }
+            if (union.Count > 0)
+            {
+                using (DataTable dt = GetDataTable(connection, string.Join(" UNION ALL ", union) + ";"))
+                {
+                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
+                }
+            }
+            foreach (MySqlDumpProject view in manifest.Views)
+            {
+                if (!view.Ignore)
+                {
+                    viewCount++;
+                }
+            }
+            foreach (MySqlDumpProject trigger in manifest.Triggers)
+            {
+                if (!trigger.Ignore)
+                {
+                    triggerCount++;
+                }
+            }
+            foreach (MySqlDumpProject function in manifest.Functions)
+            {
+                if (!function.Ignore)
+                {
+                    functionCount++;
+                }
+            }
+            foreach (MySqlDumpProject procedure in manifest.Procedures)
+            {
+                if (!procedure.Ignore)
+                {
+                    procedureCount++;
+                }
+            }
+            foreach (MySqlDumpProject event_ in manifest.Events)
+            {
+                if (!event_.Ignore)
+                {
+                    eventCount++;
+                }
+            }
+            total = tableCount + viewCount + triggerCount + functionCount + procedureCount + eventCount + recordCount;
+            //
+            using (DataTable dt = GetDataTable(connection, "SELECT @@version, @@character_set_server, @@collation_server;"))
+            {
+                tmp.AppendLine("/*");
+                tmp.AppendLine("Dump by Honoo.Data.MySqlHelper");
+                tmp.AppendLine("https://github.com/LokiHonoo/development-resources");
+                tmp.AppendLine("This code page is published under the terms of the MIT license.");
+                tmp.AppendLine();
+                tmp.AppendLine("DataSource     : " + connection.DataSource);
+                tmp.AppendLine("Server Version : " + (string)dt.Rows[0][0]);
+                tmp.AppendLine("Character_set  : " + (string)dt.Rows[0][1]);
+                tmp.AppendLine("Collation      : " + (string)dt.Rows[0][2]);
+                tmp.AppendLine("Database       : " + connection.Database);
+                tmp.AppendLine();
+                tmp.AppendLine("Table          : " + tableCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Trigger        : " + triggerCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("View           : " + viewCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Function       : " + functionCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Procedure      : " + procedureCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Event          : " + eventCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Record         : " + recordCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine();
+                tmp.AppendLine("Dump Time      : " + DateTime.Now);
+                tmp.AppendLine();
+                tmp.AppendLine("Use the console or database tool to recover data.");
+                tmp.AppendLine("If the target database has a table with the same name, the table data is overwritten.");
+                tmp.AppendLine("*/");
+                tmp.AppendLine();
+            }
+            return tmp.ToString();
+        }
+
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        private static void DumpEvents(MySqlConnection connection,
+                                       List<MySqlDumpProject> events,
+                                       TextWriter textWriter,
+                                       ref long index,
+                                       long total,
+                                       MySqlWrittenCallback written,
+                                       object userState,
+                                       ref bool cancel)
+        {
+            StringBuilder tmp = new StringBuilder();
+            foreach (MySqlDumpProject event_ in events)
+            {
+                if (!event_.Ignore)
+                {
+                    using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateEvent(event_.Name)))
+                    {
+                        string eventCreate = (string)create.Rows[0][3];
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- Event structure for " + event_);
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("DROP EVENT IF EXISTS `" + event_ + "`;");
+                        tmp.AppendLine("DELIMITER ;;");
+                        tmp.AppendLine(eventCreate + ";;");
+                        tmp.AppendLine("DELIMITER ;");
+                        tmp.AppendLine();
+                        textWriter.Write(tmp.ToString());
+                        tmp.Clear();
+                        index++;
+                        written?.Invoke(index, total, MySqlDumpProjectType.Event, event_.Name, userState, ref cancel);
+                        if (cancel) { return; }
+                    }
+                }
+            }
+        }
+
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        private static void DumpFunctions(MySqlConnection connection,
+                                          List<MySqlDumpProject> functions,
+                                          TextWriter textWriter,
+                                          ref long index,
+                                          long total,
+                                          MySqlWrittenCallback written,
+                                          object userState,
+                                          ref bool cancel)
+        {
+            StringBuilder tmp = new StringBuilder();
+            foreach (MySqlDumpProject function in functions)
+            {
+                if (!function.Ignore)
+                {
+                    using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateFunction(function.Name)))
+                    {
+                        string functionCreate = (string)create.Rows[0][2];
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- Function structure for " + function);
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("DROP FUNCTION IF EXISTS `" + function + "`;");
+                        tmp.AppendLine("DELIMITER ;;");
+                        tmp.AppendLine(functionCreate + ";;");
+                        tmp.AppendLine("DELIMITER ;");
+                        tmp.AppendLine();
+                        textWriter.Write(tmp.ToString());
+                        tmp.Clear();
+                        index++;
+                        written?.Invoke(index, total, MySqlDumpProjectType.Function, function.Name, userState, ref cancel);
+                        if (cancel) { return; }
+                    }
+                }
+            }
+        }
+
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        private static void DumpProcedures(MySqlConnection connection,
+                                           List<MySqlDumpProject> procedures,
+                                           TextWriter textWriter,
+                                           ref long index,
+                                           long total,
+                                           MySqlWrittenCallback written,
+                                           object userState,
+                                           ref bool cancel)
+        {
+            StringBuilder tmp = new StringBuilder();
+            foreach (MySqlDumpProject procedure in procedures)
+            {
+                if (!procedure.Ignore)
+                {
+                    using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateProcedure(procedure.Name)))
+                    {
+                        string procedureCreate = (string)create.Rows[0][2];
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- Procedure structure for " + procedure);
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("DROP PROCEDURE IF EXISTS `" + procedure + "`;");
+                        tmp.AppendLine("DELIMITER ;;");
+                        tmp.AppendLine(procedureCreate + ";;");
+                        tmp.AppendLine("DELIMITER ;");
+                        tmp.AppendLine();
+                        textWriter.Write(tmp.ToString());
+                        tmp.Clear();
+                        index++;
+                        written?.Invoke(index, total, MySqlDumpProjectType.Procedure, procedure.Name, userState, ref cancel);
+                        if (cancel) { return; }
+                    }
+                }
+            }
+        }
+
+        private static void DumpRecords(MySqlConnection connection,
+                                        List<MySqlTableDumpProject> tables,
+                                        TextWriter textWriter,
+                                        ref long index,
+                                        long total,
+                                        MySqlWrittenCallback written,
+                                        object userState,
+                                        ref bool cancel)
+        {
+            StringBuilder tmp = new StringBuilder();
+            textWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
+            textWriter.WriteLine();
+            foreach (MySqlTableDumpProject table in tables)
+            {
+                if (!table.Ignore && table.IncludingRecord)
+                {
+                    string tableName = table.TableName;
+                    using (MySqlDataReader reader = GetDataReader(connection, "SELECT * FROM `" + tableName + "`;"))
+                    {
+                        if (reader.HasRows)
+                        {
+                            tmp.AppendLine("-- ----------------------------");
+                            tmp.AppendLine("-- Records of " + tableName);
+                            tmp.AppendLine("-- ----------------------------");
+                            while (reader.Read())
+                            {
+                                tmp.Append("INSERT INTO `" + tableName + "` VALUES");
+                                tmp.Append('(');
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    object val = reader.GetValue(i);
+                                    if (val == DBNull.Value)
+                                    {
+                                        tmp.Append("NULL");
+                                    }
+                                    else
+                                    {
+                                        switch (val)
+                                        {
+                                            case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
+                                            case bool value: tmp.Append(value ? 1 : 0); break;
+                                            case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case uint value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case long value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case ulong value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            default: tmp.Append("'" + val.ToString() + "'"); break;
+                                        }
+                                    }
+                                    if (i < reader.FieldCount - 1)
+                                    {
+                                        tmp.Append(',');
+                                    }
+                                }
+                                tmp.AppendLine(");");
+                                textWriter.Write(tmp.ToString());
+                                tmp.Clear();
+                                index++;
+                                written?.Invoke(index, total, MySqlDumpProjectType.Record, tableName, userState, ref cancel);
+                                if (cancel) { goto end; }
+                            }
+                        }
+                        //reader.Close();
+                    }
+                    textWriter.WriteLine();
+                }
+            }
+        end:
+            textWriter.WriteLine();
+            textWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
+        }
+
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        private static void DumpRecords(MySqlConnection connection,
+                                        List<MySqlTableDumpProject> tables,
+                                        string folder,
+                                        long fileSize,
+                                        Encoding encoding,
+                                        ref long index,
+                                        long total,
+                                        MySqlWrittenCallback written,
+                                        object userState,
+                                        ref bool cancel)
+        {
+            StringBuilder tmp = new StringBuilder();
+            foreach (MySqlTableDumpProject table in tables)
+            {
+                if (!table.Ignore && table.IncludingRecord)
+                {
+                    string tableName = table.TableName;
+                    using (MySqlDataReader reader = GetDataReader(connection, "SELECT * FROM `" + tableName + "`;"))
+                    {
+                        if (reader.HasRows)
+                        {
+                            int sn = 0;
+                            string file = Path.Combine(folder, "records@" + table.TableName + ".sql");
+                            FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
+                            StreamWriter streamWriter = new StreamWriter(stream, encoding);
+                            streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
+                            streamWriter.WriteLine();
+                            tmp.AppendLine("-- ----------------------------");
+                            tmp.AppendLine("-- Records of " + tableName);
+                            tmp.AppendLine("-- ----------------------------");
+                            while (reader.Read())
+                            {
+                                tmp.Append("INSERT INTO `" + tableName + "` VALUES");
+                                tmp.Append('(');
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    object val = reader.GetValue(i);
+                                    if (val == DBNull.Value)
+                                    {
+                                        tmp.Append("NULL");
+                                    }
+                                    else
+                                    {
+                                        switch (val)
+                                        {
+                                            case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
+                                            case bool value: tmp.Append(value ? 1 : 0); break;
+                                            case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case uint value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case long value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case ulong value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            default: tmp.Append("'" + val.ToString() + "'"); break;
+                                        }
+                                    }
+                                    if (i < reader.FieldCount - 1)
+                                    {
+                                        tmp.Append(',');
+                                    }
+                                }
+                                tmp.AppendLine(");");
+                                if (streamWriter.BaseStream.Length + (tmp.Length * 3) > fileSize)
+                                {
+                                    streamWriter.WriteLine();
+                                    streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
+                                    streamWriter.Flush();
+                                    streamWriter.Close();
+                                    streamWriter.Dispose();
+                                    stream.Close();
+                                    stream.Dispose();
+                                    sn++;
+                                    file = Path.Combine(folder, "records@" + table.TableName + "@p" + sn + ".sql");
+                                    stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
+                                    streamWriter = new StreamWriter(stream, encoding);
+                                    streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
+                                    streamWriter.WriteLine();
+                                }
+                                streamWriter.Write(tmp.ToString());
+                                tmp.Clear();
+                                index++;
+                                written?.Invoke(index, total, MySqlDumpProjectType.Record, tableName, userState, ref cancel);
+                                if (cancel)
+                                {
+                                    streamWriter.WriteLine();
+                                    streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
+                                    streamWriter.Flush();
+                                    streamWriter.Close();
+                                    streamWriter.Dispose();
+                                    stream.Close();
+                                    stream.Dispose();
+                                    return;
+                                }
+                            }
+                            streamWriter.WriteLine();
+                            streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
+                            streamWriter.Flush();
+                            streamWriter.Close();
+                            streamWriter.Dispose();
+                            stream.Close();
+                            stream.Dispose();
+                        }
+                        //reader.Close();
+                    }
+                }
+            }
+        }
+
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        private static void DumpTables(MySqlConnection connection,
+                                       List<MySqlTableDumpProject> tables,
+                                       TextWriter textWriter,
+                                       ref long index,
+                                       long total,
+                                       MySqlWrittenCallback written,
+                                       object userState,
+                                       ref bool cancel)
+        {
+            StringBuilder tmp = new StringBuilder();
+            foreach (MySqlTableDumpProject table in tables)
+            {
+                if (!table.Ignore)
+                {
+                    using (DataSet info = GetDataSet(connection, MySqlCommandText.ShowCreateTable(table.TableName) + MySqlCommandText.ShowTableStatus(table.TableName)))
+                    {
+                        string tableCreate = (string)info.Tables[0].Rows[0][1];
+                        if (table.AutoIncrement > 0)
+                        {
+                            if (info.Tables[1].Rows[0]["Auto_increment"] != null)
+                            {
+                                tableCreate = tableCreate.Replace("AUTO_INCREMENT=" + (int)info.Tables[1].Rows[0]["Auto_increment"], "AUTO_INCREMENT=" + table.AutoIncrement);
+                            }
+                        }
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- Table structure for " + table.TableName);
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("DROP TABLE IF EXISTS `" + table.TableName + "`;");
+                        tmp.AppendLine(tableCreate + ";");
+                        tmp.AppendLine();
+                        textWriter.Write(tmp.ToString());
+                        tmp.Clear();
+                        index++;
+                        written?.Invoke(index, total, MySqlDumpProjectType.Table, table.TableName, userState, ref cancel);
+                        if (cancel) { return; }
+                    }
+                }
+            }
+        }
+
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        private static void DumpTriggers(MySqlConnection connection,
+                                         List<MySqlDumpProject> triggers,
+                                         TextWriter textWriter,
+                                         ref long index,
+                                         long total,
+                                         MySqlWrittenCallback written,
+                                         object userState,
+                                         ref bool cancel)
+        {
+            StringBuilder tmp = new StringBuilder();
+            foreach (MySqlDumpProject trigger in triggers)
+            {
+                if (!trigger.Ignore)
+                {
+                    using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateTrigger(trigger.Name)))
+                    {
+                        string triggerCreate = (string)create.Rows[0][2];
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- Trigger structure for " + trigger);
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("DROP TRIGGER IF EXISTS `" + trigger + "`;");
+                        tmp.AppendLine("DELIMITER ;;");
+                        tmp.AppendLine(triggerCreate + ";;");
+                        tmp.AppendLine("DELIMITER ;");
+                        tmp.AppendLine();
+                        textWriter.Write(tmp.ToString());
+                        tmp.Clear();
+                        index++;
+                        written?.Invoke(index, total, MySqlDumpProjectType.Trigger, trigger.Name, userState, ref cancel);
+                        if (cancel) { return; }
+                    }
+                }
+            }
+        }
+
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        private static void DumpViews(MySqlConnection connection,
+                                      List<MySqlDumpProject> views,
+                                      TextWriter textWriter,
+                                      ref long index,
+                                      long total,
+                                      MySqlWrittenCallback written,
+                                      object userState,
+                                      ref bool cancel)
+        {
+            StringBuilder tmp = new StringBuilder();
+            foreach (MySqlDumpProject view in views)
+            {
+                if (!view.Ignore)
+                {
+                    using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateView(view.Name)))
+                    {
+                        string viewCreate = (string)create.Rows[0][1];
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- View structure for " + view);
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("DROP VIEW IF EXISTS `" + view + "`;");
+                        tmp.AppendLine(viewCreate + ";");
+                        tmp.AppendLine();
+                        textWriter.Write(tmp.ToString());
+                        tmp.Clear();
+                        index++;
+                        written?.Invoke(index, total, MySqlDumpProjectType.View, view.Name, userState, ref cancel);
+                        if (cancel) { return; }
+                    }
+                }
+            }
         }
 
         #endregion Dump
@@ -1708,108 +1671,140 @@ namespace LH.Data
     /// </summary>
     /// <param name="written">Block index written.</param>
     /// <param name="total">The amount of dumping block.</param>
-    /// <param name="dumpType">The type of dumping.</param>
-    /// <param name="name">The name associated with dumping.</param>
+    /// <param name="projectType">The project type of dumping.</param>
+    /// <param name="association">The name associated with dumping.</param>
     /// <param name="userState">User state.</param>
     /// <param name="cancel">Cancel dump.</param>
-    public delegate void MySqlWrittenCallback(long written, long total, MySqlDumpType dumpType, string name, object userState, ref bool cancel);
+    public delegate void MySqlWrittenCallback(long written, long total, MySqlDumpProjectType projectType, string association, object userState, ref bool cancel);
 
     /// <summary>
     /// Note the type of dumping in the progress report.
     /// </summary>
-    public enum MySqlDumpType
+    [Flags]
+    public enum MySqlDumpProjectType
     {
-        /// <summary>Does not belong to any type. This type does not appear during the dumping process.</summary>
-        None = 0,
-
-        /// <summary>Got dumping summary at the beginning.</summary>
+        /// <summary>Summary header.</summary>
         Summary = 1,
 
         /// <summary>Table schema.</summary>
         Table = 2,
 
-        /// <summary>Record.</summary>
-        Record = 4,
+        /// <summary>View.</summary>
+        View = 4,
 
         /// <summary>Trigger.</summary>
         Trigger = 8,
 
-        /// <summary>View.</summary>
-        View = 16,
-
         /// <summary>Function.</summary>
-        Function = 32,
+        Function = 16,
 
         /// <summary>Procedure.</summary>
-        Procedure = 64,
+        Procedure = 32,
 
         /// <summary>Event.</summary>
-        Event = 128
+        Event = 64,
+
+        /// <summary>Record.</summary>
+        Record = 128
     }
 
     /// <summary>
-    /// Dump setting.
+    /// Dump manifest.
     /// </summary>
-    public sealed class MySqlDumpSetting
+    public sealed class MySqlDumpManifest
     {
         /// <summary>
-        /// Dump events at specified list.
+        /// Events dump project.
         /// </summary>
-        public List<string> Events { get; } = new List<string>();
+        public List<MySqlDumpProject> Events { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
-        /// Dump functions at specified list.
+        /// Functions dump project.
         /// </summary>
-        public List<string> Functions { get; } = new List<string>();
+        public List<MySqlDumpProject> Functions { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
-        /// Dump procedures at specified list.
+        /// Procedures dump project.
         /// </summary>
-        public List<string> Procedures { get; } = new List<string>();
+        public List<MySqlDumpProject> Procedures { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
-        /// Dump table setting.
+        /// Tables dump project.
         /// </summary>
-        public List<MySqlDumpTableSetting> Tables { get; } = new List<MySqlDumpTableSetting>();
+        public List<MySqlTableDumpProject> Tables { get; } = new List<MySqlTableDumpProject>();
 
         /// <summary>
-        /// Dump triggers at specified list.
+        /// Triggers dump project.
         /// </summary>
-        public List<string> Triggers { get; } = new List<string>();
+        public List<MySqlDumpProject> Triggers { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
-        /// Dump views at specified list.
+        /// Views dump project.
         /// </summary>
-        public List<string> Views { get; } = new List<string>();
+        public List<MySqlDumpProject> Views { get; } = new List<MySqlDumpProject>();
     }
 
     /// <summary>
-    /// Dump table setting.
+    /// Dump project.
     /// </summary>
-    public sealed class MySqlDumpTableSetting
+    public sealed class MySqlDumpProject
     {
         /// <summary>
-        /// Dump table setting.
+        /// Dump project.
+        /// </summary>
+        /// <param name="name">Project name.</param>
+        /// <param name="ignore">Ignore this project.</param>
+        internal MySqlDumpProject(string name, bool ignore)
+        {
+            this.Name = name;
+            this.Ignore = ignore;
+        }
+
+        /// <summary>
+        /// Ignore this project. Default false.
+        /// </summary>
+        public bool Ignore { get; set; }
+
+        /// <summary>
+        /// Project name.
+        /// </summary>
+        public string Name { get; }
+    }
+
+    /// <summary>
+    /// Table dump project.
+    /// </summary>
+    public sealed class MySqlTableDumpProject
+    {
+        /// <summary>
+        /// Table dump project.
         /// </summary>
         /// <param name="tableName">Table name.</param>
-        /// <param name="autoIncrement">Reset AUTO_INCREMENT=value. Set to 0 without changing.</param>
+        /// <param name="ignore">Ignore this project.</param>
+        /// <param name="autoIncrement">Reset AUTO_INCREMENT=value.</param>
         /// <param name="includingRecord">Dump records.</param>
-        public MySqlDumpTableSetting(string tableName, int autoIncrement, bool includingRecord)
+        internal MySqlTableDumpProject(string tableName, bool ignore, int autoIncrement, bool includingRecord)
         {
             this.TableName = tableName;
+            this.Ignore = ignore;
             this.AutoIncrement = autoIncrement;
             this.IncludingRecord = includingRecord;
         }
 
         /// <summary>
-        /// Reset AUTO_INCREMENT=value. Set to 0 without changing.
+        /// Reset AUTO_INCREMENT=value. Default 0 is without reset.
         /// </summary>
-        public int AutoIncrement { get; }
+        public int AutoIncrement { get; set; }
 
         /// <summary>
-        /// Dump records.
+        /// Ignore this project. Default false.
         /// </summary>
-        public bool IncludingRecord { get; }
+        public bool Ignore { get; set; }
+
+        /// <summary>
+        /// Dump including records.
+        /// </summary>
+        public bool IncludingRecord { get; set; }
 
         /// <summary>
         /// Table name.
@@ -1826,6 +1821,19 @@ namespace LH.Data
     /// </summary>
     public static class MySqlCommandText
     {
+        #region Database
+
+        /// <summary>
+        /// Displays the database version.
+        /// </summary>
+        /// <returns></returns>
+        public static string ShowVersion()
+        {
+            return "SELECT @@version;";
+        }
+
+        #endregion Database
+
         #region Engine
 
         /// <summary>
