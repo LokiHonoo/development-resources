@@ -21,7 +21,7 @@ namespace Honoo.Collections.Generic
     {
         #region 成员
 
-        private readonly IList<T> _array;
+        private readonly T[] _array;
         private readonly int _m;
 
         #endregion 成员
@@ -45,8 +45,10 @@ namespace Honoo.Collections.Generic
         /// <exception cref="Exception" />
         public Combination(IList<T> array, int m)
         {
-            _array = array ?? throw new ArgumentNullException(nameof(array));
-            _m = m;
+            if (array is null)
+            {
+                throw new ArgumentNullException(nameof(array));
+            }
             if (array.Count == 0)
             {
                 throw new Exception("元素数组不能是空数组。");
@@ -55,6 +57,9 @@ namespace Honoo.Collections.Generic
             {
                 throw new Exception("m 的值不能小于 1 或大于元素数组的最大长度。");
             }
+            _array = new T[array.Count];
+            array.CopyTo(_array, 0);
+            _m = m;
         }
 
         /// <summary>
@@ -63,7 +68,7 @@ namespace Honoo.Collections.Generic
         /// <returns></returns>
         public BigInteger GetCount()
         {
-            return C(_array.Count, _m);
+            return C(_array.Length, _m);
         }
 
         /// <summary>
@@ -124,11 +129,11 @@ namespace Honoo.Collections.Generic
         /// <param name="jj">循环到的盈余分段元素数组的索引。</param>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        private static void Combine(IList<T> array, int m, int ii, int jj, CreatedCallback created, object userState)
+        private static void Combine(T[] array, int m, int ii, int jj, CreatedCallback created, object userState)
         {
             for (int i = ii; i < m; i++)
             {
-                for (int j = jj; j < array.Count; j++)
+                for (int j = jj; j < array.Length; j++)
                 {
                     Swap(array, i, j);
                     Combine(array, m, i + 1, j + 1, created, userState);
@@ -150,7 +155,7 @@ namespace Honoo.Collections.Generic
         /// <param name="indexA">要交换的第一个元素的索引。</param>
         /// <param name="indexB">要交换的第二个元素的索引。</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0180:使用元组交换值", Justification = "<挂起>")]
-        private static void Swap(IList<T> array, int indexA, int indexB)
+        private static void Swap(T[] array, int indexA, int indexB)
         {
             T tmp = array[indexA];
             array[indexA] = array[indexB];
@@ -166,7 +171,7 @@ namespace Honoo.Collections.Generic
     {
         #region 成员
 
-        private readonly IList<T> _array;
+        private readonly T[] _array;
         private readonly int _m;
 
         #endregion 成员
@@ -190,8 +195,10 @@ namespace Honoo.Collections.Generic
         /// <exception cref="Exception" />
         public Permutation(IList<T> array, int m)
         {
-            _array = array ?? throw new ArgumentNullException(nameof(array));
-            _m = m;
+            if (array is null)
+            {
+                throw new ArgumentNullException(nameof(array));
+            }
             if (array.Count == 0)
             {
                 throw new Exception("元素数组不能是空数组。");
@@ -200,6 +207,9 @@ namespace Honoo.Collections.Generic
             {
                 throw new Exception("m 的值不能小于 1 或大于元素数组的最大长度。");
             }
+            _array = new T[array.Count];
+            array.CopyTo(_array, 0);
+            _m = m;
         }
 
         /// <summary>
@@ -208,7 +218,7 @@ namespace Honoo.Collections.Generic
         /// <returns></returns>
         public BigInteger GetCount()
         {
-            return P(_array.Count, _m);
+            return P(_array.Length, _m);
         }
 
         /// <summary>
@@ -235,17 +245,14 @@ namespace Honoo.Collections.Generic
         /// <param name="userState">传递用户参数。</param>
         public void Output(CreatedCallback created, object userState)
         {
-            if (_m == _array.Count)
+            if (_m == _array.Length)
             {
                 Permutate(_array, 0, created, userState);
             }
             else
             {
                 Combination<T> combination = new Combination<T>(_array, _m);
-                combination.Output((cr, cs) =>
-                {
-                    Permutate(new ArraySegment<T>(cr), 0, created, cs);
-                }, userState);
+                combination.Output((r, s) => { Permutate(r, 0, created, s); }, userState);
             }
         }
 
@@ -273,17 +280,17 @@ namespace Honoo.Collections.Generic
         /// <param name="ii">已循环到的元素数组的索引。</param>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        private static void Permutate(IList<T> array, int ii, CreatedCallback created, object userState)
+        private static void Permutate(T[] array, int ii, CreatedCallback created, object userState)
         {
-            if (ii == array.Count - 1)
+            if (ii == array.Length - 1)
             {
-                T[] result = new T[array.Count];
+                T[] result = new T[array.Length];
                 array.CopyTo(result, 0);
                 created?.Invoke(result, userState);
             }
             else
             {
-                for (int i = ii; i < array.Count; i++)
+                for (int i = ii; i < array.Length; i++)
                 {
                     if (i == ii)
                     {
@@ -306,7 +313,7 @@ namespace Honoo.Collections.Generic
         /// <param name="indexA">要交换的第一个元素的索引。</param>
         /// <param name="indexB">要交换的第二个元素的索引。</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0180:使用元组交换值", Justification = "<挂起>")]
-        private static void Swap(IList<T> array, int indexA, int indexB)
+        private static void Swap(T[] array, int indexA, int indexB)
         {
             T tmp = array[indexA];
             array[indexA] = array[indexB];

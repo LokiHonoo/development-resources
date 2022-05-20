@@ -106,7 +106,7 @@ namespace Honoo.Net
         /// Post action, return download xml string. Query actions from service's SCPD xml.
         /// </summary>
         /// <param name="service">service.</param>
-        /// <param name="man">Append MAN HTTP Header If throw 405 WebException. MAN: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
+        /// <param name="man">Append HTTP Header "MAN" If throw 405 WebException. MAN value: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
         /// <param name="action">action name.</param>
         /// <param name="arguments">action arguments. The arguments must conform to the order specified. Set 'null' if haven't arguments.</param>
         /// <returns></returns>

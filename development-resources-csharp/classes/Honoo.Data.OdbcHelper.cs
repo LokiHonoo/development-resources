@@ -94,7 +94,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static int FillDataSet(DataSet dataSet, OdbcConnection connection, string selectCommandText)
         {
@@ -106,7 +106,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static int FillDataSet(DataSet dataSet, OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
@@ -134,7 +134,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static int FillDataTable(DataTable dataTable, OdbcConnection connection, string selectCommandText)
         {
@@ -146,7 +146,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static int FillDataTable(DataTable dataTable, OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
@@ -173,7 +173,7 @@ namespace Honoo.Data
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static OdbcDataAdapter GetDataAdapter(OdbcConnection connection, string selectCommandText)
         {
@@ -184,7 +184,7 @@ namespace Honoo.Data
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static OdbcDataAdapter GetDataAdapter(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
@@ -198,7 +198,7 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static DataSet GetDataSet(OdbcConnection connection, string selectCommandText)
         {
@@ -209,7 +209,7 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static DataSet GetDataSet(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
@@ -236,7 +236,7 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static DataTable GetDataTable(OdbcConnection connection, string selectCommandText)
         {
@@ -247,7 +247,7 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static DataTable GetDataTable(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
@@ -278,7 +278,7 @@ namespace Honoo.Data
         /// Get DataReader.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static OdbcDataReader GetDataReader(OdbcConnection connection, string commandText)
         {
@@ -289,7 +289,7 @@ namespace Honoo.Data
         /// Get DataReader.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static OdbcDataReader GetDataReader(OdbcConnection connection, string commandText, params OdbcParameter[] parameters)
@@ -330,10 +330,10 @@ namespace Honoo.Data
         #region Execute
 
         /// <summary>
-        /// Execute the query command. Returns the number of rows affected.
+        /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static int ExecuteNonQuery(OdbcConnection connection, string commandText)
         {
@@ -341,10 +341,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command. Returns the number of rows affected.
+        /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static int ExecuteNonQuery(OdbcConnection connection, string commandText, params OdbcParameter[] parameters)
@@ -410,10 +410,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command. Returns the first column of the first row in the query result set.
+        /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static object ExecuteScalar(OdbcConnection connection, string commandText)
         {
@@ -421,10 +421,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command. Returns the first column of the first row in the query result set.
+        /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static object ExecuteScalar(OdbcConnection connection, string commandText, params OdbcParameter[] parameters)
@@ -456,50 +456,39 @@ namespace Honoo.Data
         #region Transaction
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
         public static int TransactionExecuteNonQuery(OdbcConnection connection, string commandText)
         {
-            return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, null);
+            return TransactionExecuteNonQuery(connection, commandText, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <param name="parameters">Parameters.</param>
+        /// <param name="commandText">Sql command.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, string commandText, params OdbcParameter[] parameters)
+        public static int TransactionExecuteNonQuery(OdbcConnection connection, string commandText, IsolationLevel isolationLevel)
         {
-            return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+            return TransactionExecuteNonQuery(connection, commandText, isolationLevel, null);
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, IsolationLevel iso, string commandText)
-        {
-            return TransactionExecuteNonQuery(connection, iso, commandText, null);
-        }
-
-        /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, IsolationLevel iso, string commandText, params OdbcParameter[] parameters)
+        public static int TransactionExecuteNonQuery(OdbcConnection connection, string commandText, IsolationLevel isolationLevel, params OdbcParameter[] parameters)
         {
             if (connection is null)
             {
@@ -514,7 +503,7 @@ namespace Honoo.Data
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (OdbcTransaction transaction = connection.BeginTransaction(iso))
+            using (OdbcTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
                 using (OdbcCommand command = connection.CreateCommand())
                 {
@@ -548,46 +537,35 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction.
+        /// Executing stored procedure by transaction. Auto rollback if failed.
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         public static void TransactionExecuteProcedure(OdbcConnection connection, string procedure)
         {
-            TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, null);
+            TransactionExecuteProcedure(connection, procedure, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction.
+        /// Executing stored procedure by transaction. Auto rollback if failed.
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        /// <param name="parameters">Parameters.</param>
-        public static void TransactionExecuteProcedure(OdbcConnection connection, string procedure, params OdbcParameter[] parameters)
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
+        public static void TransactionExecuteProcedure(OdbcConnection connection, string procedure, IsolationLevel isolationLevel)
         {
-            TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, parameters);
+            TransactionExecuteProcedure(connection, procedure, isolationLevel, null);
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction.
+        /// Executing stored procedure by transaction. Auto rollback if failed.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        public static void TransactionExecuteProcedure(OdbcConnection connection, IsolationLevel iso, string procedure)
-        {
-            TransactionExecuteProcedure(connection, iso, procedure, null);
-        }
-
-        /// <summary>
-        /// Executing stored procedure by transaction.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static void TransactionExecuteProcedure(OdbcConnection connection, IsolationLevel iso, string procedure, params OdbcParameter[] parameters)
+        public static void TransactionExecuteProcedure(OdbcConnection connection, string procedure, IsolationLevel isolationLevel, params OdbcParameter[] parameters)
         {
             if (connection is null)
             {
@@ -601,7 +579,7 @@ namespace Honoo.Data
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (OdbcTransaction transaction = connection.BeginTransaction(iso))
+            using (OdbcTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
                 using (OdbcCommand command = connection.CreateCommand())
                 {
@@ -632,55 +610,44 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static object TransactionExecuteScalar(OdbcConnection connection, string commandText)
         {
-            return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, null);
+            return TransactionExecuteScalar(connection, commandText, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <param name="parameters">Parameters.</param>
+        /// <param name="commandText">Sql command.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(OdbcConnection connection, string commandText, params OdbcParameter[] parameters)
+        public static object TransactionExecuteScalar(OdbcConnection connection, string commandText, IsolationLevel isolationLevel)
         {
-            return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+            return TransactionExecuteScalar(connection, commandText, isolationLevel, null);
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <returns></returns>
-        public static object TransactionExecuteScalar(OdbcConnection connection, IsolationLevel iso, string commandText)
-        {
-            return TransactionExecuteScalar(connection, iso, commandText, null);
-        }
-
-        /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static object TransactionExecuteScalar(OdbcConnection connection, IsolationLevel iso, string commandText, params OdbcParameter[] parameters)
+        public static object TransactionExecuteScalar(OdbcConnection connection, string commandText, IsolationLevel isolationLevel, params OdbcParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
+
             if (TransactionConnectionBehavior == OdbcConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
@@ -689,7 +656,7 @@ namespace Honoo.Data
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (OdbcTransaction transaction = connection.BeginTransaction(iso))
+            using (OdbcTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
                 using (OdbcCommand command = connection.CreateCommand())
                 {

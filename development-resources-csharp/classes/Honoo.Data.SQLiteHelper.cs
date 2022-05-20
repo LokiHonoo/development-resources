@@ -126,7 +126,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText)
         {
@@ -138,7 +138,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
@@ -165,7 +165,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText)
         {
@@ -177,7 +177,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
@@ -203,7 +203,7 @@ namespace Honoo.Data
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText)
         {
@@ -214,7 +214,7 @@ namespace Honoo.Data
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
@@ -228,7 +228,7 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText)
         {
@@ -239,7 +239,7 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
@@ -265,7 +265,7 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText)
         {
@@ -276,7 +276,7 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
@@ -306,7 +306,7 @@ namespace Honoo.Data
         /// Get DataReader.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText)
         {
@@ -317,7 +317,7 @@ namespace Honoo.Data
         /// Get DataReader.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
@@ -357,10 +357,10 @@ namespace Honoo.Data
         #region Execute
 
         /// <summary>
-        /// Execute the query command. Returns the number of rows affected.
+        /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static int ExecuteNonQuery(SQLiteConnection connection, string commandText)
         {
@@ -368,10 +368,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command. Returns the number of rows affected.
+        /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static int ExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
@@ -401,7 +401,7 @@ namespace Honoo.Data
         /// Executing stored procedure.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql query.</param>
+        /// <param name="procedure">Sql command.</param>
         public static void ExecuteProcedure(SQLiteConnection connection, string procedure)
         {
             ExecuteProcedure(connection, procedure, null);
@@ -435,10 +435,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command. Returns the first column of the first row in the query result set.
+        /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static object ExecuteScalar(SQLiteConnection connection, string commandText)
         {
@@ -446,10 +446,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command. Returns the first column of the first row in the query result set.
+        /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static object ExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
@@ -480,10 +480,10 @@ namespace Honoo.Data
         #region Transaction
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText)
         {
@@ -491,10 +491,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
@@ -550,7 +550,7 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction.
+        /// Executing stored procedure by transaction. Auto rollback if failed.
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
@@ -560,7 +560,7 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction.
+        /// Executing stored procedure by transaction. Auto rollback if failed.
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
@@ -615,10 +615,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static object TransactionExecuteScalar(SQLiteConnection connection, string commandText)
         {
@@ -626,10 +626,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static object TransactionExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)

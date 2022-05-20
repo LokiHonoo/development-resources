@@ -188,7 +188,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText)
         {
@@ -200,7 +200,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
@@ -228,7 +228,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText)
         {
@@ -240,7 +240,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
@@ -267,7 +267,7 @@ namespace Honoo.Data
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText)
         {
@@ -278,7 +278,7 @@ namespace Honoo.Data
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
@@ -292,7 +292,7 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static DataSet GetDataSet(SqlConnection connection, string selectCommandText)
         {
@@ -303,7 +303,7 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static DataSet GetDataSet(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
@@ -330,7 +330,7 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <returns></returns>
         public static DataTable GetDataTable(SqlConnection connection, string selectCommandText)
         {
@@ -341,7 +341,7 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql query.</param>
+        /// <param name="selectCommandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static DataTable GetDataTable(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
@@ -372,7 +372,7 @@ namespace Honoo.Data
         /// Get DataReader.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static SqlDataReader GetDataReader(SqlConnection connection, string commandText)
         {
@@ -383,7 +383,7 @@ namespace Honoo.Data
         /// Get DataReader.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static SqlDataReader GetDataReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
@@ -427,7 +427,7 @@ namespace Honoo.Data
         /// Get XmlReader.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static XmlReader GetXmlReader(SqlConnection connection, string commandText)
         {
@@ -438,7 +438,7 @@ namespace Honoo.Data
         /// Get XmlReader.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static XmlReader GetXmlReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
@@ -470,10 +470,10 @@ namespace Honoo.Data
         #region Execute
 
         /// <summary>
-        /// Execute the query command. Returns the number of rows affected.
+        /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static int ExecuteNonQuery(SqlConnection connection, string commandText)
         {
@@ -481,10 +481,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command. Returns the number of rows affected.
+        /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static int ExecuteNonQuery(SqlConnection connection, string commandText, params SqlParameter[] parameters)
@@ -550,10 +550,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command. Returns the first column of the first row in the query result set.
+        /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static object ExecuteScalar(SqlConnection connection, string commandText)
         {
@@ -561,10 +561,10 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command. Returns the first column of the first row in the query result set.
+        /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         public static object ExecuteScalar(SqlConnection connection, string commandText, params SqlParameter[] parameters)
@@ -596,50 +596,39 @@ namespace Honoo.Data
         #region Transaction
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
         public static int TransactionExecuteNonQuery(SqlConnection connection, string commandText)
         {
-            return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, null);
+            return TransactionExecuteNonQuery(connection, commandText, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <param name="parameters">Parameters.</param>
+        /// <param name="commandText">Sql command.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        public static int TransactionExecuteNonQuery(SqlConnection connection, string commandText, IsolationLevel isolationLevel)
         {
-            return TransactionExecuteNonQuery(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+            return TransactionExecuteNonQuery(connection, commandText, isolationLevel, null);
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SqlConnection connection, IsolationLevel iso, string commandText)
-        {
-            return TransactionExecuteNonQuery(connection, iso, commandText, null);
-        }
-
-        /// <summary>
-        /// Execute the query command by transaction. Returns the number of rows affected.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static int TransactionExecuteNonQuery(SqlConnection connection, IsolationLevel iso, string commandText, params SqlParameter[] parameters)
+        public static int TransactionExecuteNonQuery(SqlConnection connection, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
             if (connection is null)
             {
@@ -654,7 +643,7 @@ namespace Honoo.Data
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (SqlTransaction transaction = connection.BeginTransaction(iso))
+            using (SqlTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
                 using (SqlCommand command = connection.CreateCommand())
                 {
@@ -688,46 +677,35 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction.
+        /// Executing stored procedure by transaction. Auto rollback if failed.
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         public static void TransactionExecuteProcedure(SqlConnection connection, string procedure)
         {
-            TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, null);
+            TransactionExecuteProcedure(connection, procedure, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction.
+        /// Executing stored procedure by transaction. Auto rollback if failed.
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        /// <param name="parameters">Parameters.</param>
-        public static void TransactionExecuteProcedure(SqlConnection connection, string procedure, params SqlParameter[] parameters)
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
+        public static void TransactionExecuteProcedure(SqlConnection connection, string procedure, IsolationLevel isolationLevel)
         {
-            TransactionExecuteProcedure(connection, IsolationLevel.ReadCommitted, procedure, parameters);
+            TransactionExecuteProcedure(connection, procedure, isolationLevel, null);
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction.
+        /// Executing stored procedure by transaction. Auto rollback if failed.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
         /// <param name="procedure">Sql procedure.</param>
-        public static void TransactionExecuteProcedure(SqlConnection connection, IsolationLevel iso, string procedure)
-        {
-            TransactionExecuteProcedure(connection, iso, procedure, null);
-        }
-
-        /// <summary>
-        /// Executing stored procedure by transaction.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static void TransactionExecuteProcedure(SqlConnection connection, IsolationLevel iso, string procedure, params SqlParameter[] parameters)
+        public static void TransactionExecuteProcedure(SqlConnection connection, string procedure, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
             if (connection is null)
             {
@@ -741,7 +719,7 @@ namespace Honoo.Data
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (SqlTransaction transaction = connection.BeginTransaction(iso))
+            using (SqlTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
                 using (SqlCommand command = connection.CreateCommand())
                 {
@@ -772,50 +750,38 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
         /// <returns></returns>
         public static object TransactionExecuteScalar(SqlConnection connection, string commandText)
         {
-            return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, null);
+            return TransactionExecuteScalar(connection, commandText, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <param name="parameters">Parameters.</param>
+        /// <param name="commandText">Sql command.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        public static object TransactionExecuteScalar(SqlConnection connection, string commandText, IsolationLevel isolationLevel)
         {
-            return TransactionExecuteScalar(connection, IsolationLevel.ReadCommitted, commandText, parameters);
+            return TransactionExecuteScalar(connection, commandText, isolationLevel, null);
         }
 
         /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="commandText">Sql query.</param>
-        /// <returns></returns>
-        public static object TransactionExecuteScalar(SqlConnection connection, IsolationLevel iso, string commandText)
-        {
-            return TransactionExecuteScalar(connection, iso, commandText, null);
-        }
-
-        /// <summary>
-        /// Execute the query command by transaction. Returns the first column of the first row in the query result set.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="iso">The transaction isolation level of the connection.</param>
-        /// <param name="commandText">Sql query.</param>
+        /// <param name="commandText">Sql command.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static object TransactionExecuteScalar(SqlConnection connection, IsolationLevel iso, string commandText, params SqlParameter[] parameters)
+        public static object TransactionExecuteScalar(SqlConnection connection, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
             if (connection is null)
             {
@@ -830,7 +796,7 @@ namespace Honoo.Data
             Exception exception = null;
             ConnectionState state = connection.State;
             if (state != ConnectionState.Open) { connection.Open(); }
-            using (SqlTransaction transaction = connection.BeginTransaction(iso))
+            using (SqlTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
                 using (SqlCommand command = connection.CreateCommand())
                 {
