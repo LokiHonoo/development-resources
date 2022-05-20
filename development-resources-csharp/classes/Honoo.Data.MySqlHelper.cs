@@ -939,6 +939,9 @@ namespace Honoo.Data
                 DumpEvents(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
                 if (cancel) { goto end; }
             }
+            //
+            textWriter.Flush();
+            //
             if (recordCount > 0)
             {
                 DumpRecords(connection, manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
@@ -1063,6 +1066,7 @@ namespace Honoo.Data
                         DumpEvents(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
                         if (cancel) { textWriter.Flush(); goto end; }
                     }
+                    textWriter.Flush();
                 }
             }
             if (recordCount > 0)
@@ -1408,6 +1412,10 @@ namespace Honoo.Data
                                 tmp.Clear();
                                 index++;
                                 written?.Invoke(index, total, MySqlDumpProjectType.Record, tableName, userState, ref cancel);
+                                if (index % 512 == 0)
+                                {
+                                    textWriter.Flush();
+                                }
                                 if (cancel) { goto end; }
                             }
                         }
@@ -1443,6 +1451,7 @@ namespace Honoo.Data
                     {
                         if (reader.HasRows)
                         {
+                            int count = 0;
                             int sn = 0;
                             string file = Path.Combine(folder, "records@" + table.TableName + ".sql");
                             FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
@@ -1508,6 +1517,10 @@ namespace Honoo.Data
                                 tmp.Clear();
                                 index++;
                                 written?.Invoke(index, total, MySqlDumpProjectType.Record, tableName, userState, ref cancel);
+                                if (count % 512 == 0)
+                                {
+                                    streamWriter.Flush();
+                                }
                                 if (cancel)
                                 {
                                     streamWriter.WriteLine();
