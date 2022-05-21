@@ -154,7 +154,6 @@ namespace Honoo.Collections.Generic
         /// <param name="array">元素数组。</param>
         /// <param name="indexA">要交换的第一个元素的索引。</param>
         /// <param name="indexB">要交换的第二个元素的索引。</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0180:使用元组交换值", Justification = "<挂起>")]
         private static void Swap(T[] array, int indexA, int indexB)
         {
             T tmp = array[indexA];
@@ -312,7 +311,6 @@ namespace Honoo.Collections.Generic
         /// <param name="array">元素数组。</param>
         /// <param name="indexA">要交换的第一个元素的索引。</param>
         /// <param name="indexB">要交换的第二个元素的索引。</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0180:使用元组交换值", Justification = "<挂起>")]
         private static void Swap(T[] array, int indexA, int indexB)
         {
             T tmp = array[indexA];

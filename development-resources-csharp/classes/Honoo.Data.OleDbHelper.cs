@@ -10,7 +10,6 @@
 using System;
 using System.Data;
 using System.Data.OleDb;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Honoo.Data
 {
@@ -387,7 +386,6 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(OleDbConnection connection, string procedure, params OleDbParameter[] parameters)
         {
             if (connection is null)
@@ -486,7 +484,6 @@ namespace Honoo.Data
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(OleDbConnection connection, string commandText, IsolationLevel isolationLevel, params OleDbParameter[] parameters)
         {
             if (connection is null)
@@ -563,7 +560,6 @@ namespace Honoo.Data
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(OleDbConnection connection, string procedure, IsolationLevel isolationLevel, params OleDbParameter[] parameters)
         {
             if (connection is null)
@@ -639,7 +635,6 @@ namespace Honoo.Data
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(OleDbConnection connection, string commandText, IsolationLevel isolationLevel, params OleDbParameter[] parameters)
         {
             if (connection is null)

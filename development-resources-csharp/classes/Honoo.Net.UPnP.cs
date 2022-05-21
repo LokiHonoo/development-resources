@@ -9,7 +9,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
@@ -21,49 +20,91 @@ namespace Honoo.Net
     /// <summary>
     /// UPnP.
     /// </summary>
-    public static class UPnP
+    public sealed class UPnP
     {
+        #region Properties
+
         /// <summary>
         /// urn:schemas-upnp-org:device:InternetGatewayDevice:1
         /// </summary>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string DEVICE_TYPE_INTERNET_GATEWAY_DEVICE_1 = "urn:schemas-upnp-org:device:InternetGatewayDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:device:WANConnectionDevice:1
         /// </summary>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string DEVICE_TYPE_WAN_CONNECTION_DEVICE_1 = "urn:schemas-upnp-org:device:WANConnectionDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:device:WANDevice:1
         /// </summary>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string DEVICE_TYPE_WAN_DEVICE_1 = "urn:schemas-upnp-org:device:WANDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:Layer3Forwarding:1
         /// </summary>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string SERVICE_TYPE_LAYER_3_FORWARDING_1 = "urn:schemas-upnp-org:service:Layer3Forwarding:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1
         /// </summary>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string SERVICE_TYPE_WAN_COMMON_INTERFACE_CONFIG_1 = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANIPConnection:1
         /// </summary>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string SERVICE_TYPE_WAN_IP_CONNECTION_1 = "urn:schemas-upnp-org:service:WANIPConnection:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANPPPConnection:1
         /// </summary>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public const string SERVICE_TYPE_WAN_PPP_CONNECTION_1 = "urn:schemas-upnp-org:service:WANPPPConnection:1";
+
+        private bool _disposed = false;
+
+        #endregion Properties
+
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the UPnP class.
+        /// </summary>
+        public UPnP()
+        {
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        ~UPnP()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        /// <param name="disposing">Releases unmanaged resources.</param>
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                }
+                _disposed = true;
+            }
+        }
+
+        #endregion Constructor
 
         #region Base
 
@@ -74,8 +115,7 @@ namespace Honoo.Net
         /// <param name="argument">Argument for device's service responses.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        [SuppressMessage("Style", "IDE0057:Use range operator", Justification = "<Pending>")]
-        public static string GetResponseValue(string responseXmlString, string argument)
+        public string GetResponseValue(string responseXmlString, string argument)
         {
             if (string.IsNullOrEmpty(responseXmlString))
             {
@@ -106,13 +146,12 @@ namespace Honoo.Net
         /// Post action, return download xml string. Query actions from service's SCPD xml.
         /// </summary>
         /// <param name="service">service.</param>
-        /// <param name="man">Append HTTP Header "MAN" If throw 405 WebException. MAN value: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
+        /// <param name="man">Append HTTP Header "MAN" if throw 405 WebException. MAN value: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
         /// <param name="action">action name.</param>
         /// <param name="arguments">action arguments. The arguments must conform to the order specified. Set 'null' if haven't arguments.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static string PostAction(UPnPService service, bool man, string action, params KeyValuePair<string, string>[] arguments)
+        public string PostAction(UPnPService service, bool man, string action, params KeyValuePair<string, string>[] arguments)
         {
             if (service is null)
             {
@@ -121,20 +160,20 @@ namespace Honoo.Net
             using (WebClient wc = new WebClient())
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("<?xml version=\"1.0\"?>\r\n");
-                sb.Append("<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\r\n");
-                sb.Append("  <s:Body>\r\n");
-                sb.Append("    <u:" + action + " xmlns:u=\"" + service.ServiceType + "\">\r\n");
+                sb.AppendLine("<?xml version=\"1.0\"?>");
+                sb.AppendLine("<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">");
+                sb.AppendLine("  <s:Body>");
+                sb.AppendLine("    <u:" + action + " xmlns:u=\"" + service.ServiceType + "\">");
                 if (arguments != null && arguments.Length > 0)
                 {
                     foreach (KeyValuePair<string, string> argument in arguments)
                     {
-                        sb.Append("      <" + argument.Key + ">" + argument.Value + "</" + argument.Key + ">\r\n");
+                        sb.AppendLine("      <" + argument.Key + ">" + argument.Value + "</" + argument.Key + ">");
                     }
                 }
-                sb.Append("    </u:" + action + ">\r\n");
-                sb.Append("  </s:Body>\r\n");
-                sb.Append("</s:Envelope>\r\n");
+                sb.AppendLine("    </u:" + action + ">");
+                sb.AppendLine("  </s:Body>");
+                sb.AppendLine("</s:Envelope>");
                 byte[] data = Encoding.UTF8.GetBytes(sb.ToString());
                 wc.Encoding = Encoding.UTF8;
                 wc.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0(WindowsNT6.1;rv:2.0.1)Gecko/20100101Firefox/4.0.1");
@@ -166,15 +205,15 @@ namespace Honoo.Net
         /// <param name="description">Mapping description.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public static void AddPortMapping(UPnPService service,
-                                          bool man,
-                                          int externalPort,
-                                          string protocol,
-                                          int internalPort,
-                                          IPAddress internalIPAddress,
-                                          bool enabled,
-                                          int leaseDuration,
-                                          string description)
+        public void AddPortMapping(UPnPService service,
+                                   bool man,
+                                   int externalPort,
+                                   string protocol,
+                                   int internalPort,
+                                   IPAddress internalIPAddress,
+                                   bool enabled,
+                                   int leaseDuration,
+                                   string description)
         {
             if (internalIPAddress is null)
             {
@@ -202,7 +241,7 @@ namespace Honoo.Net
         /// <param name="protocol">The protocol to delete mapping. This property accepts the following protocol: TCP, UDP.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public static void DeletePortMapping(UPnPService service, bool man, int externalPort, string protocol)
+        public void DeletePortMapping(UPnPService service, bool man, int externalPort, string protocol)
         {
             KeyValuePair<string, string>[] arguments = new KeyValuePair<string, string>[] {
                 new KeyValuePair<string, string>("NewRemoteHost", string.Empty),
@@ -218,8 +257,8 @@ namespace Honoo.Net
         /// <param name="addressFamilyFilter">Search for devices of the specified address family.</param>
         /// <param name="mx">Maximum search time. Unit is seconds.</param>
         /// <returns></returns>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
-        public static UPnPRootDevice[] Discover(AddressFamily addressFamilyFilter, int mx)
+        /// <exception cref="Exception"/>
+        public UPnPRootDevice[] Discover(AddressFamily addressFamilyFilter, int mx)
         {
             List<UPnPRootDevice> dis = new List<UPnPRootDevice>();
             List<string> responses = new List<string>();
@@ -232,16 +271,15 @@ namespace Honoo.Net
                 client.Client.Ttl = 1;
                 client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 StringBuilder request = new StringBuilder();
-                request.Append("M-SEARCH * HTTP/1.1\r\n");
-                request.Append("HOST: 239.255.255.250:1900\r\n");
-                request.Append("MAN: \"ssdp:discover\"\r\n");
-                request.Append("MX: " + mx + "\r\n");
-                request.Append("ST: upnp:rootdevice\r\n");
-                request.Append("\r\n");
+                request.AppendLine("M-SEARCH * HTTP/1.1");
+                request.AppendLine("HOST: 239.255.255.250:1900");
+                request.AppendLine("MAN: \"ssdp:discover\"");
+                request.AppendLine("MX: " + mx);
+                request.AppendLine("ST: upnp:rootdevice");
+                request.AppendLine();
                 byte[] data = Encoding.UTF8.GetBytes(request.ToString());
                 IPEndPoint ep = new IPEndPoint(IPAddress.Parse("239.255.255.250"), 1900);
                 client.Send(data, data.Length, ep);
-
                 while (true)
                 {
                     try
@@ -249,7 +287,7 @@ namespace Honoo.Net
                         byte[] received = client.Receive(ref ep);
                         responses.Add(Encoding.UTF8.GetString(received));
                     }
-                    catch (SocketException)
+                    catch
                     {
                         break;
                     }
@@ -343,7 +381,7 @@ namespace Honoo.Net
         /// <param name="man">Append MAN HTTP Header If throw 405 WebException. MAN: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public static IPAddress GetExternalIPAddress(UPnPService service, bool man)
+        public IPAddress GetExternalIPAddress(UPnPService service, bool man)
         {
             string down = PostAction(service, man, "GetExternalIPAddress", null);
             string ip = GetResponseValue(down, "NewExternalIPAddress");
@@ -357,7 +395,7 @@ namespace Honoo.Net
         /// <param name="man">Append MAN HTTP Header If throw 405 WebException. MAN: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public static NatRsipStatus GetNATRSIPStatus(UPnPService service, bool man)
+        public NatRsipStatus GetNATRSIPStatus(UPnPService service, bool man)
         {
             string down = PostAction(service, man, "GetNATRSIPStatus", null);
             return new NatRsipStatus(Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewRSIPAvailable"), CultureInfo.InvariantCulture)),
@@ -372,7 +410,7 @@ namespace Honoo.Net
         /// <param name="index">The mapping index.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public static PortMappingEntry GetSpecificPortMappingEntry(UPnPService service, bool man, int index)
+        public PortMappingEntry GetSpecificPortMappingEntry(UPnPService service, bool man, int index)
         {
             try
             {
@@ -405,7 +443,7 @@ namespace Honoo.Net
         /// <param name="protocol">The protocol to query. This property accepts the following protocol: TCP, UDP.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public static PortMappingEntry GetSpecificPortMappingEntry(UPnPService service, bool man, int externalPort, string protocol)
+        public PortMappingEntry GetSpecificPortMappingEntry(UPnPService service, bool man, int externalPort, string protocol)
         {
             KeyValuePair<string, string>[] arguments = new KeyValuePair<string, string>[] {
                 new KeyValuePair<string, string>("NewRemoteHost", string.Empty),

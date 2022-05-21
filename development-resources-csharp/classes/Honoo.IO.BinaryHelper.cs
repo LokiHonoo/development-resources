@@ -8,11 +8,10 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 
-namespace Honoo
+namespace Honoo.IO
 {
     /// <summary>
     /// 二进制对象辅助。
@@ -133,75 +132,5 @@ namespace Honoo
         }
 
         #endregion 转换
-
-        #region 压缩
-
-        /*
-         * NET40 不支持设置压缩级，默认使用 LEVEL 1 fast compress.
-         */
-
-        /// <summary>
-        /// 使用 GZip 压缩字节数组。
-        /// </summary>
-        /// <param name="bytes">要压缩的字节数组。</param>
-        /// <returns></returns>
-        public static byte[] GZipCompress(byte[] bytes)
-        {
-            return GZipCompress(bytes, 0, bytes.Length);
-        }
-
-        /// <summary>
-        /// 使用 GZip 压缩字节数组的指定区段。
-        /// </summary>
-        /// <param name="bytes">要压缩的字节数组。</param>
-        /// <param name="offset">字节数组的偏移量。</param>
-        /// <param name="count">要压缩的字节个数。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception" />
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        public static byte[] GZipCompress(byte[] bytes, int offset, int count)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                using (GZipStream gzip = new GZipStream(ms, CompressionMode.Compress))
-                {
-                    gzip.Write(bytes, offset, count);
-                }
-                return ms.ToArray();
-            }
-        }
-
-        /// <summary>
-        /// 使用 GZip 解压缩字节数组。
-        /// </summary>
-        /// <param name="bytes">使用 GZip 压缩过的字节数组。</param>
-        /// <returns></returns>
-        public static byte[] GZipDecompress(byte[] bytes)
-        {
-            return GZipDecompress(bytes, 0, bytes.Length);
-        }
-
-        /// <summary>
-        /// 使用 GZip 解压缩字节数组。
-        /// </summary>
-        /// <param name="bytes">使用 GZip 压缩过的字节数组。</param>
-        /// <param name="offset">字节数组的偏移量。</param>
-        /// <param name="count">要解压的字节个数。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception" />
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        public static byte[] GZipDecompress(byte[] bytes, int offset, int count)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                using (GZipStream gzip = new GZipStream(new MemoryStream(bytes, offset, count), CompressionMode.Decompress))
-                {
-                    gzip.CopyTo(ms);
-                }
-                return ms.ToArray();
-            }
-        }
-
-        #endregion 压缩
     }
 }

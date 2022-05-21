@@ -12,7 +12,6 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Honoo.Drawing
 {
@@ -69,7 +68,6 @@ namespace Honoo.Drawing
     /// <summary>
     /// RGB 模型。
     /// </summary>
-    [SuppressMessage("Naming", "CA1707:标识符不应包含下划线", Justification = "<挂起>")]
     public enum RGBModel
     {
         Adobe1998,
@@ -491,7 +489,7 @@ namespace Honoo.Drawing
         /// </summary>
         /// <param name="xyY">xyY 值的数组。</param>
         /// <returns></returns>
-        [SuppressMessage("样式", "IDE1006:命名样式", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("样式", "IDE1006:命名样式", Justification = "<挂起>")]
         public static double[] xyY2XYZ(double[] xyY)
         {
             if (xyY is null)
@@ -799,7 +797,6 @@ namespace Honoo.Drawing
     /// <summary>
     /// 转换参照值。
     /// </summary>
-    [SuppressMessage("Performance", "CA1812:避免未实例化的内部类", Justification = "<挂起>")]
     public sealed class Reference
     {
         #region 成员
@@ -1036,7 +1033,6 @@ namespace Honoo.Drawing
         /// <param name="observer">观测角度。</param>
         /// <param name="model">RGB 模型。</param>
         /// <param name="adaptation">调整器。</param>
-        [SuppressMessage("样式", "IDE0066:将 switch 语句转换为表达式", Justification = "<挂起>")]
         public Reference(Illuminant illuminant, Observer observer, RGBModel model, Adaptation adaptation)
         {
             this.Illuminant = illuminant;

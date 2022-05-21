@@ -8,7 +8,6 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -78,7 +77,6 @@ namespace Honoo.Xml
         /// <param name="resolver">解析器。</param>
         /// <param name="settings">格式化设置。</param>
         /// <returns></returns>
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         public static XmlDocument LoadFromFile(string path, XmlResolver resolver, XmlReaderSettings settings)
         {
             XmlDocument doc = new XmlDocument() { XmlResolver = resolver };
@@ -109,7 +107,6 @@ namespace Honoo.Xml
         /// <param name="resolver">解析器。</param>
         /// <param name="settings">格式化设置。</param>
         /// <returns></returns>
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         public static XmlDocument Parse(string xml, XmlResolver resolver, XmlReaderSettings settings)
         {
             XmlDocument doc = new XmlDocument() { XmlResolver = resolver };
@@ -139,7 +136,6 @@ namespace Honoo.Xml
         /// <param name="path">保存的文件路径。</param>
         /// <param name="doc">XmlDocument 文档。</param>
         /// <param name="settings">格式化设置。</param>
-        [SuppressMessage("样式", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         public static void SaveFormattedToFile(string path, XmlDocument doc, XmlWriterSettings settings)
         {
             if (doc is null)

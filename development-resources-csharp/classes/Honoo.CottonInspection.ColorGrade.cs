@@ -8,7 +8,6 @@
  */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
@@ -588,7 +587,6 @@ namespace Honoo.CottonInspection
         /// <param name="value">颜色级的值。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        [SuppressMessage("样式", "IDE0066:将 switch 语句转换为表达式", Justification = "<挂起>")]
         public static string GetName(byte value)
         {
             switch (value)

@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -413,7 +412,6 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters)
         {
             if (connection is null)
@@ -708,7 +706,6 @@ namespace Honoo.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         public static void Dump(SQLiteConnection connection,
                                 SQLiteDumpManifest manifest,
                                 TextWriter textWriter,
@@ -791,7 +788,6 @@ namespace Honoo.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void DumpToFiles(SQLiteConnection connection,
                                        SQLiteDumpManifest manifest,
                                        string folder,
@@ -904,7 +900,6 @@ namespace Honoo.Data
             return manifest;
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static SQLiteSummary BuildSummary(SQLiteConnection connection, SQLiteDumpManifest manifest)
         {
             SQLiteSummary summary = new SQLiteSummary();
@@ -967,7 +962,6 @@ namespace Honoo.Data
             return summary;
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static void DumpRecords(SQLiteConnection connection,
                                         List<SQLiteTableDumpProject> tables,
                                         TextWriter textWriter,
@@ -1040,7 +1034,6 @@ namespace Honoo.Data
             textWriter.WriteLine("PRAGMA foreign_keys = ON;");
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static void DumpRecords(SQLiteConnection connection,
                                         List<SQLiteTableDumpProject> tables,
                                         string folder,

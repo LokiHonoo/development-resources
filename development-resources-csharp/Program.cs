@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Honoo
 {
@@ -10,7 +12,41 @@ namespace Honoo
 
         private static void Main()
         {
-            TestPermutationAndCombination();
+            List<char> aaaaa = new List<char>("100001011110000111000011110101110101001111010100011011010010011".ToCharArray());
+            Console.WriteLine(Convert.ToString(0x04C11DB7, 2));
+            Console.WriteLine(Convert.ToString(~0x04C11DB7, 2));
+            Console.WriteLine(Convert.ToString(0xEDB88320, 2));
+
+            byte[] bytes = Encoding.UTF8.GetBytes("11111333333333333444444444444444444444444444444444444444444455556666666666666666666666666666666666666666666666111113333333333333333333333333333344444444444444444444444444444444444444444444444444444444444444555555555555666666666666666666666666666666666666666666661111133333333333333333333333333333444444444444444444444444444444444444444444444444444444444444445555555555556666666666666666666666666666666666666666666666");
+
+            TestCRC(new Honoo.IO.Hashing.CRC_4_ITU(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_5_EPC(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_5_ITU(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_5_USB(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_6_ITU(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_7_MMC(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_8(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_8_ITU(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_8_MAXIM(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_8_ROHC(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_16_CCITT(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_16_CCITT_FALSE(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_16_DNP(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_16_IBM(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_16_MAXIM(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_16_MODBUS(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_16_USB(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_16_X25(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_16_XMODEM(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_16_XMODEM2(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_32(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_32_C(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_32_KOOPMAN(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_32_MPEG2(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_64_ECMA(), bytes);
+            TestCRC(new Honoo.IO.Hashing.CRC_64_ISO(), bytes);
+
+            //TestPermutationAndCombination();
             //
             Console.ReadKey(true);
         }
@@ -32,6 +68,12 @@ namespace Honoo
                 }
             }
             ((int[])userState)[0]++;
+        }
+
+        private static void TestCRC(Honoo.IO.Hashing.CRC crc, byte[] input)
+        {
+            byte[] value = crc.DoFinalBytes(input);
+            Console.WriteLine(crc.Name + "     " + BitConverter.ToString(value));
         }
 
         private static void TestPermutationAndCombination()

@@ -10,7 +10,6 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Xml;
 
@@ -527,7 +526,6 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(SqlConnection connection, string procedure, params SqlParameter[] parameters)
         {
             if (connection is null)
@@ -626,7 +624,6 @@ namespace Honoo.Data
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(SqlConnection connection, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
             if (connection is null)
@@ -703,7 +700,6 @@ namespace Honoo.Data
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(SqlConnection connection, string procedure, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
             if (connection is null)
@@ -779,7 +775,6 @@ namespace Honoo.Data
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(SqlConnection connection, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
             if (connection is null)

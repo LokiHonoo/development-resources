@@ -17,7 +17,6 @@ using MySqlConnector; // MySqlConnector
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -517,7 +516,6 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="parameters">Parameters.</param>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void ExecuteProcedure(MySqlConnection connection, string procedure, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -614,7 +612,6 @@ namespace Honoo.Data
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -691,7 +688,6 @@ namespace Honoo.Data
         /// <param name="procedure">Sql procedure.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void TransactionExecuteProcedure(MySqlConnection connection, string procedure, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -767,7 +763,6 @@ namespace Honoo.Data
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static object TransactionExecuteScalar(MySqlConnection connection, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -923,7 +918,6 @@ namespace Honoo.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        [SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "<Pending>")]
         public static void DumpToFiles(MySqlConnection connection,
                                        MySqlDumpManifest manifest,
                                        string folder,
@@ -1059,7 +1053,6 @@ namespace Honoo.Data
             return manifest;
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static MySqlSummary BuildSummary(MySqlConnection connection, MySqlDumpManifest manifest)
         {
             MySqlSummary summary = new MySqlSummary();
@@ -1157,7 +1150,6 @@ namespace Honoo.Data
             return summary;
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static void DumpEvents(MySqlConnection connection,
                                        List<MySqlDumpProject> events,
                                        TextWriter textWriter,
@@ -1196,7 +1188,6 @@ namespace Honoo.Data
             }
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static void DumpFunctions(MySqlConnection connection,
                                           List<MySqlDumpProject> functions,
                                           TextWriter textWriter,
@@ -1235,7 +1226,6 @@ namespace Honoo.Data
             }
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static void DumpProcedures(MySqlConnection connection,
                                            List<MySqlDumpProject> procedures,
                                            TextWriter textWriter,
@@ -1274,7 +1264,6 @@ namespace Honoo.Data
             }
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static void DumpRecords(MySqlConnection connection,
                                         List<MySqlTableDumpProject> tables,
                                         string folder,
@@ -1306,7 +1295,6 @@ namespace Honoo.Data
             }
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static void DumpRecords(MySqlConnection connection,
                                         List<MySqlTableDumpProject> tables,
                                         TextWriter textWriter,
@@ -1483,7 +1471,6 @@ namespace Honoo.Data
             stream.Dispose();
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static void DumpTables(MySqlConnection connection,
                                        List<MySqlTableDumpProject> tables,
                                        TextWriter textWriter,
@@ -1520,7 +1507,6 @@ namespace Honoo.Data
             }
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static void DumpTriggers(MySqlConnection connection,
                                          List<MySqlDumpProject> triggers,
                                          TextWriter textWriter,
@@ -1559,7 +1545,6 @@ namespace Honoo.Data
             }
         }
 
-        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static void DumpViews(MySqlConnection connection,
                                       List<MySqlDumpProject> views,
                                       TextWriter textWriter,
@@ -2020,7 +2005,6 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="event_">The name of the event.</param>
         /// <returns></returns>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public static string DropEvent(string event_)
         {
             return "DROP EVENT IF EXISTS `" + event_ + "`;";
@@ -2081,7 +2065,6 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="event_">The name of the event.</param>
         /// <returns></returns>
-        [SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "<Pending>")]
         public static string ShowCreateEvent(string event_)
         {
             return "SHOW CREATE EVENT `" + event_ + "`;";
