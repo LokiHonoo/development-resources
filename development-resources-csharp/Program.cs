@@ -1,37 +1,16 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace Honoo
 {
     internal class Program
     {
-        private static readonly Stopwatch _stopwatch = Stopwatch.StartNew();
+        //private static readonly Stopwatch _stopwatch = Stopwatch.StartNew();
 
         #region Main
 
         private static void Main()
         {
             TestPermutationAndCombination();
-            //
-            //
-            //
-            int[] a = new int[] { 11, 22, 33, 44, 55, 66, 77, 88, 99 };
-            int[] b = new int[a.Length];
-            _stopwatch.Restart();
-            for (int i = 0; i < 10000000; i++)
-                b = (int[])a.Clone();
-            _stopwatch.Stop();
-            Console.WriteLine("Clone ms:" + _stopwatch.ElapsedMilliseconds);
-            _stopwatch.Restart();
-            for (int i = 0; i < 10000000; i++)
-                a.CopyTo(b, 0);
-            _stopwatch.Stop();
-            Console.WriteLine("Array.CopyTo ms:" + _stopwatch.ElapsedMilliseconds);
-            _stopwatch.Restart();
-            for (int i = 0; i < 10000000; i++)
-                Array.Copy(a, b, a.Length);
-            _stopwatch.Stop();
-            Console.WriteLine("Array.Copy ms:" + _stopwatch.ElapsedMilliseconds);
             //
             Console.ReadKey(true);
         }

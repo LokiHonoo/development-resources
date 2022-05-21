@@ -861,47 +861,38 @@ namespace Honoo.Data
             ConnectionState connectionState = connection.State;
             if (connectionState != ConnectionState.Open) { connection.Open(); }
             //
-            long index = 0;
+            MySqlSummary summary = BuildSummary(connection, manifest);
             bool cancel = false;
-            string summary = BuildSummary(connection,
-                                          manifest,
-                                          out long tableCount,
-                                          out long viewCount,
-                                          out long triggerCount,
-                                          out long functionCount,
-                                          out long procedureCount,
-                                          out long eventCount,
-                                          out long recordCount,
-                                          out long total);
-            textWriter.Write(summary);
-            written?.Invoke(0, total, MySqlDumpProjectType.Summary, string.Empty, userState, ref cancel);
-            if (!cancel && tableCount > 0)
+            long index = 0;
+            textWriter.Write(summary.Text);
+            written?.Invoke(0, summary.Total, MySqlDumpProjectType.Summary, string.Empty, userState, ref cancel);
+            if (!cancel && summary.TableCount > 0)
             {
-                DumpTables(connection, manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
+                DumpTables(connection, manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
             }
-            if (!cancel && viewCount > 0)
+            if (!cancel && summary.ViewCount > 0)
             {
-                DumpViews(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                DumpViews(connection, manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
             }
-            if (!cancel && triggerCount > 0)
+            if (!cancel && summary.TriggerCount > 0)
             {
-                DumpTriggers(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                DumpTriggers(connection, manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
             }
-            if (!cancel && functionCount > 0)
+            if (!cancel && summary.FunctionCount > 0)
             {
-                DumpFunctions(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                DumpFunctions(connection, manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
             }
-            if (!cancel && procedureCount > 0)
+            if (!cancel && summary.ProcedureCount > 0)
             {
-                DumpProcedures(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                DumpProcedures(connection, manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
             }
-            if (!cancel && eventCount > 0)
+            if (!cancel && summary.EventCount > 0)
             {
-                DumpEvents(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                DumpEvents(connection, manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
             }
-            if (!cancel && recordCount > 0)
+            if (!cancel && summary.RecordCount > 0)
             {
-                DumpRecords(connection, manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
+                DumpRecords(connection, manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
             }
             textWriter.Flush();
             if (connectionState != ConnectionState.Open) { connection.Close(); }
@@ -969,57 +960,46 @@ namespace Honoo.Data
             ConnectionState connectionState = connection.State;
             if (connectionState != ConnectionState.Open) { connection.Open(); }
             //
-            long index = 0;
+            MySqlSummary summary = BuildSummary(connection, manifest);
             bool cancel = false;
-            long recordCount;
-            long total;
+            long index = 0;
             string file = Path.Combine(folder, "!schema.sql");
             using (FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
             {
                 using (StreamWriter textWriter = new StreamWriter(stream, encoding))
                 {
-                    string summary = BuildSummary(connection,
-                                                  manifest,
-                                                  out long tableCount,
-                                                  out long viewCount,
-                                                  out long triggerCount,
-                                                  out long functionCount,
-                                                  out long procedureCount,
-                                                  out long eventCount,
-                                                  out recordCount,
-                                                  out total);
-                    textWriter.Write(summary);
-                    written?.Invoke(0, total, MySqlDumpProjectType.Summary, string.Empty, userState, ref cancel);
-                    if (!cancel && tableCount > 0)
+                    textWriter.Write(summary.Text);
+                    written?.Invoke(0, summary.Total, MySqlDumpProjectType.Summary, string.Empty, userState, ref cancel);
+                    if (!cancel && summary.TableCount > 0)
                     {
-                        DumpTables(connection, manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
+                        DumpTables(connection, manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
                     }
-                    if (!cancel && viewCount > 0)
+                    if (!cancel && summary.ViewCount > 0)
                     {
-                        DumpViews(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                        DumpViews(connection, manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
                     }
-                    if (!cancel && triggerCount > 0)
+                    if (!cancel && summary.TriggerCount > 0)
                     {
-                        DumpTriggers(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                        DumpTriggers(connection, manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
                     }
-                    if (!cancel && functionCount > 0)
+                    if (!cancel && summary.FunctionCount > 0)
                     {
-                        DumpFunctions(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                        DumpFunctions(connection, manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
                     }
-                    if (!cancel && procedureCount > 0)
+                    if (!cancel && summary.ProcedureCount > 0)
                     {
-                        DumpProcedures(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                        DumpProcedures(connection, manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
                     }
-                    if (!cancel && eventCount > 0)
+                    if (!cancel && summary.EventCount > 0)
                     {
-                        DumpEvents(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
+                        DumpEvents(connection, manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
                     }
                     textWriter.Flush();
                 }
             }
-            if (!cancel && recordCount > 0)
+            if (!cancel && summary.RecordCount > 0)
             {
-                DumpRecords(connection, manifest.Tables, folder, fileSize, encoding, ref index, total, written, userState, ref cancel);
+                DumpRecords(connection, manifest.Tables, folder, fileSize, encoding, ref index, summary.Total, written, userState, ref cancel);
             }
             if (connectionState != ConnectionState.Open) { connection.Close(); }
             cancelled = cancel;
@@ -1051,7 +1031,7 @@ namespace Honoo.Data
                     {
                         if (dr["ENGINE"] != DBNull.Value)
                         {
-                            manifest.Tables.Add(new MySqlTableDumpProject((string)dr["Name"], false, 0, true));
+                            manifest.Tables.Add(new MySqlTableDumpProject((string)dr["Name"], false, true));
                         }
                         else
                         {
@@ -1080,25 +1060,9 @@ namespace Honoo.Data
         }
 
         [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        private static string BuildSummary(MySqlConnection connection,
-                                           MySqlDumpManifest manifest,
-                                           out long tableCount,
-                                           out long viewCount,
-                                           out long triggerCount,
-                                           out long functionCount,
-                                           out long procedureCount,
-                                           out long eventCount,
-                                           out long recordCount,
-                                           out long total)
+        private static MySqlSummary BuildSummary(MySqlConnection connection, MySqlDumpManifest manifest)
         {
-            StringBuilder tmp = new StringBuilder();
-            tableCount = 0;
-            viewCount = 0;
-            triggerCount = 0;
-            functionCount = 0;
-            procedureCount = 0;
-            eventCount = 0;
-            recordCount = 0;
+            MySqlSummary summary = new MySqlSummary();
             List<string> union = new List<string>();
             foreach (MySqlTableDumpProject table in manifest.Tables)
             {
@@ -1108,55 +1072,61 @@ namespace Honoo.Data
                     {
                         union.Add("SELECT COUNT(*) AS `count` FROM `" + table.TableName + "`");
                     }
-                    tableCount++;
+                    summary.TableCount++;
                 }
             }
             if (union.Count > 0)
             {
                 using (DataTable dt = GetDataTable(connection, string.Join(" UNION ALL ", union) + ";"))
                 {
-                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
+                    summary.RecordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
                 }
             }
             foreach (MySqlDumpProject view in manifest.Views)
             {
                 if (!view.Ignore)
                 {
-                    viewCount++;
+                    summary.ViewCount++;
                 }
             }
             foreach (MySqlDumpProject trigger in manifest.Triggers)
             {
                 if (!trigger.Ignore)
                 {
-                    triggerCount++;
+                    summary.TriggerCount++;
                 }
             }
             foreach (MySqlDumpProject function in manifest.Functions)
             {
                 if (!function.Ignore)
                 {
-                    functionCount++;
+                    summary.FunctionCount++;
                 }
             }
             foreach (MySqlDumpProject procedure in manifest.Procedures)
             {
                 if (!procedure.Ignore)
                 {
-                    procedureCount++;
+                    summary.ProcedureCount++;
                 }
             }
             foreach (MySqlDumpProject event_ in manifest.Events)
             {
                 if (!event_.Ignore)
                 {
-                    eventCount++;
+                    summary.EventCount++;
                 }
             }
-            total = tableCount + viewCount + triggerCount + functionCount + procedureCount + eventCount + recordCount;
-            //
+            summary.Total = summary.TableCount
+                + summary.ViewCount
+                + summary.TriggerCount
+                + summary.FunctionCount
+                + summary.ProcedureCount
+                + summary.EventCount
+                + summary.RecordCount;
             using (DataTable dt = GetDataTable(connection, "SELECT @@version, @@character_set_server, @@collation_server;"))
             {
+                StringBuilder tmp = new StringBuilder();
                 tmp.AppendLine("/*");
                 tmp.AppendLine("Dump by Honoo.Data.MySqlHelper");
                 tmp.AppendLine("https://github.com/LokiHonoo/development-resources");
@@ -1168,13 +1138,13 @@ namespace Honoo.Data
                 tmp.AppendLine("Collation      : " + (string)dt.Rows[0][2]);
                 tmp.AppendLine("Database       : " + connection.Database);
                 tmp.AppendLine();
-                tmp.AppendLine("Table          : " + tableCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Trigger        : " + triggerCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("View           : " + viewCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Function       : " + functionCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Procedure      : " + procedureCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Event          : " + eventCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Record         : " + recordCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Table          : " + summary.TableCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("View           : " + summary.ViewCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Trigger        : " + summary.TriggerCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Function       : " + summary.FunctionCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Procedure      : " + summary.ProcedureCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Event          : " + summary.EventCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine("Record         : " + summary.RecordCount.ToString("n0", CultureInfo.InvariantCulture));
                 tmp.AppendLine();
                 tmp.AppendLine("Dump Time      : " + DateTime.Now);
                 tmp.AppendLine();
@@ -1182,8 +1152,9 @@ namespace Honoo.Data
                 tmp.AppendLine("If the target database has a table with the same name, the table data is overwritten.");
                 tmp.AppendLine("*/");
                 tmp.AppendLine();
+                summary.Text = tmp.ToString();
             }
-            return tmp.ToString();
+            return summary;
         }
 
         [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
@@ -1199,6 +1170,10 @@ namespace Honoo.Data
             StringBuilder tmp = new StringBuilder();
             foreach (MySqlDumpProject event_ in events)
             {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!event_.Ignore)
                 {
                     using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateEvent(event_.Name)))
@@ -1212,11 +1187,10 @@ namespace Honoo.Data
                         tmp.AppendLine(eventCreate + ";;");
                         tmp.AppendLine("DELIMITER ;");
                         tmp.AppendLine();
-                        textWriter.Write(tmp.ToString());
+                        textWriter.Write(tmp);
                         tmp.Clear();
                         index++;
                         written?.Invoke(index, total, MySqlDumpProjectType.Event, event_.Name, userState, ref cancel);
-                        if (cancel) { return; }
                     }
                 }
             }
@@ -1235,6 +1209,10 @@ namespace Honoo.Data
             StringBuilder tmp = new StringBuilder();
             foreach (MySqlDumpProject function in functions)
             {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!function.Ignore)
                 {
                     using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateFunction(function.Name)))
@@ -1248,11 +1226,10 @@ namespace Honoo.Data
                         tmp.AppendLine(functionCreate + ";;");
                         tmp.AppendLine("DELIMITER ;");
                         tmp.AppendLine();
-                        textWriter.Write(tmp.ToString());
+                        textWriter.Write(tmp);
                         tmp.Clear();
                         index++;
                         written?.Invoke(index, total, MySqlDumpProjectType.Function, function.Name, userState, ref cancel);
-                        if (cancel) { return; }
                     }
                 }
             }
@@ -1271,6 +1248,10 @@ namespace Honoo.Data
             StringBuilder tmp = new StringBuilder();
             foreach (MySqlDumpProject procedure in procedures)
             {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!procedure.Ignore)
                 {
                     using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateProcedure(procedure.Name)))
@@ -1284,91 +1265,13 @@ namespace Honoo.Data
                         tmp.AppendLine(procedureCreate + ";;");
                         tmp.AppendLine("DELIMITER ;");
                         tmp.AppendLine();
-                        textWriter.Write(tmp.ToString());
+                        textWriter.Write(tmp);
                         tmp.Clear();
                         index++;
                         written?.Invoke(index, total, MySqlDumpProjectType.Procedure, procedure.Name, userState, ref cancel);
-                        if (cancel) { return; }
                     }
                 }
             }
-        }
-
-        private static void DumpRecords(MySqlConnection connection,
-                                        List<MySqlTableDumpProject> tables,
-                                        TextWriter textWriter,
-                                        ref long index,
-                                        long total,
-                                        MySqlWrittenCallback written,
-                                        object userState,
-                                        ref bool cancel)
-        {
-            StringBuilder tmp = new StringBuilder();
-            textWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
-            textWriter.WriteLine();
-            foreach (MySqlTableDumpProject table in tables)
-            {
-                if (!table.Ignore && table.IncludingRecord)
-                {
-                    string tableName = table.TableName;
-                    using (MySqlDataReader reader = GetDataReader(connection, "SELECT * FROM `" + tableName + "`;"))
-                    {
-                        if (reader.HasRows)
-                        {
-                            tmp.AppendLine("-- ----------------------------");
-                            tmp.AppendLine("-- Records of " + tableName);
-                            tmp.AppendLine("-- ----------------------------");
-                            while (reader.Read())
-                            {
-                                tmp.Append("INSERT INTO `" + tableName + "` VALUES");
-                                tmp.Append('(');
-                                for (int i = 0; i < reader.FieldCount; i++)
-                                {
-                                    object val = reader.GetValue(i);
-                                    if (val == DBNull.Value)
-                                    {
-                                        tmp.Append("NULL");
-                                    }
-                                    else
-                                    {
-                                        switch (val)
-                                        {
-                                            case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
-                                            case bool value: tmp.Append(value ? 1 : 0); break;
-                                            case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case uint value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case long value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case ulong value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            default: tmp.Append("'" + val.ToString() + "'"); break;
-                                        }
-                                    }
-                                    if (i < reader.FieldCount - 1)
-                                    {
-                                        tmp.Append(',');
-                                    }
-                                }
-                                tmp.AppendLine(");");
-                                textWriter.Write(tmp.ToString());
-                                tmp.Clear();
-                                index++;
-                                written?.Invoke(index, total, MySqlDumpProjectType.Record, tableName, userState, ref cancel);
-                                if (cancel) { goto end; }
-                            }
-                        }
-                        //reader.Close();
-                    }
-                    textWriter.WriteLine();
-                }
-            }
-        end:
-            textWriter.WriteLine();
-            textWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
         }
 
         [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
@@ -1383,12 +1286,45 @@ namespace Honoo.Data
                                         object userState,
                                         ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
-            string file;
-            FileStream stream;
-            StreamWriter streamWriter;
             foreach (MySqlTableDumpProject table in tables)
             {
+                if (cancel)
+                {
+                    break;
+                }
+                if (!table.Ignore && table.IncludingRecord)
+                {
+                    using (MySqlDataReader reader = GetDataReader(connection, "SELECT * FROM `" + table.TableName + "`;"))
+                    {
+                        if (reader.HasRows)
+                        {
+                            DumpRecords(table.TableName, reader, folder, fileSize, encoding, ref index, total, written, userState, ref cancel);
+                        }
+                        //reader.Close();
+                    }
+                }
+            }
+        }
+
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
+        private static void DumpRecords(MySqlConnection connection,
+                                        List<MySqlTableDumpProject> tables,
+                                        TextWriter textWriter,
+                                        ref long index,
+                                        long total,
+                                        MySqlWrittenCallback written,
+                                        object userState,
+                                        ref bool cancel)
+        {
+            StringBuilder tmp = new StringBuilder();
+            textWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
+            textWriter.WriteLine();
+            foreach (MySqlTableDumpProject table in tables)
+            {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!table.Ignore && table.IncludingRecord)
                 {
                     string tableName = table.TableName;
@@ -1396,17 +1332,15 @@ namespace Honoo.Data
                     {
                         if (reader.HasRows)
                         {
-                            int sn = 0;
-                            file = Path.Combine(folder, "records@" + table.TableName + ".sql");
-                            stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
-                            streamWriter = new StreamWriter(stream, encoding);
-                            streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
-                            streamWriter.WriteLine();
                             tmp.AppendLine("-- ----------------------------");
                             tmp.AppendLine("-- Records of " + tableName);
                             tmp.AppendLine("-- ----------------------------");
                             while (reader.Read())
                             {
+                                if (cancel)
+                                {
+                                    break;
+                                }
                                 tmp.Append("INSERT INTO `" + tableName + "` VALUES");
                                 tmp.Append('(');
                                 for (int i = 0; i < reader.FieldCount; i++)
@@ -1441,41 +1375,105 @@ namespace Honoo.Data
                                     }
                                 }
                                 tmp.AppendLine(");");
-                                if (streamWriter.BaseStream.Length + (tmp.Length * 3) > fileSize)
-                                {
-                                    streamWriter.WriteLine();
-                                    streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
-                                    streamWriter.Flush();
-                                    streamWriter.Close();
-                                    streamWriter.Dispose();
-                                    stream.Close();
-                                    stream.Dispose();
-                                    sn++;
-                                    file = Path.Combine(folder, "records@" + table.TableName + "@p" + sn + ".sql");
-                                    stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
-                                    streamWriter = new StreamWriter(stream, encoding);
-                                    streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
-                                    streamWriter.WriteLine();
-                                }
-                                streamWriter.Write(tmp.ToString());
+                                textWriter.Write(tmp);
                                 tmp.Clear();
                                 index++;
                                 written?.Invoke(index, total, MySqlDumpProjectType.Record, tableName, userState, ref cancel);
-                                if (cancel) { goto end; }
                             }
-                            streamWriter.WriteLine();
-                            streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
-                            streamWriter.Flush();
-                            streamWriter.Close();
-                            streamWriter.Dispose();
-                            stream.Close();
-                            stream.Dispose();
                         }
                         //reader.Close();
                     }
                 }
             }
-        end:
+            textWriter.WriteLine();
+            textWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
+        }
+
+        private static void DumpRecords(string tableName,
+                                        MySqlDataReader reader,
+                                        string folder,
+                                        long fileSize,
+                                        Encoding encoding,
+                                        ref long index,
+                                        long total,
+                                        MySqlWrittenCallback written,
+                                        object userState,
+                                        ref bool cancel)
+        {
+            StringBuilder tmp = new StringBuilder();
+            int sn = 0;
+            string file = Path.Combine(folder, "records@" + tableName + ".sql");
+            FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
+            StreamWriter streamWriter = new StreamWriter(stream, encoding);
+            streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
+            streamWriter.WriteLine();
+            streamWriter.WriteLine("-- ----------------------------");
+            streamWriter.WriteLine("-- Records of " + tableName);
+            streamWriter.WriteLine("-- ----------------------------");
+            while (reader.Read())
+            {
+                if (cancel)
+                {
+                    break;
+                }
+                tmp.Append("INSERT INTO `" + tableName + "` VALUES");
+                tmp.Append('(');
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    object val = reader.GetValue(i);
+                    if (val == DBNull.Value)
+                    {
+                        tmp.Append("NULL");
+                    }
+                    else
+                    {
+                        switch (val)
+                        {
+                            case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
+                            case bool value: tmp.Append(value ? 1 : 0); break;
+                            case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            case uint value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            case long value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            case ulong value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            default: tmp.Append("'" + val.ToString() + "'"); break;
+                        }
+                    }
+                    if (i < reader.FieldCount - 1)
+                    {
+                        tmp.Append(',');
+                    }
+                }
+                tmp.AppendLine(");");
+                if (streamWriter.BaseStream.Length + (tmp.Length * 3) > fileSize)
+                {
+                    streamWriter.WriteLine();
+                    streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    streamWriter.Dispose();
+                    stream.Close();
+                    stream.Dispose();
+                    sn++;
+                    file = Path.Combine(folder, "records@" + tableName + "@p" + sn + ".sql");
+                    stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
+                    streamWriter = new StreamWriter(stream, encoding);
+                    streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
+                    streamWriter.WriteLine();
+                    streamWriter.WriteLine("-- ----------------------------");
+                    streamWriter.WriteLine("-- Records of " + tableName);
+                    streamWriter.WriteLine("-- ----------------------------");
+                }
+                streamWriter.Write(tmp);
+                tmp.Clear();
+                index++;
+                written?.Invoke(index, total, MySqlDumpProjectType.Record, tableName, userState, ref cancel);
+            }
             streamWriter.WriteLine();
             streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
             streamWriter.Flush();
@@ -1498,29 +1496,25 @@ namespace Honoo.Data
             StringBuilder tmp = new StringBuilder();
             foreach (MySqlTableDumpProject table in tables)
             {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!table.Ignore)
                 {
                     using (DataSet info = GetDataSet(connection, MySqlCommandText.ShowCreateTable(table.TableName) + MySqlCommandText.ShowTableStatus(table.TableName)))
                     {
                         string tableCreate = (string)info.Tables[0].Rows[0][1];
-                        if (table.AutoIncrement > 0)
-                        {
-                            if (info.Tables[1].Rows[0]["Auto_increment"] != null)
-                            {
-                                tableCreate = tableCreate.Replace("AUTO_INCREMENT=" + (int)info.Tables[1].Rows[0]["Auto_increment"], "AUTO_INCREMENT=" + table.AutoIncrement);
-                            }
-                        }
                         tmp.AppendLine("-- ----------------------------");
                         tmp.AppendLine("-- Table structure for " + table.TableName);
                         tmp.AppendLine("-- ----------------------------");
                         tmp.AppendLine("DROP TABLE IF EXISTS `" + table.TableName + "`;");
                         tmp.AppendLine(tableCreate + ";");
                         tmp.AppendLine();
-                        textWriter.Write(tmp.ToString());
+                        textWriter.Write(tmp);
                         tmp.Clear();
                         index++;
                         written?.Invoke(index, total, MySqlDumpProjectType.Table, table.TableName, userState, ref cancel);
-                        if (cancel) { return; }
                     }
                 }
             }
@@ -1539,6 +1533,10 @@ namespace Honoo.Data
             StringBuilder tmp = new StringBuilder();
             foreach (MySqlDumpProject trigger in triggers)
             {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!trigger.Ignore)
                 {
                     using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateTrigger(trigger.Name)))
@@ -1552,11 +1550,10 @@ namespace Honoo.Data
                         tmp.AppendLine(triggerCreate + ";;");
                         tmp.AppendLine("DELIMITER ;");
                         tmp.AppendLine();
-                        textWriter.Write(tmp.ToString());
+                        textWriter.Write(tmp);
                         tmp.Clear();
                         index++;
                         written?.Invoke(index, total, MySqlDumpProjectType.Trigger, trigger.Name, userState, ref cancel);
-                        if (cancel) { return; }
                     }
                 }
             }
@@ -1575,6 +1572,10 @@ namespace Honoo.Data
             StringBuilder tmp = new StringBuilder();
             foreach (MySqlDumpProject view in views)
             {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!view.Ignore)
                 {
                     using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateView(view.Name)))
@@ -1586,17 +1587,33 @@ namespace Honoo.Data
                         tmp.AppendLine("DROP VIEW IF EXISTS `" + view + "`;");
                         tmp.AppendLine(viewCreate + ";");
                         tmp.AppendLine();
-                        textWriter.Write(tmp.ToString());
+                        textWriter.Write(tmp);
                         tmp.Clear();
                         index++;
                         written?.Invoke(index, total, MySqlDumpProjectType.View, view.Name, userState, ref cancel);
-                        if (cancel) { return; }
                     }
                 }
             }
         }
 
         #endregion Dump
+
+        #region Private class
+
+        private struct MySqlSummary
+        {
+            internal long EventCount { get; set; }
+            internal long FunctionCount { get; set; }
+            internal long ProcedureCount { get; set; }
+            internal long RecordCount { get; set; }
+            internal long TableCount { get; set; }
+            internal string Text { get; set; }
+            internal long Total { get; set; }
+            internal long TriggerCount { get; set; }
+            internal long ViewCount { get; set; }
+        }
+
+        #endregion Private class
     }
 
     #region ConnectionBehavior
@@ -1705,7 +1722,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="name">Project name.</param>
         /// <param name="ignore">Ignore this project.</param>
-        internal MySqlDumpProject(string name, bool ignore)
+        public MySqlDumpProject(string name, bool ignore)
         {
             this.Name = name;
             this.Ignore = ignore;
@@ -1732,20 +1749,13 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="tableName">Table name.</param>
         /// <param name="ignore">Ignore this project.</param>
-        /// <param name="autoIncrement">Reset AUTO_INCREMENT=value.</param>
         /// <param name="includingRecord">Dump records.</param>
-        internal MySqlTableDumpProject(string tableName, bool ignore, int autoIncrement, bool includingRecord)
+        public MySqlTableDumpProject(string tableName, bool ignore, bool includingRecord)
         {
             this.TableName = tableName;
             this.Ignore = ignore;
-            this.AutoIncrement = autoIncrement;
             this.IncludingRecord = includingRecord;
         }
-
-        /// <summary>
-        /// Reset AUTO_INCREMENT=value. Default 0 is without reset.
-        /// </summary>
-        public int AutoIncrement { get; set; }
 
         /// <summary>
         /// Ignore this project. Default false.

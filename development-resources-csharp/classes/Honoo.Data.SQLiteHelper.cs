@@ -708,6 +708,7 @@ namespace Honoo.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
+        [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         public static void Dump(SQLiteConnection connection,
                                 SQLiteDumpManifest manifest,
                                 TextWriter textWriter,
@@ -734,46 +735,33 @@ namespace Honoo.Data
             ConnectionState connectionState = connection.State;
             if (connectionState != ConnectionState.Open) { connection.Open(); }
             //
-            long index = 0;
+            SQLiteSummary summary = BuildSummary(connection, manifest);
             bool cancel = false;
-            string summary = BuildSummary(connection,
-                                          manifest,
-                                          out long tableCount,
-                                          out long viewCount,
-                                          out long triggerCount,
-                                          out long recordCount,
-                                          out long total);
-            textWriter.Write(summary);
-            written?.Invoke(0, total, SQLiteDumpProjectType.Summary, string.Empty, userState, ref cancel);
-            if (cancel) { goto end; }
-            //
-            using (DataSet ds = GetDataSet(connection, SQLiteCommandText.ShowTables() + SQLiteCommandText.ShowViews() + SQLiteCommandText.ShowTriggers()))
+            long index = 0;
+            textWriter.Write(summary.Text);
+            written?.Invoke(0, summary.Total, SQLiteDumpProjectType.Summary, string.Empty, userState, ref cancel);
+            if (!cancel)
             {
-                if (tableCount > 0)
+                using (DataSet ds = GetDataSet(connection, SQLiteCommandText.ShowTables() + SQLiteCommandText.ShowViews() + SQLiteCommandText.ShowTriggers()))
                 {
-                    DumpTables(ds.Tables[0], manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
-                if (viewCount > 0)
-                {
-                    DumpViews(ds.Tables[1], manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                    if (cancel) { goto end; }
-                }
-                if (triggerCount > 0)
-                {
-                    DumpTriggers(ds.Tables[2], manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                    if (cancel) { goto end; }
+                    if (!cancel && summary.TableCount > 0)
+                    {
+                        DumpTables(ds.Tables[0], manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
+                    }
+                    if (!cancel && summary.ViewCount > 0)
+                    {
+                        DumpViews(ds.Tables[1], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
+                    }
+                    if (!cancel && summary.TriggerCount > 0)
+                    {
+                        DumpTriggers(ds.Tables[2], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
+                    }
                 }
             }
-            //
-            textWriter.Flush();
-            //
-            if (recordCount > 0)
+            if (!cancel && summary.RecordCount > 0)
             {
-                DumpRecords(connection, manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
-                if (cancel) { goto end; }
+                DumpRecords(connection, manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
             }
-        end:
             textWriter.Flush();
             if (connectionState != ConnectionState.Open) { connection.Close(); }
             cancelled = cancel;
@@ -840,53 +828,41 @@ namespace Honoo.Data
             ConnectionState connectionState = connection.State;
             if (connectionState != ConnectionState.Open) { connection.Open(); }
             //
-            long index = 0;
+            SQLiteSummary summary = BuildSummary(connection, manifest);
             bool cancel = false;
-            long recordCount;
-            long total;
+            long index = 0;
             string file = Path.Combine(folder, "!schema.sql");
             using (FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
             {
                 using (StreamWriter textWriter = new StreamWriter(stream, encoding))
                 {
-                    string summary = BuildSummary(connection,
-                                                  manifest,
-                                                  out long tableCount,
-                                                  out long viewCount,
-                                                  out long triggerCount,
-                                                  out recordCount,
-                                                  out total);
-                    textWriter.Write(summary);
-                    written?.Invoke(0, total, SQLiteDumpProjectType.Summary, string.Empty, userState, ref cancel);
-                    if (cancel) { textWriter.Flush(); goto end; }
-                    //
-                    using (DataSet ds = GetDataSet(connection, SQLiteCommandText.ShowTables() + SQLiteCommandText.ShowViews() + SQLiteCommandText.ShowTriggers()))
+                    textWriter.Write(summary.Text);
+                    written?.Invoke(0, summary.Total, SQLiteDumpProjectType.Summary, string.Empty, userState, ref cancel);
+                    if (!cancel)
                     {
-                        if (tableCount > 0)
+                        using (DataSet ds = GetDataSet(connection, SQLiteCommandText.ShowTables() + SQLiteCommandText.ShowViews() + SQLiteCommandText.ShowTriggers()))
                         {
-                            DumpTables(ds.Tables[0], manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
-                            if (cancel) { textWriter.Flush(); goto end; }
-                        }
-                        if (viewCount > 0)
-                        {
-                            DumpViews(ds.Tables[1], manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                            if (cancel) { textWriter.Flush(); goto end; }
-                        }
-                        if (triggerCount > 0)
-                        {
-                            DumpTriggers(ds.Tables[2], manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                            if (cancel) { textWriter.Flush(); goto end; }
+                            if (!cancel && summary.TableCount > 0)
+                            {
+                                DumpTables(ds.Tables[0], manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
+                            }
+                            if (!cancel && summary.ViewCount > 0)
+                            {
+                                DumpViews(ds.Tables[1], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
+                            }
+                            if (!cancel && summary.TriggerCount > 0)
+                            {
+                                DumpTriggers(ds.Tables[2], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
+                            }
+                            textWriter.Flush();
                         }
                     }
-                    textWriter.Flush();
                 }
             }
-            if (recordCount > 0)
+            if (!cancel && summary.RecordCount > 0)
             {
-                DumpRecords(connection, manifest.Tables, folder, fileSize, encoding, ref index, total, written, userState, ref cancel);
-                if (cancel) { goto end; }
+                DumpRecords(connection, manifest.Tables, folder, fileSize, encoding, ref index, summary.Total, written, userState, ref cancel);
             }
-        end:
             if (connectionState != ConnectionState.Open) { connection.Close(); }
             cancelled = cancel;
         }
@@ -912,7 +888,7 @@ namespace Honoo.Data
                         string type = (string)dr["type"];
                         if (type == "table")
                         {
-                            manifest.Tables.Add(new SQLiteTableDumpProject((string)dr["name"], false, 0, true));
+                            manifest.Tables.Add(new SQLiteTableDumpProject((string)dr["name"], false, true));
                         }
                         else if (type == "view")
                         {
@@ -929,19 +905,9 @@ namespace Honoo.Data
         }
 
         [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
-        private static string BuildSummary(SQLiteConnection connection,
-                                           SQLiteDumpManifest manifest,
-                                           out long tableCount,
-                                           out long viewCount,
-                                           out long triggerCount,
-                                           out long recordCount,
-                                           out long total)
+        private static SQLiteSummary BuildSummary(SQLiteConnection connection, SQLiteDumpManifest manifest)
         {
-            StringBuilder tmp = new StringBuilder();
-            tableCount = 0;
-            viewCount = 0;
-            triggerCount = 0;
-            recordCount = 0;
+            SQLiteSummary summary = new SQLiteSummary();
             List<string> union = new List<string>();
             foreach (SQLiteTableDumpProject table in manifest.Tables)
             {
@@ -951,32 +917,32 @@ namespace Honoo.Data
                     {
                         union.Add("SELECT COUNT(*) AS `count` FROM `" + table.TableName + "`");
                     }
-                    tableCount++;
+                    summary.TableCount++;
                 }
             }
             if (union.Count > 0)
             {
                 using (DataTable dt = GetDataTable(connection, string.Join(" UNION ALL ", union) + ";"))
                 {
-                    recordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
+                    summary.RecordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
                 }
             }
             foreach (SQLiteDumpProject view in manifest.Views)
             {
                 if (!view.Ignore)
                 {
-                    viewCount++;
+                    summary.ViewCount++;
                 }
             }
             foreach (SQLiteDumpProject trigger in manifest.Triggers)
             {
                 if (!trigger.Ignore)
                 {
-                    triggerCount++;
+                    summary.TriggerCount++;
                 }
             }
-            total = tableCount + viewCount + triggerCount + recordCount;
-            //
+            summary.Total = summary.TableCount + summary.ViewCount + summary.TriggerCount + summary.RecordCount;
+            StringBuilder tmp = new StringBuilder();
             tmp.AppendLine("/*");
             tmp.AppendLine("Dump by Honoo.Data.SQLiteHelper");
             tmp.AppendLine("https://github.com/LokiHonoo/development-resources");
@@ -986,10 +952,10 @@ namespace Honoo.Data
             tmp.AppendLine("Server Version : " + connection.ServerVersion);
             tmp.AppendLine("Database       : " + connection.Database);
             tmp.AppendLine();
-            tmp.AppendLine("Table          : " + tableCount.ToString("n0", CultureInfo.InvariantCulture));
-            tmp.AppendLine("Trigger        : " + triggerCount.ToString("n0", CultureInfo.InvariantCulture));
-            tmp.AppendLine("View           : " + viewCount.ToString("n0", CultureInfo.InvariantCulture));
-            tmp.AppendLine("Record         : " + recordCount.ToString("n0", CultureInfo.InvariantCulture));
+            tmp.AppendLine("Table          : " + summary.TableCount.ToString("n0", CultureInfo.InvariantCulture));
+            tmp.AppendLine("View           : " + summary.ViewCount.ToString("n0", CultureInfo.InvariantCulture));
+            tmp.AppendLine("Trigger        : " + summary.TriggerCount.ToString("n0", CultureInfo.InvariantCulture));
+            tmp.AppendLine("Record         : " + summary.RecordCount.ToString("n0", CultureInfo.InvariantCulture));
             tmp.AppendLine();
             tmp.AppendLine("Dump Time      : " + DateTime.Now);
             tmp.AppendLine();
@@ -997,7 +963,8 @@ namespace Honoo.Data
             tmp.AppendLine("If the target database has a table with the same name, the table data is overwritten.");
             tmp.AppendLine("*/");
             tmp.AppendLine();
-            return tmp.ToString();
+            summary.Text = tmp.ToString();
+            return summary;
         }
 
         [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
@@ -1015,312 +982,183 @@ namespace Honoo.Data
             textWriter.WriteLine();
             foreach (SQLiteTableDumpProject table in tables)
             {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!table.Ignore && table.IncludingRecord)
                 {
-                    if (table.TableName == "sqlite_sequence")
+                    using (SQLiteDataReader reader = GetDataReader(connection, "SELECT * FROM `" + table.TableName + "`;"))
                     {
-                        using (DataTable dt = GetDataTable(connection, "SELECT name, seq FROM sqlite_sequence;"))
+                        if (reader.HasRows)
                         {
-                            if (dt.Rows.Count > 0)
+                            tmp.AppendLine("-- ----------------------------");
+                            tmp.AppendLine("-- Records of " + table.TableName);
+                            tmp.AppendLine("-- ----------------------------");
+                            while (reader.Read())
                             {
-                                tmp.AppendLine("-- ----------------------------");
-                                tmp.AppendLine("-- Records of sqlite_sequence");
-                                tmp.AppendLine("-- ----------------------------");
-                                foreach (DataRow dr in dt.Rows)
+                                if (cancel)
                                 {
-                                    string name = (string)dr["name"];
-                                    foreach (SQLiteTableDumpProject t in tables)
+                                    break;
+                                }
+                                tmp.Append("INSERT INTO `" + table.TableName + "` VALUES");
+                                tmp.Append('(');
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    object val = reader.GetValue(i);
+                                    if (val == DBNull.Value)
                                     {
-                                        if (t.TableName == name)
+                                        tmp.Append("NULL");
+                                    }
+                                    else
+                                    {
+                                        switch (val)
                                         {
-                                            if (t.Sequence.HasValue && t.Sequence.Value > 0)
-                                            {
-                                                tmp.AppendLine("INSERT INTO `sqlite_sequence` VALUES('" + name + "'," + t.Sequence.Value + ");");
-                                            }
-                                            else if (!t.Sequence.HasValue)
-                                            {
-                                                tmp.AppendLine("INSERT INTO `sqlite_sequence` VALUES('" + name + "',NULL);");
-                                            }
-                                            else
-                                            {
-                                                if (dr["seq"] == DBNull.Value)
-                                                {
-                                                    tmp.AppendLine("INSERT INTO `sqlite_sequence` VALUES('" + name + "',NULL);");
-                                                }
-                                                else
-                                                {
-                                                    tmp.AppendLine("INSERT INTO `sqlite_sequence` VALUES('" + name + "'," + dr["seq"].ToString() + ");");
-                                                }
-                                            }
-                                            textWriter.Write(tmp.ToString());
-                                            tmp.Clear();
-                                            index++;
-                                            written?.Invoke(index, total, SQLiteDumpProjectType.Record, table.TableName, userState, ref cancel);
-                                            if (index % 512 == 0)
-                                            {
-                                                textWriter.Flush();
-                                            }
-                                            if (cancel) { goto end; }
+                                            case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
+                                            case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                            default: tmp.Append("'" + val.ToString() + "'"); break;
                                         }
+                                    }
+                                    if (i < reader.FieldCount - 1)
+                                    {
+                                        tmp.Append(',');
                                     }
                                 }
+                                tmp.AppendLine(");");
+                                textWriter.Write(tmp);
+                                tmp.Clear();
+                                index++;
+                                written?.Invoke(index, total, SQLiteDumpProjectType.Record, table.TableName, userState, ref cancel);
                             }
                         }
-                    }
-                    else
-                    {
-                        using (SQLiteDataReader reader = GetDataReader(connection, "SELECT * FROM `" + table.TableName + "`;"))
-                        {
-                            if (reader.HasRows)
-                            {
-                                tmp.AppendLine("-- ----------------------------");
-                                tmp.AppendLine("-- Records of " + table.TableName);
-                                tmp.AppendLine("-- ----------------------------");
-                                while (reader.Read())
-                                {
-                                    tmp.Append("INSERT INTO `" + table.TableName + "` VALUES");
-                                    tmp.Append('(');
-                                    for (int i = 0; i < reader.FieldCount; i++)
-                                    {
-                                        object val = reader.GetValue(i);
-                                        if (val == DBNull.Value)
-                                        {
-                                            tmp.Append("NULL");
-                                        }
-                                        else
-                                        {
-                                            switch (val)
-                                            {
-                                                case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
-                                                case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                default: tmp.Append("'" + val.ToString() + "'"); break;
-                                            }
-                                        }
-                                        if (i < reader.FieldCount - 1)
-                                        {
-                                            tmp.Append(',');
-                                        }
-                                    }
-                                    tmp.AppendLine(");");
-                                    textWriter.Write(tmp.ToString());
-                                    tmp.Clear();
-                                    index++;
-                                    written?.Invoke(index, total, SQLiteDumpProjectType.Record, table.TableName, userState, ref cancel);
-                                    if (index % 512 == 0)
-                                    {
-                                        textWriter.Flush();
-                                    }
-                                    if (cancel) { goto end; }
-                                }
-                            }
-                            //reader.Close();
-                        }
-                        textWriter.WriteLine();
+                        //reader.Close();
                     }
                 }
             }
-        end:
             textWriter.WriteLine();
             textWriter.WriteLine("PRAGMA foreign_keys = ON;");
         }
 
         [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]
         private static void DumpRecords(SQLiteConnection connection,
-                                List<SQLiteTableDumpProject> tables,
-                                string folder,
-                                long fileSize,
-                                Encoding encoding,
-                                ref long index,
-                                long total,
-                                SQLiteWrittenCallback written,
-                                object userState,
-                                ref bool cancel)
+                                        List<SQLiteTableDumpProject> tables,
+                                        string folder,
+                                        long fileSize,
+                                        Encoding encoding,
+                                        ref long index,
+                                        long total,
+                                        SQLiteWrittenCallback written,
+                                        object userState,
+                                        ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
             foreach (SQLiteTableDumpProject table in tables)
             {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!table.Ignore && table.IncludingRecord)
                 {
-                    int count = 0;
-                    int sn = 0;
-                    string file = Path.Combine(folder, "records@" + table.TableName + ".sql");
-                    FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
-                    StreamWriter streamWriter = new StreamWriter(stream, encoding);
-                    streamWriter.WriteLine("PRAGMA foreign_keys = OFF;");
-                    streamWriter.WriteLine();
-                    if (table.TableName == "sqlite_sequence")
+                    using (SQLiteDataReader reader = GetDataReader(connection, "SELECT * FROM `" + table.TableName + "`;"))
                     {
-                        using (DataTable dt = GetDataTable(connection, "SELECT name, seq FROM sqlite_sequence;"))
+                        if (reader.HasRows)
                         {
-                            if (dt.Rows.Count > 0)
-                            {
-                                tmp.AppendLine("-- ----------------------------");
-                                tmp.AppendLine("-- Records of sqlite_sequence");
-                                tmp.AppendLine("-- ----------------------------");
-                                foreach (DataRow dr in dt.Rows)
-                                {
-                                    string name = (string)dr["name"];
-                                    foreach (SQLiteTableDumpProject t in tables)
-                                    {
-                                        if (t.TableName == name)
-                                        {
-                                            if (t.Sequence.HasValue && t.Sequence.Value > 0)
-                                            {
-                                                tmp.AppendLine("INSERT INTO `sqlite_sequence` VALUES('" + name + "'," + t.Sequence.Value + ");");
-                                            }
-                                            else if (!t.Sequence.HasValue)
-                                            {
-                                                tmp.AppendLine("INSERT INTO `sqlite_sequence` VALUES('" + name + "',NULL);");
-                                            }
-                                            else
-                                            {
-                                                if (dr["seq"] == DBNull.Value)
-                                                {
-                                                    tmp.AppendLine("INSERT INTO `sqlite_sequence` VALUES('" + name + "',NULL);");
-                                                }
-                                                else
-                                                {
-                                                    tmp.AppendLine("INSERT INTO `sqlite_sequence` VALUES('" + name + "'," + dr["seq"].ToString() + ");");
-                                                }
-                                            }
-                                            if (streamWriter.BaseStream.Length + (tmp.Length * 3) > fileSize)
-                                            {
-                                                streamWriter.WriteLine();
-                                                streamWriter.WriteLine("PRAGMA foreign_keys = ON;");
-                                                streamWriter.Flush();
-                                                streamWriter.Close();
-                                                streamWriter.Dispose();
-                                                stream.Close();
-                                                stream.Dispose();
-                                                sn++;
-                                                file = Path.Combine(folder, "records@" + table.TableName + "@p" + sn + ".sql");
-                                                stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
-                                                streamWriter = new StreamWriter(stream, encoding);
-                                                streamWriter.WriteLine("PRAGMA foreign_keys = OFF;");
-                                                streamWriter.WriteLine();
-                                            }
-                                            streamWriter.Write(tmp.ToString());
-                                            tmp.Clear();
-                                            index++;
-                                            written?.Invoke(index, total, SQLiteDumpProjectType.Record, table.TableName, userState, ref cancel);
-                                            if (count % 512 == 0)
-                                            {
-                                                streamWriter.Flush();
-                                            }
-                                            if (cancel)
-                                            {
-                                                streamWriter.WriteLine();
-                                                streamWriter.WriteLine("PRAGMA foreign_keys = ON;");
-                                                streamWriter.Flush();
-                                                streamWriter.Close();
-                                                streamWriter.Dispose();
-                                                stream.Close();
-                                                stream.Dispose();
-                                                return;
-                                            }
-                                        }
-                                        streamWriter.WriteLine();
-                                        streamWriter.WriteLine("PRAGMA foreign_keys = ON;");
-                                        streamWriter.Flush();
-                                        streamWriter.Close();
-                                        streamWriter.Dispose();
-                                        stream.Close();
-                                        stream.Dispose();
-                                    }
-                                }
-                            }
+                            DumpRecords(table.TableName, reader, folder, fileSize, encoding, ref index, total, written, userState, ref cancel);
                         }
-                    }
-                    else
-                    {
-                        using (SQLiteDataReader reader = GetDataReader(connection, "SELECT * FROM `" + table.TableName + "`;"))
-                        {
-                            if (reader.HasRows)
-                            {
-                                tmp.AppendLine("-- ----------------------------");
-                                tmp.AppendLine("-- Records of " + table.TableName);
-                                tmp.AppendLine("-- ----------------------------");
-                                while (reader.Read())
-                                {
-                                    tmp.Append("INSERT INTO `" + table.TableName + "` VALUES");
-                                    tmp.Append('(');
-                                    for (int i = 0; i < reader.FieldCount; i++)
-                                    {
-                                        object val = reader.GetValue(i);
-                                        if (val == DBNull.Value)
-                                        {
-                                            tmp.Append("NULL");
-                                        }
-                                        else
-                                        {
-                                            switch (val)
-                                            {
-                                                case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
-                                                case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                                default: tmp.Append("'" + val.ToString() + "'"); break;
-                                            }
-                                        }
-                                        if (i < reader.FieldCount - 1)
-                                        {
-                                            tmp.Append(',');
-                                        }
-                                    }
-                                    tmp.AppendLine(");");
-                                    if (streamWriter.BaseStream.Length + (tmp.Length * 3) > fileSize)
-                                    {
-                                        streamWriter.WriteLine();
-                                        streamWriter.WriteLine("PRAGMA foreign_keys = ON;");
-                                        streamWriter.Flush();
-                                        streamWriter.Close();
-                                        streamWriter.Dispose();
-                                        stream.Close();
-                                        stream.Dispose();
-                                        sn++;
-                                        file = Path.Combine(folder, "records@" + table.TableName + "@p" + sn + ".sql");
-                                        stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
-                                        streamWriter = new StreamWriter(stream, encoding);
-                                        streamWriter.WriteLine("PRAGMA foreign_keys = OFF;");
-                                        streamWriter.WriteLine();
-                                    }
-                                    streamWriter.Write(tmp.ToString());
-                                    tmp.Clear();
-                                    index++;
-                                    written?.Invoke(index, total, SQLiteDumpProjectType.Record, table.TableName, userState, ref cancel);
-                                    if (count % 512 == 0)
-                                    {
-                                        streamWriter.Flush();
-                                    }
-                                    if (cancel)
-                                    {
-                                        streamWriter.WriteLine();
-                                        streamWriter.WriteLine("PRAGMA foreign_keys = ON;");
-                                        streamWriter.Flush();
-                                        streamWriter.Close();
-                                        streamWriter.Dispose();
-                                        stream.Close();
-                                        stream.Dispose();
-                                        return;
-                                    }
-                                }
-                            }
-                            //reader.Close();
-                        }
-                        streamWriter.WriteLine();
-                        streamWriter.WriteLine("PRAGMA foreign_keys = ON;");
-                        streamWriter.Flush();
-                        streamWriter.Close();
-                        streamWriter.Dispose();
-                        stream.Close();
-                        stream.Dispose();
+                        //reader.Close();
                     }
                 }
             }
         }
 
+        private static void DumpRecords(string tableName,
+                                        SQLiteDataReader reader,
+                                        string folder,
+                                        long fileSize,
+                                        Encoding encoding,
+                                        ref long index,
+                                        long total,
+                                        SQLiteWrittenCallback written,
+                                        object userState,
+                                        ref bool cancel)
+        {
+            StringBuilder tmp = new StringBuilder();
+            int sn = 0;
+            string file = Path.Combine(folder, "records@" + tableName + ".sql");
+            FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
+            StreamWriter streamWriter = new StreamWriter(stream, encoding);
+            streamWriter.WriteLine("PRAGMA foreign_keys = OFF;");
+            streamWriter.WriteLine();
+            streamWriter.WriteLine("-- ----------------------------");
+            streamWriter.WriteLine("-- Records of " + tableName);
+            streamWriter.WriteLine("-- ----------------------------");
+            while (reader.Read())
+            {
+                if (cancel)
+                {
+                    break;
+                }
+                tmp.Append("INSERT INTO `" + tableName + "` VALUES");
+                tmp.Append('(');
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    object val = reader.GetValue(i);
+                    if (val == DBNull.Value)
+                    {
+                        tmp.Append("NULL");
+                    }
+                    else
+                    {
+                        switch (val)
+                        {
+                            case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
+                            case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            default: tmp.Append("'" + val.ToString() + "'"); break;
+                        }
+                    }
+                    if (i < reader.FieldCount - 1)
+                    {
+                        tmp.Append(',');
+                    }
+                }
+                tmp.AppendLine(");");
+                if (streamWriter.BaseStream.Length + (tmp.Length * 3) > fileSize)
+                {
+                    streamWriter.WriteLine();
+                    streamWriter.WriteLine("PRAGMA foreign_keys = ON;");
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    streamWriter.Dispose();
+                    stream.Close();
+                    stream.Dispose();
+                    sn++;
+                    file = Path.Combine(folder, "records@" + tableName + "@p" + sn + ".sql");
+                    stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
+                    streamWriter = new StreamWriter(stream, encoding);
+                    streamWriter.WriteLine("PRAGMA foreign_keys = OFF;");
+                    streamWriter.WriteLine();
+                    streamWriter.WriteLine("-- ----------------------------");
+                    streamWriter.WriteLine("-- Records of " + tableName);
+                    streamWriter.WriteLine("-- ----------------------------");
+                }
+                streamWriter.Write(tmp);
+                tmp.Clear();
+                index++;
+                written?.Invoke(index, total, SQLiteDumpProjectType.Record, tableName, userState, ref cancel);
+            }
+            streamWriter.WriteLine();
+            streamWriter.WriteLine("PRAGMA foreign_keys = ON;");
+            streamWriter.Flush();
+            streamWriter.Close();
+            streamWriter.Dispose();
+            stream.Close();
+            stream.Dispose();
+        }
+
         private static void DumpTables(DataTable tableCreates,
-                                               List<SQLiteTableDumpProject> tables,
+                                       List<SQLiteTableDumpProject> tables,
                                        TextWriter textWriter,
                                        ref long index,
                                        long total,
@@ -1331,6 +1169,10 @@ namespace Honoo.Data
             StringBuilder tmp = new StringBuilder();
             foreach (SQLiteTableDumpProject table in tables)
             {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!table.Ignore)
                 {
                     string tableCreate = (string)tableCreates.Select("name='" + table.TableName + "'")[0]["sql"];
@@ -1340,11 +1182,10 @@ namespace Honoo.Data
                     tmp.AppendLine("DROP TABLE IF EXISTS `" + table.TableName + "`;");
                     tmp.AppendLine(tableCreate + ";");
                     tmp.AppendLine();
-                    textWriter.Write(tmp.ToString());
+                    textWriter.Write(tmp);
                     tmp.Clear();
                     index++;
                     written?.Invoke(index, total, SQLiteDumpProjectType.Table, table.TableName, userState, ref cancel);
-                    if (cancel) { return; }
                 }
             }
         }
@@ -1361,6 +1202,10 @@ namespace Honoo.Data
             StringBuilder tmp = new StringBuilder();
             foreach (SQLiteDumpProject trigger in triggers)
             {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!trigger.Ignore)
                 {
                     string triggerCreate = (string)triggerCreates.Select("name='" + trigger + "'")[0]["sql"];
@@ -1372,11 +1217,10 @@ namespace Honoo.Data
                     tmp.AppendLine(triggerCreate + ";;");
                     tmp.AppendLine("DELIMITER ;");
                     tmp.AppendLine();
-                    textWriter.Write(tmp.ToString());
+                    textWriter.Write(tmp);
                     tmp.Clear();
                     index++;
                     written?.Invoke(index, total, SQLiteDumpProjectType.Trigger, trigger.Name, userState, ref cancel);
-                    if (cancel) { return; }
                 }
             }
         }
@@ -1393,6 +1237,10 @@ namespace Honoo.Data
             StringBuilder tmp = new StringBuilder();
             foreach (SQLiteDumpProject view in views)
             {
+                if (cancel)
+                {
+                    break;
+                }
                 if (!view.Ignore)
                 {
                     string viewCreate = (string)viewCreates.Select("name='" + view + "'")[0]["sql"];
@@ -1402,7 +1250,7 @@ namespace Honoo.Data
                     tmp.AppendLine("DROP VIEW IF EXISTS `" + view + "`;");
                     tmp.AppendLine(viewCreate + ";");
                     tmp.AppendLine();
-                    textWriter.Write(tmp.ToString());
+                    textWriter.Write(tmp);
                     tmp.Clear();
                     index++;
                     written?.Invoke(index, total, SQLiteDumpProjectType.View, view.Name, userState, ref cancel);
@@ -1411,6 +1259,20 @@ namespace Honoo.Data
         }
 
         #endregion Dump
+
+        #region Private class
+
+        private struct SQLiteSummary
+        {
+            internal long RecordCount { get; set; }
+            internal long TableCount { get; set; }
+            internal string Text { get; set; }
+            internal long Total { get; set; }
+            internal long TriggerCount { get; set; }
+            internal long ViewCount { get; set; }
+        }
+
+        #endregion Private class
     }
 
     #region ConnectionBehavior
@@ -1495,7 +1357,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="name">Project name.</param>
         /// <param name="ignore">Ignore this project.</param>
-        internal SQLiteDumpProject(string name, bool ignore)
+        public SQLiteDumpProject(string name, bool ignore)
         {
             this.Name = name;
             this.Ignore = ignore;
@@ -1522,13 +1384,11 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="tableName">Table name.</param>
         /// <param name="ignore">Ignore this project.</param>
-        /// <param name="sequence">Reset Sequence=value. Set to 0 without changing.</param>
         /// <param name="includingRecord">Dump records.</param>
-        internal SQLiteTableDumpProject(string tableName, bool ignore, int? sequence, bool includingRecord)
+        public SQLiteTableDumpProject(string tableName, bool ignore, bool includingRecord)
         {
             this.TableName = tableName;
             this.Ignore = ignore;
-            this.Sequence = sequence;
             this.IncludingRecord = includingRecord;
         }
 
@@ -1541,11 +1401,6 @@ namespace Honoo.Data
         /// Dump including records.
         /// </summary>
         public bool IncludingRecord { get; set; }
-
-        /// <summary>
-        /// Reset Sequence=value. Set to 0 without changing.
-        /// </summary>
-        public int? Sequence { get; }
 
         /// <summary>
         /// Table name.
