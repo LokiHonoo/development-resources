@@ -25,7 +25,7 @@ using System.Text;
 namespace Honoo.Data
 {
     /// <summary>
-    /// MySql extension.
+    /// MySql helper.
     /// </summary>
     public static class MySqlHelper
     {
@@ -588,7 +588,6 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql command.</param>
-        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
         public static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText)
         {
@@ -876,46 +875,34 @@ namespace Honoo.Data
                                           out long total);
             textWriter.Write(summary);
             written?.Invoke(0, total, MySqlDumpProjectType.Summary, string.Empty, userState, ref cancel);
-            if (cancel) { goto end; }
-            if (tableCount > 0)
+            if (!cancel && tableCount > 0)
             {
                 DumpTables(connection, manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
-                if (cancel) { goto end; }
             }
-            if (viewCount > 0)
+            if (!cancel && viewCount > 0)
             {
                 DumpViews(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                if (cancel) { goto end; }
             }
-            if (triggerCount > 0)
+            if (!cancel && triggerCount > 0)
             {
                 DumpTriggers(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                if (cancel) { goto end; }
             }
-            if (functionCount > 0)
+            if (!cancel && functionCount > 0)
             {
                 DumpFunctions(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                if (cancel) { goto end; }
             }
-            if (procedureCount > 0)
+            if (!cancel && procedureCount > 0)
             {
                 DumpProcedures(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                if (cancel) { goto end; }
             }
-            if (eventCount > 0)
+            if (!cancel && eventCount > 0)
             {
                 DumpEvents(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                if (cancel) { goto end; }
             }
-            //
-            textWriter.Flush();
-            //
-            if (recordCount > 0)
+            if (!cancel && recordCount > 0)
             {
                 DumpRecords(connection, manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
-                if (cancel) { goto end; }
             }
-        end:
             textWriter.Flush();
             if (connectionState != ConnectionState.Open) { connection.Close(); }
             cancelled = cancel;
@@ -1003,46 +990,37 @@ namespace Honoo.Data
                                                   out total);
                     textWriter.Write(summary);
                     written?.Invoke(0, total, MySqlDumpProjectType.Summary, string.Empty, userState, ref cancel);
-                    if (cancel) { textWriter.Flush(); goto end; }
-                    if (tableCount > 0)
+                    if (!cancel && tableCount > 0)
                     {
                         DumpTables(connection, manifest.Tables, textWriter, ref index, total, written, userState, ref cancel);
-                        if (cancel) { textWriter.Flush(); goto end; }
                     }
-                    if (viewCount > 0)
+                    if (!cancel && viewCount > 0)
                     {
                         DumpViews(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                        if (cancel) { textWriter.Flush(); goto end; }
                     }
-                    if (triggerCount > 0)
+                    if (!cancel && triggerCount > 0)
                     {
                         DumpTriggers(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                        if (cancel) { textWriter.Flush(); goto end; }
                     }
-                    if (functionCount > 0)
+                    if (!cancel && functionCount > 0)
                     {
                         DumpFunctions(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                        if (cancel) { textWriter.Flush(); goto end; }
                     }
-                    if (procedureCount > 0)
+                    if (!cancel && procedureCount > 0)
                     {
                         DumpProcedures(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                        if (cancel) { textWriter.Flush(); goto end; }
                     }
-                    if (eventCount > 0)
+                    if (!cancel && eventCount > 0)
                     {
                         DumpEvents(connection, manifest.Triggers, textWriter, ref index, total, written, userState, ref cancel);
-                        if (cancel) { textWriter.Flush(); goto end; }
                     }
                     textWriter.Flush();
                 }
             }
-            if (recordCount > 0)
+            if (!cancel && recordCount > 0)
             {
                 DumpRecords(connection, manifest.Tables, folder, fileSize, encoding, ref index, total, written, userState, ref cancel);
-                if (cancel) { goto end; }
             }
-        end:
             if (connectionState != ConnectionState.Open) { connection.Close(); }
             cancelled = cancel;
         }
@@ -1380,10 +1358,6 @@ namespace Honoo.Data
                                 tmp.Clear();
                                 index++;
                                 written?.Invoke(index, total, MySqlDumpProjectType.Record, tableName, userState, ref cancel);
-                                if (index % 512 == 0)
-                                {
-                                    textWriter.Flush();
-                                }
                                 if (cancel) { goto end; }
                             }
                         }
@@ -1410,6 +1384,9 @@ namespace Honoo.Data
                                         ref bool cancel)
         {
             StringBuilder tmp = new StringBuilder();
+            string file;
+            FileStream stream;
+            StreamWriter streamWriter;
             foreach (MySqlTableDumpProject table in tables)
             {
                 if (!table.Ignore && table.IncludingRecord)
@@ -1419,11 +1396,10 @@ namespace Honoo.Data
                     {
                         if (reader.HasRows)
                         {
-                            int count = 0;
                             int sn = 0;
-                            string file = Path.Combine(folder, "records@" + table.TableName + ".sql");
-                            FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
-                            StreamWriter streamWriter = new StreamWriter(stream, encoding);
+                            file = Path.Combine(folder, "records@" + table.TableName + ".sql");
+                            stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
+                            streamWriter = new StreamWriter(stream, encoding);
                             streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
                             streamWriter.WriteLine();
                             tmp.AppendLine("-- ----------------------------");
@@ -1485,21 +1461,7 @@ namespace Honoo.Data
                                 tmp.Clear();
                                 index++;
                                 written?.Invoke(index, total, MySqlDumpProjectType.Record, tableName, userState, ref cancel);
-                                if (count % 512 == 0)
-                                {
-                                    streamWriter.Flush();
-                                }
-                                if (cancel)
-                                {
-                                    streamWriter.WriteLine();
-                                    streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
-                                    streamWriter.Flush();
-                                    streamWriter.Close();
-                                    streamWriter.Dispose();
-                                    stream.Close();
-                                    stream.Dispose();
-                                    return;
-                                }
+                                if (cancel) { goto end; }
                             }
                             streamWriter.WriteLine();
                             streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
@@ -1513,6 +1475,14 @@ namespace Honoo.Data
                     }
                 }
             }
+        end:
+            streamWriter.WriteLine();
+            streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
+            streamWriter.Flush();
+            streamWriter.Close();
+            streamWriter.Dispose();
+            stream.Close();
+            stream.Dispose();
         }
 
         [SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句", Justification = "<挂起>")]

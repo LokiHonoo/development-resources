@@ -23,7 +23,7 @@ using System.Text;
 namespace Honoo.Data
 {
     /// <summary>
-    /// SQLite extension.
+    /// SQLite helper.
     /// </summary>
     public static class SQLiteHelper
     {

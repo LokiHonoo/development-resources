@@ -17,7 +17,7 @@ using System.Xml;
 namespace Honoo.Data
 {
     /// <summary>
-    /// Sql extension.
+    /// Sql helper.
     /// </summary>
     public static class SqlHelper
     {
@@ -600,7 +600,6 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql command.</param>
-        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
         public static int TransactionExecuteNonQuery(SqlConnection connection, string commandText)
         {

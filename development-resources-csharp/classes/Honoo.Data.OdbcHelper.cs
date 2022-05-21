@@ -15,7 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Honoo.Data
 {
     /// <summary>
-    /// Odbc extension.
+    /// Odbc helper.
     /// </summary>
     public static class OdbcHelper
     {
@@ -460,7 +460,6 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <param name="commandText">Sql command.</param>
-        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
         public static int TransactionExecuteNonQuery(OdbcConnection connection, string commandText)
         {
