@@ -113,7 +113,7 @@ namespace Honoo.IO.Hashing
     /// <summary>
     /// CRC algorithm.
     /// </summary>
-    public abstract class CRC : IEquatable<CRC>
+    public abstract class CRC : IDisposable, IEquatable<CRC>
     {
         #region Properties
 
@@ -151,6 +151,31 @@ namespace Honoo.IO.Hashing
             _name = name;
             _checksumWidth = checksumWidth;
             _checksumSize = checksumSize;
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        ~CRC()
+        {
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        /// <param name="disposing">Releases unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
         }
 
         #endregion Constructor
@@ -260,6 +285,7 @@ namespace Honoo.IO.Hashing
         private readonly bool _reflect;
         private readonly byte _xorout;
         private byte _crc;
+        private bool _disposed;
 
         #endregion Properties
 
@@ -281,6 +307,22 @@ namespace Honoo.IO.Hashing
             _xorout = xorout;
             //
             _crc = init;
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        /// <param name="disposing">Releases unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // _table = null;
+                }
+                _disposed = true;
+            }
         }
 
         #endregion Constructor
@@ -417,6 +459,7 @@ namespace Honoo.IO.Hashing
         private readonly bool _reflect;
         private readonly byte _xorout;
         private byte _crc;
+        private bool _disposed;
 
         #endregion Properties
 
@@ -438,6 +481,22 @@ namespace Honoo.IO.Hashing
             _xorout = xorout;
             //
             _crc = init;
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        /// <param name="disposing">Releases unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // _table = null;
+                }
+                _disposed = true;
+            }
         }
 
         #endregion Constructor
@@ -604,6 +663,7 @@ namespace Honoo.IO.Hashing
         private readonly bool _reflect;
         private readonly byte _xorout;
         private byte _crc;
+        private bool _disposed;
 
         #endregion Properties
 
@@ -625,6 +685,22 @@ namespace Honoo.IO.Hashing
             _xorout = xorout;
             //
             _crc = init;
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        /// <param name="disposing">Releases unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // _table = null;
+                }
+                _disposed = true;
+            }
         }
 
         #endregion Constructor
@@ -761,6 +837,7 @@ namespace Honoo.IO.Hashing
         private readonly bool _reflect;
         private readonly byte _xorout;
         private byte _crc;
+        private bool _disposed;
 
         #endregion Properties
 
@@ -782,6 +859,22 @@ namespace Honoo.IO.Hashing
             _xorout = xorout;
             //
             _crc = init;
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        /// <param name="disposing">Releases unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // _table = null;
+                }
+                _disposed = true;
+            }
         }
 
         #endregion Constructor
@@ -918,6 +1011,7 @@ namespace Honoo.IO.Hashing
         private readonly bool _reflect;
         private readonly byte _xorout;
         private byte _crc;
+        private bool _disposed;
 
         #endregion Properties
 
@@ -952,6 +1046,22 @@ namespace Honoo.IO.Hashing
             _xorout = xorout;
             //
             _crc = init;
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        /// <param name="disposing">Releases unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // _table = null;
+                }
+                _disposed = true;
+            }
         }
 
         #endregion Constructor
@@ -1111,6 +1221,7 @@ namespace Honoo.IO.Hashing
         private readonly bool _reflect;
         private readonly ushort _xorout;
         private ushort _crc;
+        private bool _disposed;
 
         #endregion Properties
 
@@ -1132,6 +1243,22 @@ namespace Honoo.IO.Hashing
             _xorout = xorout;
             //
             _crc = init;
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        /// <param name="disposing">Releases unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // _table = null;
+                }
+                _disposed = true;
+            }
         }
 
         #endregion Constructor
@@ -1389,6 +1516,7 @@ namespace Honoo.IO.Hashing
         private readonly bool _reflect;
         private readonly uint _xorout;
         private uint _crc;
+        private bool _disposed;
 
         #endregion Properties
 
@@ -1423,6 +1551,22 @@ namespace Honoo.IO.Hashing
             _xorout = xorout;
             //
             _crc = init;
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        /// <param name="disposing">Releases unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // _table = null;
+                }
+                _disposed = true;
+            }
         }
 
         #endregion Constructor
@@ -1583,6 +1727,7 @@ namespace Honoo.IO.Hashing
         private readonly bool _reflect;
         private readonly ulong _xorout;
         private ulong _crc;
+        private bool _disposed;
 
         #endregion Properties
 
@@ -1604,6 +1749,22 @@ namespace Honoo.IO.Hashing
             _xorout = xorout;
             //
             _crc = init;
+        }
+
+        /// <summary>
+        /// Releases resources at the instance.
+        /// </summary>
+        /// <param name="disposing">Releases unmanaged resources.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    // _table = null;
+                }
+                _disposed = true;
+            }
         }
 
         #endregion Constructor
