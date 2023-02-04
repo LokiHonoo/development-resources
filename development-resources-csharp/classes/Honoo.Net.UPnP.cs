@@ -7,12 +7,25 @@
  * This code page is published under the terms of the MIT license.
  */
 
+/*
+ * using (UPnP uPnP = new UPnP())
+ * {
+ *     UPnPDevice[] devices = await uPnP.Discover();
+ *     UPnPService service = devices[0].FindServices(UPnP.URN_UPNP_SERVICE_WAN_IP_CONNECTION_1)[0];
+ *     await uPnP.AddPortMapping(service, false, "TCP", 4788, IPAddress.Parse("192.168.1.1"), 4788, "test", 0, true);
+ *     UPnPPortMappingEntry entry = await uPnP.GetSpecificPortMappingEntry(service, false, "TCP", 4788);
+ *     await uPnP.DeletePortMapping(service, false, "TCP", 4788);
+ * }
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace Honoo.Net
@@ -20,56 +33,60 @@ namespace Honoo.Net
     /// <summary>
     /// UPnP.
     /// </summary>
-    public sealed class UPnP
+    public sealed class UPnP : IDisposable
     {
         #region Properties
 
         /// <summary>
         /// urn:schemas-upnp-org:device:InternetGatewayDevice:1
         /// </summary>
-        public const string DEVICE_TYPE_INTERNET_GATEWAY_DEVICE_1 = "urn:schemas-upnp-org:device:InternetGatewayDevice:1";
+        public const string URN_UPNP_DEVICE_INTERNET_GATEWAY_DEVICE_1 = "urn:schemas-upnp-org:device:InternetGatewayDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:device:WANConnectionDevice:1
         /// </summary>
-        public const string DEVICE_TYPE_WAN_CONNECTION_DEVICE_1 = "urn:schemas-upnp-org:device:WANConnectionDevice:1";
+        public const string URN_UPNP_DEVICE_WAN_CONNECTION_DEVICE_1 = "urn:schemas-upnp-org:device:WANConnectionDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:device:WANDevice:1
         /// </summary>
-        public const string DEVICE_TYPE_WAN_DEVICE_1 = "urn:schemas-upnp-org:device:WANDevice:1";
+        public const string URN_UPNP_DEVICE_WAN_DEVICE_1 = "urn:schemas-upnp-org:device:WANDevice:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:Layer3Forwarding:1
         /// </summary>
-        public const string SERVICE_TYPE_LAYER_3_FORWARDING_1 = "urn:schemas-upnp-org:service:Layer3Forwarding:1";
+        public const string URN_UPNP_SERVICE_LAYER_3_FORWARDING_1 = "urn:schemas-upnp-org:service:Layer3Forwarding:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1
         /// </summary>
-        public const string SERVICE_TYPE_WAN_COMMON_INTERFACE_CONFIG_1 = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1";
+        public const string URN_UPNP_SERVICE_WAN_COMMON_INTERFACE_CONFIG_1 = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANIPConnection:1
         /// </summary>
-        public const string SERVICE_TYPE_WAN_IP_CONNECTION_1 = "urn:schemas-upnp-org:service:WANIPConnection:1";
+        public const string URN_UPNP_SERVICE_WAN_IP_CONNECTION_1 = "urn:schemas-upnp-org:service:WANIPConnection:1";
 
         /// <summary>
         /// urn:schemas-upnp-org:service:WANPPPConnection:1
         /// </summary>
-        public const string SERVICE_TYPE_WAN_PPP_CONNECTION_1 = "urn:schemas-upnp-org:service:WANPPPConnection:1";
+        public const string URN_UPNP_SERVICE_WAN_PPP_CONNECTION_1 = "urn:schemas-upnp-org:service:WANPPPConnection:1";
 
+        private readonly HttpClient _httpClient = new HttpClient(new SocketsHttpHandler() { AllowAutoRedirect = false, UseCookies = false });
         private bool _disposed = false;
 
         #endregion Properties
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// Initializes a new instance of the UPnP class.
         /// </summary>
         public UPnP()
         {
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", new string[] { "Mozilla/5.0", "(Windows NT 6.1; Win64; x64; rv:47.0)", "Gecko/20100101", "Firefox/47.0" });
+            _httpClient.DefaultRequestHeaders.Add("Cache-Control", "no-store");
+            _httpClient.DefaultRequestHeaders.Add("Pragma", "no-cache");
         }
 
         /// <summary>
@@ -99,12 +116,13 @@ namespace Honoo.Net
             {
                 if (disposing)
                 {
+                    _httpClient.Dispose();
                 }
                 _disposed = true;
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         #region Base
 
@@ -115,7 +133,7 @@ namespace Honoo.Net
         /// <param name="argument">Argument for device's service responses.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public string GetResponseValue(string responseXmlString, string argument)
+        private static string GetResponseValue(string responseXmlString, string argument)
         {
             if (string.IsNullOrEmpty(responseXmlString))
             {
@@ -145,48 +163,49 @@ namespace Honoo.Net
         /// <summary>
         /// Post action, return download xml string. Query actions from service's SCPD xml.
         /// </summary>
-        /// <param name="service">service.</param>
+        /// <param name="service">Service "urn:schemas-upnp-org:service:WANIPConnection:1" or "urn:schemas-upnp-org:service:WANPPPConnection:1".</param>
         /// <param name="man">Append HTTP Header "MAN" if throw 405 WebException. MAN value: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
         /// <param name="action">action name.</param>
         /// <param name="arguments">action arguments. The arguments must conform to the order specified. Set 'null' if haven't arguments.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public string PostAction(UPnPService service, bool man, string action, params KeyValuePair<string, string>[] arguments)
+        private async Task<string> PostAction(UPnPService service, bool man, string action, params KeyValuePair<string, string>[] arguments)
         {
             if (service is null)
             {
                 throw new ArgumentNullException(nameof(service));
             }
-            using (WebClient wc = new WebClient())
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<?xml version=\"1.0\"?>");
+            sb.AppendLine("<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">");
+            sb.AppendLine("  <s:Body>");
+            sb.AppendLine("    <u:" + action + " xmlns:u=\"" + service.ServiceType + "\">");
+            if (arguments != null && arguments.Length > 0)
             {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("<?xml version=\"1.0\"?>");
-                sb.AppendLine("<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">");
-                sb.AppendLine("  <s:Body>");
-                sb.AppendLine("    <u:" + action + " xmlns:u=\"" + service.ServiceType + "\">");
-                if (arguments != null && arguments.Length > 0)
+                foreach (KeyValuePair<string, string> argument in arguments)
                 {
-                    foreach (KeyValuePair<string, string> argument in arguments)
-                    {
-                        sb.AppendLine("      <" + argument.Key + ">" + argument.Value + "</" + argument.Key + ">");
-                    }
+                    sb.AppendLine("      <" + argument.Key + ">" + argument.Value + "</" + argument.Key + ">");
                 }
-                sb.AppendLine("    </u:" + action + ">");
-                sb.AppendLine("  </s:Body>");
-                sb.AppendLine("</s:Envelope>");
-                byte[] data = Encoding.UTF8.GetBytes(sb.ToString());
-                wc.Encoding = Encoding.UTF8;
-                wc.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0(WindowsNT6.1;rv:2.0.1)Gecko/20100101Firefox/4.0.1");
-                wc.Headers.Add(HttpRequestHeader.CacheControl, "no-store");
-                wc.Headers.Add(HttpRequestHeader.Pragma, "no-cache");
-                if (man)
-                {
-                    wc.Headers.Add("MAN", "\"http://schemas.xmlsoap.org/soap/envelope/\"; ns=01");
-                }
-                wc.Headers.Add("SOAPAction", "\"" + service.ServiceType + "#" + action + "\"");
-                byte[] down = wc.UploadData(service.ControlUrl, "POST", data);
-                return Encoding.UTF8.GetString(down);
             }
+            sb.AppendLine("    </u:" + action + ">");
+            sb.AppendLine("  </s:Body>");
+            sb.AppendLine("</s:Envelope>");
+            sb.AppendLine();
+            string body = sb.ToString();
+            StringContent content = new StringContent(body, Encoding.UTF8);
+            content.Headers.ContentType.MediaType = "text/xml";
+            content.Headers.Add("SOAPAction", "\"" + service.ServiceType + "#" + action + "\"");
+            if (man)
+            {
+                content.Headers.Add("MAN", "\"http://schemas.xmlsoap.org/soap/envelope/\"; ns=01");
+            }
+            HttpResponseMessage message = await _httpClient.PostAsync(service.BaseUrl.AbsoluteUri + service.ControlUrl.TrimStart('/'), content);
+            string response = await message.Content.ReadAsStringAsync();
+            if (!message.IsSuccessStatusCode)
+            {
+                message.EnsureSuccessStatusCode();
+            }
+            return response;
         }
 
         #endregion Base
@@ -194,26 +213,26 @@ namespace Honoo.Net
         /// <summary>
         /// Add port mapping.
         /// </summary>
-        /// <param name="service">Router WANIPConnection/WANPPPConnection service.</param>
+        /// <param name="service">Service "urn:schemas-upnp-org:service:WANIPConnection:1" or "urn:schemas-upnp-org:service:WANPPPConnection:1".</param>
         /// <param name="man">Append MAN HTTP Header If throw 405 WebException. MAN: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
-        /// <param name="externalPort">The external port to mapping.</param>
         /// <param name="protocol">The protocol to mapping. This property accepts the following protocol: TCP, UDP.</param>
-        /// <param name="internalPort">The public port to mapping.</param>
+        /// <param name="externalPort">The external port to mapping.</param>
         /// <param name="internalIPAddress">The public IPAddress to mapping.</param>
-        /// <param name="enabled">Enable.</param>
-        /// <param name="leaseDuration">Lease duration. This property accepts the following 0 - 604800. Unit is seconds. Set 0 to permanents.</param>
+        /// <param name="internalPort">The public port to mapping.</param>
         /// <param name="description">Mapping description.</param>
+        /// <param name="leaseDuration">Lease duration. This property accepts the following 0 - 604800. Unit is seconds. Set 0 to permanents.</param>
+        /// <param name="enabled">Enable.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void AddPortMapping(UPnPService service,
-                                   bool man,
-                                   int externalPort,
-                                   string protocol,
-                                   int internalPort,
-                                   IPAddress internalIPAddress,
-                                   bool enabled,
-                                   int leaseDuration,
-                                   string description)
+        public async Task AddPortMapping(UPnPService service,
+                                         bool man,
+                                         string protocol,
+                                         int externalPort,
+                                         IPAddress internalIPAddress,
+                                         int internalPort,
+                                         string description,
+                                         int leaseDuration,
+                                         bool enabled)
         {
             if (internalIPAddress is null)
             {
@@ -229,53 +248,52 @@ namespace Honoo.Net
                 new KeyValuePair<string, string>("NewLeaseDuration", leaseDuration.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("NewPortMappingDescription", description)
             };
-            PostAction(service, man, "AddPortMapping", arguments);
+            await PostAction(service, man, "AddPortMapping", arguments);
         }
 
         /// <summary>
         /// Delete port mapping.
         /// </summary>
-        /// <param name="service">Router WANIPConnection/WANPPPConnection service.</param>
+        /// <param name="service">Service "urn:schemas-upnp-org:service:WANIPConnection:1" or "urn:schemas-upnp-org:service:WANPPPConnection:1".</param>
         /// <param name="man">Append MAN HTTP Header If throw 405 WebException. MAN: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
-        /// <param name="externalPort">The external port to delete mapping.</param>
         /// <param name="protocol">The protocol to delete mapping. This property accepts the following protocol: TCP, UDP.</param>
+        /// <param name="externalPort">The external port to delete mapping.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public void DeletePortMapping(UPnPService service, bool man, int externalPort, string protocol)
+        public async Task DeletePortMapping(UPnPService service, bool man, string protocol, int externalPort)
         {
             KeyValuePair<string, string>[] arguments = new KeyValuePair<string, string>[] {
                 new KeyValuePair<string, string>("NewRemoteHost", string.Empty),
                 new KeyValuePair<string, string>("NewExternalPort", externalPort.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("NewProtocol", protocol)
             };
-            PostAction(service, man, "DeletePortMapping", arguments);
+            await PostAction(service, man, "DeletePortMapping", arguments);
         }
 
         /// <summary>
         /// Discover UPnP root devices.
         /// </summary>
-        /// <param name="addressFamilyFilter">Search for devices of the specified address family.</param>
-        /// <param name="mx">Maximum search time. Unit is seconds.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public UPnPRootDevice[] Discover(AddressFamily addressFamilyFilter, int mx)
+        public async Task<UPnPDevice[]> Discover()
         {
-            List<UPnPRootDevice> dis = new List<UPnPRootDevice>();
+            List<UPnPDevice> devives = new List<UPnPDevice>();
             List<string> responses = new List<string>();
             using (UdpClient client = new UdpClient(new IPEndPoint(IPAddress.Any, 0)))
             {
-                client.Client.ReceiveTimeout = mx * 1000;
+                client.Client.ReceiveTimeout = 2000;
                 client.Client.ReceiveBufferSize = 8 * 1024;
                 client.Client.EnableBroadcast = true;
-                client.Client.MulticastLoopback = true;
-                client.Client.Ttl = 1;
-                client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                client.Client.MulticastLoopback = false;
                 StringBuilder request = new StringBuilder();
                 request.AppendLine("M-SEARCH * HTTP/1.1");
                 request.AppendLine("HOST: 239.255.255.250:1900");
                 request.AppendLine("MAN: \"ssdp:discover\"");
-                request.AppendLine("MX: " + mx);
-                request.AppendLine("ST: upnp:rootdevice");
+                request.AppendLine("MX: 2");
+                // request.AppendLine("ST: ssdp:all");
+                // request.AppendLine("ST: upnp:rootdevice");
+                // request.AppendLine("ST: uuid:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
+                request.AppendLine("ST: urn:schemas-upnp-org:service:WANIPConnection:1");
                 request.AppendLine();
                 byte[] data = Encoding.UTF8.GetBytes(request.ToString());
                 IPEndPoint ep = new IPEndPoint(IPAddress.Parse("239.255.255.250"), 1900);
@@ -295,75 +313,36 @@ namespace Honoo.Net
             }
             if (responses.Count > 0)
             {
-                using (WebClient wc = new WebClient())
+                foreach (var response in responses)
                 {
-                    foreach (string response in responses)
+                    if (response.Contains("HTTP/1.1 200 OK"))
                     {
-                        if (response.Contains("200 OK"))
+                        string find = "LOCATION:";
+                        int index = response.IndexOf(find, StringComparison.InvariantCulture);
+                        if (index >= 0)
                         {
-                            string descriptionUrl;
-                            string find;
-                            int index;
-                            int count;
-                            find = "LOCATION:";
-                            index = response.IndexOf(find, StringComparison.InvariantCulture);
-                            if (index >= 0)
+                            index += find.Length;
+                            int count = response.IndexOf("\r\n", index, StringComparison.InvariantCulture) - index;
+                            if (count > 0)
                             {
-                                index += find.Length;
-                                count = response.IndexOf("\r\n", index, StringComparison.InvariantCulture) - index;
-                                if (count > 0)
-                                {
-                                    descriptionUrl = response.Substring(index, count).Trim();
-                                    try
-                                    {
-                                        Uri uri = new Uri(descriptionUrl);
-                                        IPAddress ipAddress = IPAddress.Parse(uri.Host);
-                                        if ((addressFamilyFilter & ipAddress.AddressFamily) != ipAddress.AddressFamily)
-                                        {
-                                            continue;
-                                        }
-                                    }
-                                    catch
-                                    {
-                                        continue;
-                                    }
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                continue;
-                            }
-                            bool exist = false;
-                            foreach (UPnPRootDevice di in dis)
-                            {
-                                if (descriptionUrl == di.DescriptionUrl)
-                                {
-                                    exist = true;
-                                    break;
-                                }
-                            }
-                            if (!exist)
-                            {
+                                string descriptionUrl = response.Substring(index, count).Trim();
                                 try
                                 {
-                                    byte[] down = wc.DownloadData(descriptionUrl);
-                                    UPnPRootDevice di = new UPnPRootDevice(descriptionUrl, Encoding.UTF8.GetString(down));
-                                    if (di is null)
+                                    string down = await _httpClient.GetStringAsync(descriptionUrl);
+                                    XmlDocument doc = new XmlDocument();
+                                    doc.LoadXml(down);
+                                    XmlNamespaceManager nm = new XmlNamespaceManager(doc.NameTable);
+                                    nm.AddNamespace("ns", "urn:schemas-upnp-org:device-1-0");
+                                    Uri uri = new Uri(doc.SelectSingleNode("/ns:root/ns:URLBase", nm).InnerText.Trim());
+                                    XmlNode deviceNode = doc.SelectSingleNode("/ns:root/ns:device", nm);
+                                    UPnPDevice device = new UPnPDevice(uri, deviceNode, nm);
+                                    if (device != null)
                                     {
-                                        continue;
-                                    }
-                                    else
-                                    {
-                                        dis.Add(di);
+                                        devives.Add(device);
                                     }
                                 }
                                 catch
                                 {
-                                    continue;
                                 }
                             }
                         }
@@ -371,19 +350,19 @@ namespace Honoo.Net
                 }
             }
 
-            return dis.ToArray();
+            return devives.ToArray();
         }
 
         /// <summary>
-        /// Get external(internet) IPAddress.
+        /// Get external IPAddress.
         /// </summary>
-        /// <param name="service">Router WANIPConnection/WANPPPConnection service.</param>
+        /// <param name="service">Service "urn:schemas-upnp-org:service:WANIPConnection:1" or "urn:schemas-upnp-org:service:WANPPPConnection:1".</param>
         /// <param name="man">Append MAN HTTP Header If throw 405 WebException. MAN: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public IPAddress GetExternalIPAddress(UPnPService service, bool man)
+        public async Task<IPAddress> GetExternalIPAddress(UPnPService service, bool man)
         {
-            string down = PostAction(service, man, "GetExternalIPAddress", null);
+            string down = await PostAction(service, man, "GetExternalIPAddress", null);
             string ip = GetResponseValue(down, "NewExternalIPAddress");
             return IPAddress.Parse(ip);
         }
@@ -391,179 +370,55 @@ namespace Honoo.Net
         /// <summary>
         /// Get NAT RSIP status.
         /// </summary>
-        /// <param name="service">Router WANIPConnection/WANPPPConnection service.</param>
+        /// <param name="service">Service "urn:schemas-upnp-org:service:WANIPConnection:1" or "urn:schemas-upnp-org:service:WANPPPConnection:1".</param>
         /// <param name="man">Append MAN HTTP Header If throw 405 WebException. MAN: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public NatRsipStatus GetNATRSIPStatus(UPnPService service, bool man)
+        public async Task<UPnPNatRsipStatus> GetNATRSIPStatus(UPnPService service, bool man)
         {
-            string down = PostAction(service, man, "GetNATRSIPStatus", null);
-            return new NatRsipStatus(Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewRSIPAvailable"), CultureInfo.InvariantCulture)),
+            string down = await PostAction(service, man, "GetNATRSIPStatus", null);
+            return new UPnPNatRsipStatus(Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewRSIPAvailable"), CultureInfo.InvariantCulture)),
                                      Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewNATEnabled"), CultureInfo.InvariantCulture)));
         }
 
         /// <summary>
         /// Get specific port mapping entry.
         /// </summary>
-        /// <param name="service">Router WANIPConnection/WANPPPConnection service.</param>
+        /// <param name="service">Service "urn:schemas-upnp-org:service:WANIPConnection:1" or "urn:schemas-upnp-org:service:WANPPPConnection:1".</param>
         /// <param name="man">Append MAN HTTP Header If throw 405 WebException. MAN: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
-        /// <param name="index">The mapping index.</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"/>
-        public PortMappingEntry GetSpecificPortMappingEntry(UPnPService service, bool man, int index)
-        {
-            try
-            {
-                string down = PostAction(service, man, "GetSpecificPortMappingEntry", new KeyValuePair<string, string>("NewPortMappingIndex", index.ToString(CultureInfo.InvariantCulture)));
-                return new PortMappingEntry(true,
-                    IPAddress.Parse(GetResponseValue(down, "NewInternalClient")),
-                    int.Parse(GetResponseValue(down, "NewInternalPort"), CultureInfo.InvariantCulture),
-                    Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewEnabled"), CultureInfo.InvariantCulture)),
-                    GetResponseValue(down, "NewPortMappingDescription"));
-            }
-            catch (WebException ex)
-            {
-                if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    return new PortMappingEntry(false, null, 0, false, string.Empty);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Get specific port mapping entry.
-        /// </summary>
-        /// <param name="service">Router WANIPConnection/WANPPPConnection service.</param>
-        /// <param name="man">Append MAN HTTP Header If throw 405 WebException. MAN: "http://schemas.xmlsoap.org/soap/envelope/"; ns=01</param>
-        /// <param name="externalPort">The external port to query.</param>
         /// <param name="protocol">The protocol to query. This property accepts the following protocol: TCP, UDP.</param>
+        /// <param name="externalPort">The external port to query.</param>
         /// <returns></returns>
         /// <exception cref="Exception"/>
-        public PortMappingEntry GetSpecificPortMappingEntry(UPnPService service, bool man, int externalPort, string protocol)
+        public async Task<UPnPPortMappingEntry> GetSpecificPortMappingEntry(UPnPService service, bool man, string protocol, int externalPort)
         {
             KeyValuePair<string, string>[] arguments = new KeyValuePair<string, string>[] {
                 new KeyValuePair<string, string>("NewRemoteHost", string.Empty),
                 new KeyValuePair<string, string>("NewExternalPort", externalPort.ToString(CultureInfo.InvariantCulture)),
                 new KeyValuePair<string, string>("NewProtocol", protocol)
             };
-            try
-            {
-                string down = PostAction(service, man, "GetSpecificPortMappingEntry", arguments);
-                return new PortMappingEntry(true,
-                    IPAddress.Parse(GetResponseValue(down, "NewInternalClient")),
-                    int.Parse(GetResponseValue(down, "NewInternalPort"), CultureInfo.InvariantCulture),
-                    Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewEnabled"), CultureInfo.InvariantCulture)),
-                    GetResponseValue(down, "NewPortMappingDescription"));
-            }
-            catch (WebException ex)
-            {
-                if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    return new PortMappingEntry(false, null, 0, false, string.Empty);
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            string down = await PostAction(service, man, "GetSpecificPortMappingEntry", arguments);
+            return new UPnPPortMappingEntry(IPAddress.Parse(GetResponseValue(down, "NewInternalClient")),
+                                            int.Parse(GetResponseValue(down, "NewInternalPort"), CultureInfo.InvariantCulture),
+                                            GetResponseValue(down, "NewPortMappingDescription"),
+                                            Convert.ToInt32(GetResponseValue(down, "NewLeaseDuration"), CultureInfo.InvariantCulture),
+                                            Convert.ToBoolean(int.Parse(GetResponseValue(down, "NewEnabled"), CultureInfo.InvariantCulture))); ;
         }
     }
 
     #region Components
 
     /// <summary>
-    /// NAT RSIP status.
-    /// </summary>
-    public sealed class NatRsipStatus
-    {
-        #region Members
-
-        /// <summary>
-        /// NAT enabled.
-        /// </summary>
-        public bool NatEnabled { get; }
-
-        /// <summary>
-        /// RSIP available.
-        /// </summary>
-        public bool RsipAvailable { get; }
-
-        #endregion Members
-
-        /// <summary>
-        /// Initializes a new instance of the NatRsipStatus class.
-        /// </summary>
-        /// <param name="rsipAvailable">RSIP available.</param>
-        /// <param name="natEnabled">NAT enabled.</param>
-        public NatRsipStatus(bool rsipAvailable, bool natEnabled)
-        {
-            this.RsipAvailable = rsipAvailable;
-            this.NatEnabled = natEnabled;
-        }
-    }
-
-    /// <summary>
-    /// Port mapping entry.
-    /// </summary>
-    public sealed class PortMappingEntry
-    {
-        #region Members
-
-        /// <summary>
-        /// Description.
-        /// </summary>
-        public string Description { get; }
-
-        /// <summary>
-        /// Enabled.
-        /// </summary>
-        public bool Enabled { get; }
-
-        /// <summary>
-        /// Internal IPAddress.
-        /// </summary>
-        public IPAddress InternalIPAddress { get; }
-
-        /// <summary>
-        /// Internal port.
-        /// </summary>
-        public int InternalPort { get; }
-
-        /// <summary>
-        /// Mapped.
-        /// </summary>
-        public bool Mapped { get; }
-
-        #endregion Members
-
-        /// <summary>
-        /// Initializes a new instance of the PortMappingEntry class.
-        /// </summary>
-        /// <param name="mapped">Mapped.</param>
-        /// <param name="internalIPAddress">Internal IPAddress.</param>
-        /// <param name="internalPort">Internal port.</param>
-        /// <param name="enabled">Enabled.</param>
-        /// <param name="description">Description.</param>
-        public PortMappingEntry(bool mapped, IPAddress internalIPAddress, int internalPort, bool enabled, string description)
-        {
-            this.Mapped = mapped;
-            this.InternalIPAddress = internalIPAddress;
-            this.InternalPort = internalPort;
-            this.Enabled = enabled;
-            this.Description = description;
-        }
-    }
-
-    /// <summary>
     /// UPnP device.
     /// </summary>
     public sealed class UPnPDevice
     {
-        #region Members
+        #region Properties
+
+        /// <summary>
+        /// Base url.
+        /// </summary>
+        public Uri BaseUrl { get; }
 
         /// <summary>
         /// Child devices.
@@ -611,17 +466,6 @@ namespace Honoo.Net
         public string ModelUrl { get; }
 
         /// <summary>
-        /// Parent device.
-        /// </summary>
-        /// <exception cref="Exception"/>
-        public UPnPDevice Parent { get; }
-
-        /// <summary>
-        /// Root device info.
-        /// </summary>
-        public UPnPRootDevice Root { get; }
-
-        /// <summary>
         /// SerialNumber.
         /// </summary>
         public string SerialNumber { get; }
@@ -636,28 +480,21 @@ namespace Honoo.Net
         /// </summary>
         public string Udn { get; }
 
-        #endregion Members
+        #endregion Properties
 
         /// <summary>
-        /// Initializes a new instance of the Device class.
+        /// Initializes a new instance of the UPnPDevice class.
         /// </summary>
-        /// <param name="uri">Must specify device base uri, Because the description file does not contain uri.</param>
-        /// <param name="root">Root device info.</param>
-        /// <param name="parent">Parent device.</param>
+        /// <param name="baseUri">Base uri,</param>
         /// <param name="deviceNode">Device XmlNode.</param>
         /// <param name="nm">XmlNamespaceManager.</param>
         /// <exception cref="Exception"/>
-        public UPnPDevice(Uri uri, UPnPRootDevice root, UPnPDevice parent, XmlNode deviceNode, XmlNamespaceManager nm)
+        internal UPnPDevice(Uri baseUri, XmlNode deviceNode, XmlNamespaceManager nm)
         {
-            if (deviceNode is null)
-            {
-                throw new ArgumentNullException(nameof(deviceNode));
-            }
-            List<UPnPDevice> childDevices = new List<UPnPDevice>();
+            List<UPnPDevice> devices = new List<UPnPDevice>();
             List<UPnPService> services = new List<UPnPService>();
             //
-            this.Root = root;
-            this.Parent = parent;
+            this.BaseUrl = baseUri;
             this.DeviceType = deviceNode.SelectSingleNode("ns:deviceType", nm).InnerText.Trim();
             this.FriendlyName = deviceNode.SelectSingleNode("ns:friendlyName", nm).InnerText.Trim();
             this.Manufacturer = deviceNode.SelectSingleNode("ns:manufacturer", nm).InnerText.Trim();
@@ -672,16 +509,16 @@ namespace Honoo.Net
             //
             foreach (XmlNode childDeviceNode in childDeviceNodes)
             {
-                childDevices.Add(new UPnPDevice(uri, root, this, childDeviceNode, nm));
+                devices.Add(new UPnPDevice(baseUri, childDeviceNode, nm));
             }
             //
             XmlNodeList serviceNodes = deviceNode.SelectNodes("ns:serviceList/ns:service", nm);
             foreach (XmlNode serviceNode in serviceNodes)
             {
-                services.Add(new UPnPService(uri, root, this, serviceNode, nm));
+                services.Add(new UPnPService(baseUri, serviceNode, nm));
             }
             //
-            this.Devices = childDevices.ToArray();
+            this.Devices = devices.ToArray();
             this.Services = services.ToArray();
         }
 
@@ -725,93 +562,88 @@ namespace Honoo.Net
             }
             return services.ToArray();
         }
+    }
+
+    /// <summary>
+    /// UPnP NAT RSIP status.
+    /// </summary>
+    public sealed class UPnPNatRsipStatus
+    {
+        #region Properties
 
         /// <summary>
-        /// Returns a string that represents the current object.
+        /// NAT enabled.
         /// </summary>
-        /// <returns></returns>
-        public override string ToString()
+        public bool NatEnabled { get; }
+
+        /// <summary>
+        /// RSIP available.
+        /// </summary>
+        public bool RsipAvailable { get; }
+
+        #endregion Properties
+
+        /// <summary>
+        /// Initializes a new instance of the NatRsipStatus class.
+        /// </summary>
+        /// <param name="rsipAvailable">RSIP available.</param>
+        /// <param name="natEnabled">NAT enabled.</param>
+        internal UPnPNatRsipStatus(bool rsipAvailable, bool natEnabled)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.FriendlyName, this.DeviceType);
+            this.RsipAvailable = rsipAvailable;
+            this.NatEnabled = natEnabled;
         }
     }
 
     /// <summary>
-    /// UPnP root device.
+    /// UPnP port mapping entry.
     /// </summary>
-    public sealed class UPnPRootDevice
+    public sealed class UPnPPortMappingEntry
     {
-        #region Members
+        #region Properties
 
         /// <summary>
-        /// Description Url. This parameter is used only for records.
+        /// Description.
         /// </summary>
-        public string DescriptionUrl { get; }
+        public string Description { get; }
 
         /// <summary>
-        /// Root device escription xml string.
+        /// Enabled.
         /// </summary>
-        public string DescriptionXmlString { get; }
+        public bool Enabled { get; }
 
         /// <summary>
-        /// Root device.
+        /// Internal IPAddress.
         /// </summary>
-        public UPnPDevice Device { get; }
+        public IPAddress InternalIPAddress { get; }
 
         /// <summary>
-        /// Root device base uri.
+        /// Internal port.
         /// </summary>
-        public Uri Uri { get; }
-
-        #endregion Members
+        public int InternalPort { get; }
 
         /// <summary>
-        /// Initializes a new instance of the RootDevice class.
+        /// Lease duration. This property unit is seconds.
         /// </summary>
-        /// <param name="descriptionUrl">Specify root device escription full url.</param>
-        /// <param name="descriptionXmlString">Root device escription xml string.</param>
-        /// <exception cref="Exception"/>
-        public UPnPRootDevice(string descriptionUrl, string descriptionXmlString)
+        public int LeaseDuration { get; }
+
+        #endregion Properties
+
+        /// <summary>
+        /// Initializes a new instance of the PortMappingEntry class.
+        /// </summary>
+        /// <param name="internalIPAddress">Internal IPAddress.</param>
+        /// <param name="internalPort">Internal port.</param>
+        /// <param name="description">Description.</param>
+        /// <param name="leaseDuration">Lease duration. This property unit is seconds.</param>
+        /// <param name="enabled">Enabled.</param>
+        internal UPnPPortMappingEntry(IPAddress internalIPAddress, int internalPort, string description, int leaseDuration, bool enabled)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(descriptionXmlString);
-            XmlNamespaceManager nm = new XmlNamespaceManager(doc.NameTable);
-            nm.AddNamespace("ns", "urn:schemas-upnp-org:device-1-0");
-            XmlNode deviceNode = doc.SelectSingleNode("/ns:root/ns:device", nm);
-            Uri uri = new Uri(descriptionUrl);
-            this.Uri = new Uri(string.Format(CultureInfo.InvariantCulture, "{0}://{1}", uri.Scheme, uri.Authority));
-            this.DescriptionUrl = descriptionUrl;
-            this.DescriptionXmlString = descriptionXmlString;
-            this.Device = new UPnPDevice(uri, this, null, deviceNode, nm);
-        }
-
-        /// <summary>
-        /// Find the specified type of device.
-        /// </summary>
-        /// <param name="deviceType">Device type.</param>
-        /// <returns></returns>
-        public UPnPDevice[] FindDevices(string deviceType)
-        {
-            return this.Device.FindDevices(deviceType);
-        }
-
-        /// <summary>
-        /// Find the specified type of service.
-        /// </summary>
-        /// <param name="serviceType">Service type.</param>
-        /// <returns></returns>
-        public UPnPService[] FindServices(string serviceType)
-        {
-            return this.Device.FindServices(serviceType);
-        }
-
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.Device.FriendlyName, this.Device.DeviceType);
+            this.InternalIPAddress = internalIPAddress;
+            this.InternalPort = internalPort;
+            this.Enabled = enabled;
+            this.LeaseDuration = leaseDuration;
+            this.Description = description;
         }
     }
 
@@ -820,7 +652,12 @@ namespace Honoo.Net
     /// </summary>
     public sealed class UPnPService
     {
-        #region Members
+        #region Properties
+
+        /// <summary>
+        /// Base url.
+        /// </summary>
+        public Uri BaseUrl { get; }
 
         /// <summary>
         /// Control url.
@@ -831,17 +668,6 @@ namespace Honoo.Net
         /// Event sub url.
         /// </summary>
         public string EventSubUrl { get; }
-
-        /// <summary>
-        /// Parent device.
-        /// </summary>
-        /// <exception cref="Exception"/>
-        public UPnPDevice Parent { get; }
-
-        /// <summary>
-        /// Root device info.
-        /// </summary>
-        public UPnPRootDevice Root { get; }
 
         /// <summary>
         /// Scpd url.
@@ -858,43 +684,23 @@ namespace Honoo.Net
         /// </summary>
         public string ServiceType { get; }
 
-        #endregion Members
+        #endregion Properties
 
         /// <summary>
-        /// Initializes a new instance of the Service class.
+        /// Initializes a new instance of the UPnPService class.
         /// </summary>
-        /// <param name="uri">Must specify device base uri, Because the description file does not contain uri.</param>
-        /// <param name="root">Root device.</param>
-        /// <param name="parent">Parent device.</param>
+        /// <param name="baseUri">Base uri,</param>
         /// <param name="serviceNode">Service XmlNode.</param>
         /// <param name="nm">XmlNamespaceManager.</param>
         /// <exception cref="Exception"/>
-        public UPnPService(Uri uri, UPnPRootDevice root, UPnPDevice parent, XmlNode serviceNode, XmlNamespaceManager nm)
+        internal UPnPService(Uri baseUri, XmlNode serviceNode, XmlNamespaceManager nm)
         {
-            if (uri is null)
-            {
-                throw new ArgumentNullException(nameof(uri));
-            }
-            if (serviceNode is null)
-            {
-                throw new ArgumentNullException(nameof(serviceNode));
-            }
-            this.Root = root;
-            this.Parent = parent;
+            this.BaseUrl = baseUri;
             this.ServiceType = serviceNode.SelectSingleNode("ns:serviceType", nm).InnerText.Trim();
             this.ServiceID = serviceNode.SelectSingleNode("ns:serviceId", nm).InnerText.Trim();
-            this.ScpdUrl = string.Format(CultureInfo.InvariantCulture, "{0}{1}", uri.AbsoluteUri, serviceNode.SelectSingleNode("ns:SCPDURL", nm).InnerText.Trim().Trim('/'));
-            this.ControlUrl = string.Format(CultureInfo.InvariantCulture, "{0}{1}", uri.AbsoluteUri, serviceNode.SelectSingleNode("ns:controlURL", nm).InnerText.Trim().Trim('/'));
-            this.EventSubUrl = string.Format(CultureInfo.InvariantCulture, "{0}{1}", uri.AbsoluteUri, serviceNode.SelectSingleNode("ns:eventSubURL", nm).InnerText.Trim().Trim('/'));
-        }
-
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0} \"{1}\"", this.ServiceID, this.ServiceType);
+            this.ScpdUrl = serviceNode.SelectSingleNode("ns:SCPDURL", nm).InnerText.Trim();
+            this.ControlUrl = serviceNode.SelectSingleNode("ns:controlURL", nm).InnerText.Trim();
+            this.EventSubUrl = serviceNode.SelectSingleNode("ns:eventSubURL", nm).InnerText.Trim();
         }
     }
 

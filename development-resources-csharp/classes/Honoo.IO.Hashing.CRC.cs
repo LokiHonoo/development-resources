@@ -138,7 +138,7 @@ namespace Honoo.IO.Hashing
 
         #endregion Properties
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// Initializes a new instance of the CRC class.
@@ -178,7 +178,7 @@ namespace Honoo.IO.Hashing
         {
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// Gets final crc value.
@@ -289,7 +289,7 @@ namespace Honoo.IO.Hashing
 
         #endregion Properties
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// Initializes a new instance of the CRC_4 class.
@@ -325,7 +325,7 @@ namespace Honoo.IO.Hashing
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// Gets final crc value.
@@ -463,7 +463,7 @@ namespace Honoo.IO.Hashing
 
         #endregion Properties
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// Initializes a new instance of the CRC_5 class.
@@ -499,7 +499,7 @@ namespace Honoo.IO.Hashing
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// Gets final crc value.
@@ -667,7 +667,7 @@ namespace Honoo.IO.Hashing
 
         #endregion Properties
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// Initializes a new instance of the CRC_6 class.
@@ -703,7 +703,7 @@ namespace Honoo.IO.Hashing
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// Gets final crc value.
@@ -841,7 +841,7 @@ namespace Honoo.IO.Hashing
 
         #endregion Properties
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// Initializes a new instance of the CRC_7 class.
@@ -877,7 +877,7 @@ namespace Honoo.IO.Hashing
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// Gets final crc value.
@@ -1015,7 +1015,7 @@ namespace Honoo.IO.Hashing
 
         #endregion Properties
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// Initializes a new instance of the CRC_8 class.
@@ -1064,7 +1064,7 @@ namespace Honoo.IO.Hashing
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// Gets final crc value.
@@ -1225,7 +1225,7 @@ namespace Honoo.IO.Hashing
 
         #endregion Properties
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// Initializes a new instance of the CRC_16 class.
@@ -1261,7 +1261,7 @@ namespace Honoo.IO.Hashing
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// Gets final crc value.
@@ -1520,7 +1520,7 @@ namespace Honoo.IO.Hashing
 
         #endregion Properties
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// Initializes a new instance of the CRC_32 class.
@@ -1569,7 +1569,7 @@ namespace Honoo.IO.Hashing
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// Gets final crc value.
@@ -1731,7 +1731,7 @@ namespace Honoo.IO.Hashing
 
         #endregion Properties
 
-        #region Constructor
+        #region Construction
 
         /// <summary>
         /// Initializes a new instance of the CRC_64 class.
@@ -1767,7 +1767,7 @@ namespace Honoo.IO.Hashing
             }
         }
 
-        #endregion Constructor
+        #endregion Construction
 
         /// <summary>
         /// Gets final crc value.
