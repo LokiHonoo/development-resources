@@ -118,8 +118,8 @@ namespace Honoo.IO.Hashing
         #region Properties
 
         private readonly int _checksumSize;
-        private readonly int _checksumWidth;
         private readonly string _name;
+        private readonly int _width;
 
         /// <summary>
         /// Gets checksum size bits.
@@ -127,14 +127,14 @@ namespace Honoo.IO.Hashing
         public int ChecksumSize => _checksumSize;
 
         /// <summary>
-        /// Gets checksum width bits.
-        /// </summary>
-        public int ChecksumWidth => _checksumWidth;
-
-        /// <summary>
         /// Gets algorithm name.
         /// </summary>
         public string Name => _name;
+
+        /// <summary>
+        /// Gets width bits.
+        /// </summary>
+        public int Width => _width;
 
         #endregion Properties
 
@@ -144,12 +144,12 @@ namespace Honoo.IO.Hashing
         /// Initializes a new instance of the CRC class.
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="checksumWidth"></param>
+        /// <param name="width"></param>
         /// <param name="checksumSize"></param>
-        protected CRC(string name, int checksumWidth, int checksumSize)
+        protected CRC(string name, int width, int checksumSize)
         {
             _name = name;
-            _checksumWidth = checksumWidth;
+            _width = width;
             _checksumSize = checksumSize;
         }
 
