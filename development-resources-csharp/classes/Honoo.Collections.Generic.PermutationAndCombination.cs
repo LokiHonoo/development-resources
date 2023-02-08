@@ -17,7 +17,7 @@ namespace Honoo.Collections.Generic
     /// 求数组组合。如果元素的类型是引用类型，组合的结果是元素的浅表复制。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
-    public class Combination<T>
+    public sealed class Combination<T>
     {
         #region 成员
 
@@ -76,7 +76,7 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public List<T[]> Output()
+        public IList<T[]> Output()
         {
             BigInteger count = GetCount();
             if (count > int.MaxValue)
@@ -166,7 +166,7 @@ namespace Honoo.Collections.Generic
     /// 求数组排列。如果元素的类型是引用类型，排列的结果是元素的浅表复制。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
-    public class Permutation<T>
+    public sealed class Permutation<T>
     {
         #region 成员
 
@@ -225,7 +225,7 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public List<T[]> Output()
+        public IList<T[]> Output()
         {
             BigInteger count = GetCount();
             if (count > int.MaxValue)

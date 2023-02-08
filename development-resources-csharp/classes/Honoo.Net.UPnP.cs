@@ -109,15 +109,15 @@ namespace Honoo.Net
         /// <summary>
         /// Releases resources at the instance.
         /// </summary>
-        /// <param name="disposing">Releases unmanaged resources.</param>
+        /// <param name="disposing">Releases managed resources.</param>
         private void Dispose(bool disposing)
         {
             if (!_disposed)
             {
                 if (disposing)
                 {
-                    _httpClient.Dispose();
                 }
+                _httpClient.Dispose();
                 _disposed = true;
             }
         }
