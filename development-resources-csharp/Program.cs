@@ -1,7 +1,10 @@
-﻿using Honoo.Net;
+﻿using Honoo.Collections.Generic;
+using Honoo.Net;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace Honoo
 {
@@ -11,19 +14,9 @@ namespace Honoo
 
         #region Main
 
-        private static async Task Main()
+        private static void Main()
         {
-            using (UPnP uPnP = new UPnP())
-            {
-                UPnPDevice[] devices = await uPnP.Discover();
-                UPnPService service = devices[0].FindServices(UPnP.URN_UPNP_SERVICE_WAN_IP_CONNECTION_1)[0];
-                await uPnP.AddPortMapping(service, false, "TCP", 4788, IPAddress.Parse("192.168.1.1"), 4788, "test", 0, true);
-                UPnPPortMappingEntry entry = await uPnP.GetSpecificPortMappingEntry(service, false, "TCP", 4788);
-                await uPnP.DeletePortMapping(service, false, "TCP", 4788);
-                var a = 1;
-            }
-
-            //TestPermutationAndCombination();
+            TestUPnP();
             //
             Console.ReadKey(true);
         }
@@ -44,33 +37,43 @@ namespace Honoo
                     Console.Write(' ');
                 }
             }
-            ((int[])userState)[0]++;
-        }
-
-        private static void TestCRC(Honoo.IO.Hashing.CRC crc, byte[] input)
-        {
-            byte[] value = crc.DoFinalBytes(input);
-            Console.WriteLine(crc.Name + "     " + BitConverter.ToString(value));
+            ((Counter)userState).Count++;
         }
 
         private static void TestPermutationAndCombination()
         {
             int[] a = new int[] { 11, 22, 33, 44, 55, 66, 77, 88, 99 };
             int m = 5;
-            int[] count = new int[1];
-            Honoo.Collections.Generic.Combination<int> combination = new Honoo.Collections.Generic.Combination<int>(a, m);
-            Console.WriteLine($"combination m={m} count = {combination.GetCount()}");
+            Counter counter = new Counter();
+            Combination<int> combination = new Combination<int>(a, m);
+            combination.Output(Created, counter);
+            Console.WriteLine($"combination n={a.Length} m={m} Due count={combination.GetCount()}");
+            Console.WriteLine($"combination output count={counter.Count}");
             Console.ReadKey(true);
-            combination.Output(Created, count);
-            Console.WriteLine($"combination output count = {count[0]}");
+            counter.Count = 0;
+            Permutation<int> permutation = new Permutation<int>(a, m);
+            permutation.Output(Created, counter);
+            Console.WriteLine($"permutation n={a.Length} m={m} Due count={permutation.GetCount()}");
+            Console.WriteLine($"permutation output count={counter.Count}");
             Console.ReadKey(true);
-            count[0] = 0;
-            Honoo.Collections.Generic.Permutation<int> permutation = new Honoo.Collections.Generic.Permutation<int>(a, m);
-            Console.WriteLine($"permutation m={m} count = {permutation.GetCount()}");
-            Console.ReadKey(true);
-            permutation.Output(Created, count);
-            Console.WriteLine($"permutation output count = {count[0]}");
-            Console.ReadKey(true);
+        }
+
+        private static async void TestUPnP()
+        {
+            using (UPnP uPnP = new UPnP())
+            {
+                UPnPDevice[] devices = await uPnP.Discover();
+                UPnPService service = devices[0].FindServices(UPnP.URN_UPNP_SERVICE_WAN_IP_CONNECTION_1)[0];
+                await uPnP.AddPortMapping(service, false, "TCP", 4788, IPAddress.Parse("192.168.1.1"), 4788, "test", 0, true);
+                UPnPPortMappingEntry entry = await uPnP.GetSpecificPortMappingEntry(service, false, "TCP", 4788);
+                await uPnP.DeletePortMapping(service, false, "TCP", 4788);
+                var a = 1;
+            }
+        }
+
+        internal sealed class Counter
+        {
+            internal long Count { get; set; }
         }
     }
 }

@@ -30,25 +30,46 @@ namespace Honoo.Data
     {
         #region ConnectionBehavior
 
+        private static MySqlConnectionBehavior _dataAdapterConnectionBehavior = MySqlConnectionBehavior.Auto;
+        private static MySqlConnectionBehavior _dataReaderConnectionBehavior = MySqlConnectionBehavior.Manual;
+        private static MySqlConnectionBehavior _executeConnectionBehavior = MySqlConnectionBehavior.Manual;
+        private static MySqlConnectionBehavior _transactionConnectionBehavior = MySqlConnectionBehavior.Manual;
+
         /// <summary>
         /// Connection open/close behavior when using DataAdapter. Default Auto.
         /// </summary>
-        public static MySqlConnectionBehavior DataAdapterConnectionBehavior { get; set; } = MySqlConnectionBehavior.Auto;
+        public static MySqlConnectionBehavior DataAdapterConnectionBehavior
+        {
+            get => _dataAdapterConnectionBehavior;
+            set => _dataAdapterConnectionBehavior = value;
+        }
 
         /// <summary>
         /// Connection open/close behavior when using DataReader. Default Manual.
         /// </summary>
-        public static MySqlConnectionBehavior DataReaderConnectionBehavior { get; set; } = MySqlConnectionBehavior.Manual;
+        public static MySqlConnectionBehavior DataReaderConnectionBehavior
+        {
+            get => _dataReaderConnectionBehavior;
+            set => _dataReaderConnectionBehavior = value;
+        }
 
         /// <summary>
         /// Connection open/close behavior when using Execute. Default Manual.
         /// </summary>
-        public static MySqlConnectionBehavior ExecuteConnectionBehavior { get; set; } = MySqlConnectionBehavior.Manual;
+        public static MySqlConnectionBehavior ExecuteConnectionBehavior
+        {
+            get => _executeConnectionBehavior;
+            set => _executeConnectionBehavior = value;
+        }
 
         /// <summary>
         /// Connection open/close behavior when using Transaction. Default Manual.
         /// </summary>
-        public static MySqlConnectionBehavior TransactionConnectionBehavior { get; set; } = MySqlConnectionBehavior.Manual;
+        public static MySqlConnectionBehavior TransactionConnectionBehavior
+        {
+            get => _transactionConnectionBehavior;
+            set => _transactionConnectionBehavior = value;
+        }
 
         #endregion ConnectionBehavior
 
@@ -250,7 +271,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -289,7 +310,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -351,7 +372,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -388,7 +409,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -430,7 +451,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
             CommandBehavior commandBehavior;
-            if (DataReaderConnectionBehavior == MySqlConnectionBehavior.Manual)
+            if (_dataReaderConnectionBehavior == MySqlConnectionBehavior.Manual)
             {
                 if (connection.State != ConnectionState.Open)
                 {
@@ -483,7 +504,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (ExecuteConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_executeConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -522,7 +543,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (ExecuteConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_executeConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -560,7 +581,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (ExecuteConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_executeConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -619,7 +640,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (TransactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_transactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -695,7 +716,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (TransactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_transactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -770,7 +791,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (TransactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_transactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -849,7 +870,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(textWriter));
             }
-            if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -947,7 +968,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentException("File size cannot be less than 1 MB.");
             }
-            if (DataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -1608,10 +1629,14 @@ namespace Honoo.Data
     /// </summary>
     public enum MySqlConnectionBehavior
     {
-        /// <summary>Does not open automatically. If the connection is not open  when the querying, an exception is thrown.</summary>
+        /// <summary>Does not open automatically.
+        /// If the connection is not open  when the querying, an exception is thrown.</summary>
         Manual,
 
-        /// <summary>If the connection is not open, automatically open and close when the query is complete. If the connection is already open, keep it turned on when the query is complete.</summary>
+        /// <summary>
+        /// If the connection is not open, automatically open and close when the query is complete.
+        /// If the connection is already open, keep it turned on when the query is complete.
+        /// </summary>
         Auto
     }
 
@@ -1628,7 +1653,12 @@ namespace Honoo.Data
     /// <param name="association">The name associated with dumping.</param>
     /// <param name="userState">User state.</param>
     /// <param name="cancel">Cancel dump.</param>
-    public delegate void MySqlWrittenCallback(long written, long total, MySqlDumpProjectType projectType, string association, object userState, ref bool cancel);
+    public delegate void MySqlWrittenCallback(long written,
+                                              long total,
+                                              MySqlDumpProjectType projectType,
+                                              string association,
+                                              object userState,
+                                              ref bool cancel);
 
     /// <summary>
     /// Note the type of dumping in the progress report.

@@ -22,25 +22,46 @@ namespace Honoo.Data
     {
         #region ConnectionBehavior
 
+        private static SqlConnectionBehavior _dataAdapterConnectionBehavior = SqlConnectionBehavior.Auto;
+        private static SqlConnectionBehavior _dataReaderConnectionBehavior = SqlConnectionBehavior.Manual;
+        private static SqlConnectionBehavior _executeConnectionBehavior = SqlConnectionBehavior.Manual;
+        private static SqlConnectionBehavior _transactionConnectionBehavior = SqlConnectionBehavior.Manual;
+
         /// <summary>
         /// Connection open/close behavior when using DataAdapter. Default Auto.
         /// </summary>
-        public static SqlConnectionBehavior DataAdapterConnectionBehavior { get; set; } = SqlConnectionBehavior.Auto;
+        public static SqlConnectionBehavior DataAdapterConnectionBehavior
+        {
+            get => _dataAdapterConnectionBehavior;
+            set => _dataAdapterConnectionBehavior = value;
+        }
 
         /// <summary>
         /// Connection open/close behavior when using DataReader. Default Manual.
         /// </summary>
-        public static SqlConnectionBehavior DataReaderConnectionBehavior { get; set; } = SqlConnectionBehavior.Manual;
+        public static SqlConnectionBehavior DataReaderConnectionBehavior
+        {
+            get => _dataReaderConnectionBehavior;
+            set => _dataReaderConnectionBehavior = value;
+        }
 
         /// <summary>
-        /// Connection open/close behavior when using Execute, XmlReader. Default Manual.
+        /// Connection open/close behavior when using Execute. Default Manual.
         /// </summary>
-        public static SqlConnectionBehavior ExecuteConnectionBehavior { get; set; } = SqlConnectionBehavior.Manual;
+        public static SqlConnectionBehavior ExecuteConnectionBehavior
+        {
+            get => _executeConnectionBehavior;
+            set => _executeConnectionBehavior = value;
+        }
 
         /// <summary>
         /// Connection open/close behavior when using Transaction. Default Manual.
         /// </summary>
-        public static SqlConnectionBehavior TransactionConnectionBehavior { get; set; } = SqlConnectionBehavior.Manual;
+        public static SqlConnectionBehavior TransactionConnectionBehavior
+        {
+            get => _transactionConnectionBehavior;
+            set => _transactionConnectionBehavior = value;
+        }
 
         #endregion ConnectionBehavior
 
@@ -209,7 +230,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (DataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -249,7 +270,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (DataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -312,7 +333,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (DataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -350,7 +371,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (DataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -393,7 +414,7 @@ namespace Honoo.Data
             }
 
             CommandBehavior commandBehavior;
-            if (DataReaderConnectionBehavior == SqlConnectionBehavior.Manual)
+            if (_dataReaderConnectionBehavior == SqlConnectionBehavior.Manual)
             {
                 if (connection.State != ConnectionState.Open)
                 {
@@ -447,7 +468,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (ExecuteConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_executeConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -493,7 +514,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (ExecuteConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_executeConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -533,7 +554,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (ExecuteConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_executeConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -572,7 +593,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (ExecuteConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_executeConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -631,7 +652,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (TransactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_transactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -707,7 +728,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (TransactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_transactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -782,7 +803,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (TransactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_transactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }

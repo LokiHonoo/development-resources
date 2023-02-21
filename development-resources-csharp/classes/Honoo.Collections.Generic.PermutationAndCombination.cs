@@ -14,7 +14,7 @@ using System.Numerics;
 namespace Honoo.Collections.Generic
 {
     /// <summary>
-    /// 求数组组合。如果元素的类型是引用类型，组合的结果是元素的浅表复制。
+    /// 求数组组合。组合的结果是元素的浅表复制。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
     public sealed class Combination<T>
@@ -38,7 +38,7 @@ namespace Honoo.Collections.Generic
         #endregion 委托
 
         /// <summary>
-        /// 求数组 m 个元素的组合。如果元素的类型是引用类型，组合的结果是元素的浅表复制。
+        /// 求数组 m 个元素的组合。组合的结果是元素的浅表复制。
         /// </summary>
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
@@ -66,19 +66,19 @@ namespace Honoo.Collections.Generic
         /// 计算可组合数量。
         /// </summary>
         /// <returns></returns>
-        public BigInteger GetCount()
+        public string GetCount()
         {
-            return C(_array.Length, _m);
+            return C(_array.Length, _m).ToString();
         }
 
         /// <summary>
-        /// 输出组合的集合。如果元素的类型是引用类型，组合的结果是元素的浅表复制。
+        /// 输出组合的集合。组合的结果是元素的浅表复制。
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
         public IList<T[]> Output()
         {
-            BigInteger count = GetCount();
+            BigInteger count = C(_array.Length, _m);
             if (count > int.MaxValue)
             {
                 throw new Exception("可计算的组合数量超出了容器容量 (Int32)。");
@@ -89,7 +89,7 @@ namespace Honoo.Collections.Generic
         }
 
         /// <summary>
-        /// 每生成一组集合后调用回调函数。如果元素的类型是引用类型，组合的结果是元素的浅表复制。
+        /// 每生成一组集合后调用回调函数。组合的结果是元素的浅表复制。
         /// </summary>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
@@ -163,7 +163,7 @@ namespace Honoo.Collections.Generic
     }
 
     /// <summary>
-    /// 求数组排列。如果元素的类型是引用类型，排列的结果是元素的浅表复制。
+    /// 求数组排列。排列的结果是元素的浅表复制。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
     public sealed class Permutation<T>
@@ -187,7 +187,7 @@ namespace Honoo.Collections.Generic
         #endregion 委托
 
         /// <summary>
-        /// 求数组 m 个元素的排列。如果元素的类型是引用类型，排列的结果是元素的浅表复制。
+        /// 求数组 m 个元素的排列。排列的结果是元素的浅表复制。
         /// </summary>
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
@@ -215,19 +215,19 @@ namespace Honoo.Collections.Generic
         /// 计算可排列数量。
         /// </summary>
         /// <returns></returns>
-        public BigInteger GetCount()
+        public string GetCount()
         {
-            return P(_array.Length, _m);
+            return P(_array.Length, _m).ToString();
         }
 
         /// <summary>
-        /// 输出排列的集合。如果元素的类型是引用类型，排列的结果是元素的浅表复制。
+        /// 输出排列的集合。排列的结果是元素的浅表复制。
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
         public IList<T[]> Output()
         {
-            BigInteger count = GetCount();
+            BigInteger count = P(_array.Length, _m);
             if (count > int.MaxValue)
             {
                 throw new Exception("可计算的排列数量超出了容器容量 (Int32)。");
@@ -238,7 +238,7 @@ namespace Honoo.Collections.Generic
         }
 
         /// <summary>
-        /// 每生成一组集合后调用回调函数。如果元素的类型是引用类型，排列的结果是元素的浅表复制。
+        /// 每生成一组集合后调用回调函数。排列的结果是元素的浅表复制。
         /// </summary>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>

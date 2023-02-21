@@ -291,13 +291,12 @@ namespace Honoo.Net
                 request.AppendLine("MAN: \"ssdp:discover\"");
                 request.AppendLine("MX: 2");
                 // request.AppendLine("ST: ssdp:all");
-                // request.AppendLine("ST: upnp:rootdevice");
+                request.AppendLine("ST: upnp:rootdevice");
                 // request.AppendLine("ST: uuid:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
-                request.AppendLine("ST: urn:schemas-upnp-org:service:WANIPConnection:1");
-                request.AppendLine();
-                byte[] data = Encoding.UTF8.GetBytes(request.ToString());
+                // request.AppendLine("ST: urn:schemas-upnp-org:service:WANIPConnection:1");
+                byte[] requestBytes = Encoding.UTF8.GetBytes(request.ToString());
                 IPEndPoint ep = new IPEndPoint(IPAddress.Parse("239.255.255.250"), 1900);
-                client.Send(data, data.Length, ep);
+                client.Send(requestBytes, requestBytes.Length, ep);
                 while (true)
                 {
                     try
@@ -328,9 +327,9 @@ namespace Honoo.Net
                                 string descriptionUrl = response.Substring(index, count).Trim();
                                 try
                                 {
-                                    string down = await _httpClient.GetStringAsync(descriptionUrl);
+                                    string description = await _httpClient.GetStringAsync(descriptionUrl);
                                     XmlDocument doc = new XmlDocument();
-                                    doc.LoadXml(down);
+                                    doc.LoadXml(description);
                                     XmlNamespaceManager nm = new XmlNamespaceManager(doc.NameTable);
                                     nm.AddNamespace("ns", "urn:schemas-upnp-org:device-1-0");
                                     Uri uri = new Uri(doc.SelectSingleNode("/ns:root/ns:URLBase", nm).InnerText.Trim());

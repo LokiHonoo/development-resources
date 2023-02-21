@@ -28,25 +28,46 @@ namespace Honoo.Data
     {
         #region ConnectionBehavior
 
+        private static SQLiteConnectionBehavior _dataAdapterConnectionBehavior = SQLiteConnectionBehavior.Auto;
+        private static SQLiteConnectionBehavior _dataReaderConnectionBehavior = SQLiteConnectionBehavior.Manual;
+        private static SQLiteConnectionBehavior _executeConnectionBehavior = SQLiteConnectionBehavior.Manual;
+        private static SQLiteConnectionBehavior _transactionConnectionBehavior = SQLiteConnectionBehavior.Manual;
+
         /// <summary>
         /// Connection open/close behavior when using DataAdapter. Default Auto.
         /// </summary>
-        public static SQLiteConnectionBehavior DataAdapterConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Auto;
+        public static SQLiteConnectionBehavior DataAdapterConnectionBehavior
+        {
+            get => _dataAdapterConnectionBehavior;
+            set => _dataAdapterConnectionBehavior = value;
+        }
 
         /// <summary>
         /// Connection open/close behavior when using DataReader. Default Manual.
         /// </summary>
-        public static SQLiteConnectionBehavior DataReaderConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Manual;
+        public static SQLiteConnectionBehavior DataReaderConnectionBehavior
+        {
+            get => _dataReaderConnectionBehavior;
+            set => _dataReaderConnectionBehavior = value;
+        }
 
         /// <summary>
         /// Connection open/close behavior when using Execute. Default Manual.
         /// </summary>
-        public static SQLiteConnectionBehavior ExecuteConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Manual;
+        public static SQLiteConnectionBehavior ExecuteConnectionBehavior
+        {
+            get => _executeConnectionBehavior;
+            set => _executeConnectionBehavior = value;
+        }
 
         /// <summary>
         /// Connection open/close behavior when using Transaction. Default Manual.
         /// </summary>
-        public static SQLiteConnectionBehavior TransactionConnectionBehavior { get; set; } = SQLiteConnectionBehavior.Manual;
+        public static SQLiteConnectionBehavior TransactionConnectionBehavior
+        {
+            get => _transactionConnectionBehavior;
+            set => _transactionConnectionBehavior = value;
+        }
 
         #endregion ConnectionBehavior
 
@@ -146,7 +167,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -185,7 +206,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -247,7 +268,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -284,7 +305,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -326,7 +347,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
             CommandBehavior commandBehavior;
-            if (DataReaderConnectionBehavior == SQLiteConnectionBehavior.Manual)
+            if (_dataReaderConnectionBehavior == SQLiteConnectionBehavior.Manual)
             {
                 if (connection.State != ConnectionState.Open)
                 {
@@ -379,7 +400,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (ExecuteConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_executeConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -418,7 +439,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (ExecuteConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_executeConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -456,7 +477,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (ExecuteConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_executeConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -501,7 +522,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (TransactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_transactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -570,7 +591,7 @@ namespace Honoo.Data
                 throw new ArgumentNullException(nameof(connection));
             }
 
-            if (TransactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_transactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -636,7 +657,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            if (TransactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_transactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -725,7 +746,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(textWriter));
             }
-            if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
@@ -817,7 +838,7 @@ namespace Honoo.Data
             {
                 throw new ArgumentException("File size cannot be less than 1 MB.");
             }
-            if (DataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
+            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
             {
                 throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
