@@ -1,10 +1,9 @@
 ﻿using Honoo.Collections.Generic;
 using Honoo.Net;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Text;
+using System.Xml;
 
 namespace Honoo
 {
@@ -16,6 +15,7 @@ namespace Honoo
 
         private static void Main()
         {
+
             TestUPnP();
             //
             Console.ReadKey(true);
@@ -62,12 +62,15 @@ namespace Honoo
         {
             using (UPnP uPnP = new UPnP())
             {
-                UPnPDevice[] devices = await uPnP.Discover();
+                UPnPRootDevice[] devices = await uPnP.Discover();
                 UPnPService service = devices[0].FindServices(UPnP.URN_UPNP_SERVICE_WAN_IP_CONNECTION_1)[0];
-                await uPnP.AddPortMapping(service, false, "TCP", 4788, IPAddress.Parse("192.168.1.1"), 4788, "test", 0, true);
+                string scpd = await uPnP.GetScpdInformation(service);
+                var a = await uPnP.GetNATRSIPStatus(service, false);
+                var b = await uPnP.GetExternalIPAddress(service, false);
+                //await uPnP.AddPortMapping(service, false, "TCP", 4788, IPAddress.Parse("192.168.18.11"), 4788, "test", 0, true);
                 UPnPPortMappingEntry entry = await uPnP.GetSpecificPortMappingEntry(service, false, "TCP", 4788);
-                await uPnP.DeletePortMapping(service, false, "TCP", 4788);
-                var a = 1;
+                //await uPnP.DeletePortMapping(service, false, "TCP", 4788);
+                var ssa = 1;
             }
         }
 
