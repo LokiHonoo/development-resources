@@ -209,29 +209,29 @@ namespace Honoo.IO
         /// <summary>
         /// 指定字节数组大小端，根据字节数组长度（最大 4 字节）转换为对应的数值，并以 Int32 类型输出。
         /// </summary>
-        /// <param name="bytes">字节数组。</param>
         /// <param name="littleEndian">指定大小端。Windows 定义 little endian，Unix 定义 big endian。</param>
+        /// <param name="bytes">字节数组。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static int GetInt32(byte[] bytes, bool littleEndian)
+        public static int GetInt32(bool littleEndian, byte[] bytes)
         {
-            return GetInt32(bytes, 0, bytes.Length, littleEndian);
+            return GetInt32(littleEndian, bytes, 0, bytes.Length);
         }
 
         /// <summary>
         /// 指定字节数组大小端，根据字节数组长度（最大 4 字节）转换为对应的数值，并以 Int32 类型输出。
         /// </summary>
+        /// <param name="littleEndian">指定大小端。Windows 定义 little endian，Unix 定义 big endian。</param>
         /// <param name="buffer">字节数组。</param>
         /// <param name="offset">读取的字节数组偏移量。</param>
         /// <param name="length">读取的字节数量。</param>
-        /// <param name="littleEndian">指定大小端。Windows 定义 little endian，Unix 定义 big endian。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static int GetInt32(byte[] buffer, int offset, int length, bool littleEndian)
+        public static int GetInt32(bool littleEndian, byte[] buffer, int offset, int length)
         {
             if (length <= 0 || length > 4)
             {
-                throw new ArgumentException("Length must be between 1 - 4.");
+                throw new ArgumentException("Input length must be between 1 - 4.");
             }
             int result;
             if (length == 4)
@@ -289,29 +289,29 @@ namespace Honoo.IO
         /// <summary>
         /// 指定字节数组大小端，根据字节数组长度（最大 8 字节）转换为对应的数值，并以 Int64 类型输出。
         /// </summary>
-        /// <param name="bytes">字节数组。</param>
         /// <param name="littleEndian">指定大小端。Windows 定义 little endian，Unix 定义 big endian。</param>
+        /// <param name="bytes">字节数组。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static long GetInt64(byte[] bytes, bool littleEndian)
+        public static long GetInt64(bool littleEndian, byte[] bytes)
         {
-            return GetInt64(bytes, 0, bytes.Length, littleEndian);
+            return GetInt64(littleEndian, bytes, 0, bytes.Length);
         }
 
         /// <summary>
         /// 指定字节数组大小端，根据字节数组长度（最大 8 字节）转换为对应的数值，并以 Int64 类型输出。
         /// </summary>
+        /// <param name="littleEndian">指定大小端。Windows 定义 little endian，Unix 定义 big endian。</param>
         /// <param name="buffer">字节数组。</param>
         /// <param name="offset">读取的字节数组偏移量。</param>
         /// <param name="length">读取的字节数量。</param>
-        /// <param name="littleEndian">指定大小端。Windows 定义 little endian，Unix 定义 big endian。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static long GetInt64(byte[] buffer, int offset, int length, bool littleEndian)
+        public static long GetInt64(bool littleEndian, byte[] buffer, int offset, int length)
         {
             if (length <= 0 || length > 8)
             {
-                throw new ArgumentException("Length must be between 1 - 8.");
+                throw new ArgumentException("Input length must be between 1 - 8.");
             }
             long result;
             if (length == 8)
