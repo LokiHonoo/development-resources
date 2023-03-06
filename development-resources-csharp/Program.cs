@@ -1,9 +1,4 @@
-﻿using Honoo.Collections.Generic;
-using Honoo.Net;
-using System;
-using System.Net.Http;
-using System.Text;
-using System.Xml;
+﻿using System;
 
 namespace Honoo
 {
@@ -15,8 +10,8 @@ namespace Honoo
 
         private static void Main()
         {
+            TestBinaries();
 
-            TestUPnP();
             //
             Console.ReadKey(true);
         }
@@ -40,38 +35,44 @@ namespace Honoo
             ((Counter)userState).Count++;
         }
 
+        private static void TestBinaries()
+        {
+            byte[] bytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+            Console.WriteLine(BitConverter.ToInt16(bytes, 6));
+            Console.WriteLine(Honoo.Binaries.ToInt16(true, bytes, 6, 2));
+            Console.WriteLine(BitConverter.ToInt32(bytes, 4));
+            Console.WriteLine(Honoo.Binaries.ToInt32(true, bytes, 4, 4));
+            Console.WriteLine(BitConverter.ToInt64(bytes, 0));
+            Console.WriteLine(Honoo.Binaries.ToInt64(true, bytes));
+            Console.WriteLine(BitConverter.ToUInt16(bytes, 6));
+            Console.WriteLine(Honoo.Binaries.ToUInt16(true, bytes, 6, 2));
+            Console.WriteLine(BitConverter.ToUInt32(bytes, 4));
+            Console.WriteLine(Honoo.Binaries.ToUInt32(true, bytes, 4, 4));
+            Console.WriteLine(BitConverter.ToUInt64(bytes, 0));
+            Console.WriteLine(Honoo.Binaries.ToUInt64(true, bytes));
+
+            Console.WriteLine(BitConverter.ToString(bytes));
+            Console.WriteLine(Honoo.Binaries.ToString(bytes, 0, bytes.Length, "-", 4, "    "));
+
+            Console.WriteLine(Honoo.Binaries.ToUInt64(true, Honoo.Binaries.GetBytes(true, BitConverter.ToUInt64(bytes, 0))));
+        }
+
         private static void TestPermutationAndCombination()
         {
             int[] a = new int[] { 11, 22, 33, 44, 55, 66, 77, 88, 99 };
             int m = 5;
             Counter counter = new Counter();
-            Combination<int> combination = new Combination<int>(a, m);
+            Collections.Generic.Combination<int> combination = new Collections.Generic.Combination<int>(a, m);
             combination.Output(Created, counter);
             Console.WriteLine($"combination n={a.Length} m={m} Due count={combination.GetCount()}");
             Console.WriteLine($"combination output count={counter.Count}");
             Console.ReadKey(true);
             counter.Count = 0;
-            Permutation<int> permutation = new Permutation<int>(a, m);
+            Collections.Generic.Permutation<int> permutation = new Collections.Generic.Permutation<int>(a, m);
             permutation.Output(Created, counter);
             Console.WriteLine($"permutation n={a.Length} m={m} Due count={permutation.GetCount()}");
             Console.WriteLine($"permutation output count={counter.Count}");
             Console.ReadKey(true);
-        }
-
-        private static async void TestUPnP()
-        {
-            using (UPnP uPnP = new UPnP())
-            {
-                UPnPRootDevice[] devices = await uPnP.Discover();
-                UPnPService service = devices[0].FindServices(UPnP.URN_UPNP_SERVICE_WAN_IP_CONNECTION_1)[0];
-                string scpd = await uPnP.GetScpdInformation(service);
-                var a = await uPnP.GetNATRSIPStatus(service, false);
-                var b = await uPnP.GetExternalIPAddress(service, false);
-                //await uPnP.AddPortMapping(service, false, "TCP", 4788, IPAddress.Parse("192.168.18.11"), 4788, "test", 0, true);
-                UPnPPortMappingEntry entry = await uPnP.GetSpecificPortMappingEntry(service, false, "TCP", 4788);
-                //await uPnP.DeletePortMapping(service, false, "TCP", 4788);
-                var ssa = 1;
-            }
         }
 
         internal sealed class Counter

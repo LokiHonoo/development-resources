@@ -12,8 +12,8 @@
  */
 
 //
-// using MySql.Data.MySqlClient; // MySql.Data
-using MySqlConnector; // MySqlConnector
+using MySql.Data.MySqlClient; // MySql.Data
+//using MySqlConnector; // MySqlConnector
 using System;
 using System.Collections.Generic;
 using System.Data;
