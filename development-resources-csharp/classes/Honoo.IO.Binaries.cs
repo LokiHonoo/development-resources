@@ -238,45 +238,45 @@ namespace Honoo.IO
             {
                 if (littleEndian)
                 {
-                    result = (buffer[offset] & 0xFF) << 24;
-                    result |= (buffer[offset + 1] & 0xFF) << 16;
-                    result |= (buffer[offset + 2] & 0xFF) << 8;
-                    result |= buffer[offset + 3] & 0xFF;
-                }
-                else
-                {
                     result = buffer[offset] & 0xFF;
                     result |= (buffer[offset + 1] & 0xFF) << 8;
                     result |= (buffer[offset + 2] & 0xFF) << 16;
                     result |= (buffer[offset + 3] & 0xFF) << 24;
+                }
+                else
+                {
+                    result = (buffer[offset] & 0xFF) << 24;
+                    result |= (buffer[offset + 1] & 0xFF) << 16;
+                    result |= (buffer[offset + 2] & 0xFF) << 8;
+                    result |= buffer[offset + 3] & 0xFF;
                 }
             }
             else if (length == 3)
             {
                 if (littleEndian)
                 {
-                    result = (buffer[offset] & 0xFF) << 16;
-                    result |= (buffer[offset + 1] & 0xFF) << 8;
-                    result |= buffer[offset + 2] & 0xFF;
-                }
-                else
-                {
                     result = buffer[offset] & 0xFF;
                     result |= (buffer[offset + 1] & 0xFF) << 8;
                     result |= (buffer[offset + 2] & 0xFF) << 16;
+                }
+                else
+                {
+                    result = (buffer[offset] & 0xFF) << 16;
+                    result |= (buffer[offset + 1] & 0xFF) << 8;
+                    result |= buffer[offset + 2] & 0xFF;
                 }
             }
             else if (length == 2)
             {
                 if (littleEndian)
                 {
-                    result = (buffer[offset] & 0xFF) << 8;
-                    result |= buffer[offset + 1] & 0xFF;
+                    result = buffer[offset] & 0xFF;
+                    result |= (buffer[offset + 1] & 0xFF) << 8;
                 }
                 else
                 {
-                    result = buffer[offset] & 0xFF;
-                    result |= (buffer[offset + 1] & 0xFF) << 8;
+                    result = (buffer[offset] & 0xFF) << 8;
+                    result |= buffer[offset + 1] & 0xFF;
                 }
             }
             else
@@ -318,17 +318,6 @@ namespace Honoo.IO
             {
                 if (littleEndian)
                 {
-                    result = (buffer[offset] & 0xFFL) << 56;
-                    result |= (buffer[offset + 1] & 0xFFL) << 48;
-                    result |= (buffer[offset + 2] & 0xFFL) << 40;
-                    result |= (buffer[offset + 3] & 0xFFL) << 32;
-                    result |= (buffer[offset + 4] & 0xFFL) << 24;
-                    result |= (buffer[offset + 5] & 0xFFL) << 16;
-                    result |= (buffer[offset + 6] & 0xFFL) << 8;
-                    result |= buffer[offset + 7] & 0xFFL;
-                }
-                else
-                {
                     result = buffer[offset] & 0xFFL;
                     result |= (buffer[offset + 1] & 0xFFL) << 8;
                     result |= (buffer[offset + 2] & 0xFFL) << 16;
@@ -338,20 +327,21 @@ namespace Honoo.IO
                     result |= (buffer[offset + 6] & 0xFFL) << 48;
                     result |= (buffer[offset + 7] & 0xFFL) << 56;
                 }
+                else
+                {
+                    result = (buffer[offset] & 0xFFL) << 56;
+                    result |= (buffer[offset + 1] & 0xFFL) << 48;
+                    result |= (buffer[offset + 2] & 0xFFL) << 40;
+                    result |= (buffer[offset + 3] & 0xFFL) << 32;
+                    result |= (buffer[offset + 4] & 0xFFL) << 24;
+                    result |= (buffer[offset + 5] & 0xFFL) << 16;
+                    result |= (buffer[offset + 6] & 0xFFL) << 8;
+                    result |= buffer[offset + 7] & 0xFFL;
+                }
             }
             else if (length == 7)
             {
                 if (littleEndian)
-                {
-                    result = (buffer[offset] & 0xFFL) << 48;
-                    result |= (buffer[offset + 1] & 0xFFL) << 40;
-                    result |= (buffer[offset + 2] & 0xFFL) << 32;
-                    result |= (buffer[offset + 3] & 0xFFL) << 24;
-                    result |= (buffer[offset + 4] & 0xFFL) << 16;
-                    result |= (buffer[offset + 5] & 0xFFL) << 8;
-                    result |= buffer[offset + 6] & 0xFFL;
-                }
-                else
                 {
                     result = buffer[offset] & 0xFFL;
                     result |= (buffer[offset + 1] & 0xFFL) << 8;
@@ -361,19 +351,20 @@ namespace Honoo.IO
                     result |= (buffer[offset + 5] & 0xFFL) << 40;
                     result |= (buffer[offset + 6] & 0xFFL) << 48;
                 }
+                else
+                {
+                    result = (buffer[offset] & 0xFFL) << 48;
+                    result |= (buffer[offset + 1] & 0xFFL) << 40;
+                    result |= (buffer[offset + 2] & 0xFFL) << 32;
+                    result |= (buffer[offset + 3] & 0xFFL) << 24;
+                    result |= (buffer[offset + 4] & 0xFFL) << 16;
+                    result |= (buffer[offset + 5] & 0xFFL) << 8;
+                    result |= buffer[offset + 6] & 0xFFL;
+                }
             }
             else if (length == 6)
             {
                 if (littleEndian)
-                {
-                    result = (buffer[offset] & 0xFFL) << 40;
-                    result |= (buffer[offset + 1] & 0xFFL) << 32;
-                    result |= (buffer[offset + 2] & 0xFFL) << 24;
-                    result |= (buffer[offset + 3] & 0xFFL) << 16;
-                    result |= (buffer[offset + 4] & 0xFFL) << 8;
-                    result |= buffer[offset + 5] & 0xFFL;
-                }
-                else
                 {
                     result = buffer[offset] & 0xFFL;
                     result |= (buffer[offset + 1] & 0xFFL) << 8;
@@ -382,18 +373,19 @@ namespace Honoo.IO
                     result |= (buffer[offset + 4] & 0xFFL) << 32;
                     result |= (buffer[offset + 5] & 0xFFL) << 40;
                 }
+                else
+                {
+                    result = (buffer[offset] & 0xFFL) << 40;
+                    result |= (buffer[offset + 1] & 0xFFL) << 32;
+                    result |= (buffer[offset + 2] & 0xFFL) << 24;
+                    result |= (buffer[offset + 3] & 0xFFL) << 16;
+                    result |= (buffer[offset + 4] & 0xFFL) << 8;
+                    result |= buffer[offset + 5] & 0xFFL;
+                }
             }
             else if (length == 5)
             {
                 if (littleEndian)
-                {
-                    result = (buffer[offset] & 0xFFL) << 32;
-                    result |= (buffer[offset + 1] & 0xFFL) << 24;
-                    result |= (buffer[offset + 2] & 0xFFL) << 16;
-                    result |= (buffer[offset + 3] & 0xFFL) << 8;
-                    result |= buffer[offset + 4] & 0xFFL;
-                }
-                else
                 {
                     result = buffer[offset] & 0xFFL;
                     result |= (buffer[offset + 1] & 0xFFL) << 8;
@@ -401,50 +393,58 @@ namespace Honoo.IO
                     result |= (buffer[offset + 3] & 0xFFL) << 24;
                     result |= (buffer[offset + 4] & 0xFFL) << 32;
                 }
+                else
+                {
+                    result = (buffer[offset] & 0xFFL) << 32;
+                    result |= (buffer[offset + 1] & 0xFFL) << 24;
+                    result |= (buffer[offset + 2] & 0xFFL) << 16;
+                    result |= (buffer[offset + 3] & 0xFFL) << 8;
+                    result |= buffer[offset + 4] & 0xFFL;
+                }
             }
             else if (length == 4)
             {
                 if (littleEndian)
-                {
-                    result = (buffer[offset] & 0xFFL) << 24;
-                    result |= (buffer[offset + 1] & 0xFFL) << 16;
-                    result |= (buffer[offset + 2] & 0xFFL) << 8;
-                    result |= buffer[offset + 3] & 0xFFL;
-                }
-                else
                 {
                     result = buffer[offset] & 0xFFL;
                     result |= (buffer[offset + 1] & 0xFFL) << 8;
                     result |= (buffer[offset + 2] & 0xFFL) << 16;
                     result |= (buffer[offset + 3] & 0xFFL) << 24;
                 }
+                else
+                {
+                    result = (buffer[offset] & 0xFFL) << 24;
+                    result |= (buffer[offset + 1] & 0xFFL) << 16;
+                    result |= (buffer[offset + 2] & 0xFFL) << 8;
+                    result |= buffer[offset + 3] & 0xFFL;
+                }
             }
             else if (length == 3)
             {
                 if (littleEndian)
                 {
-                    result = (buffer[offset] & 0xFFL) << 16;
-                    result |= (buffer[offset + 1] & 0xFFL) << 8;
-                    result |= buffer[offset + 2] & 0xFFL;
-                }
-                else
-                {
                     result = buffer[offset] & 0xFFL;
                     result |= (buffer[offset + 1] & 0xFFL) << 8;
                     result |= (buffer[offset + 2] & 0xFFL) << 16;
+                }
+                else
+                {
+                    result = (buffer[offset] & 0xFFL) << 16;
+                    result |= (buffer[offset + 1] & 0xFFL) << 8;
+                    result |= buffer[offset + 2] & 0xFFL;
                 }
             }
             else if (length == 2)
             {
                 if (littleEndian)
                 {
-                    result = (buffer[offset] & 0xFFL) << 8;
-                    result |= buffer[offset + 1] & 0xFFL;
+                    result = buffer[offset] & 0xFFL;
+                    result |= (buffer[offset + 1] & 0xFFL) << 8;
                 }
                 else
                 {
-                    result = buffer[offset] & 0xFFL;
-                    result |= (buffer[offset + 1] & 0xFFL) << 8;
+                    result = (buffer[offset] & 0xFFL) << 8;
+                    result |= buffer[offset + 1] & 0xFFL;
                 }
             }
             else
