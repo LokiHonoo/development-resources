@@ -22,17 +22,17 @@ namespace Honoo
         /// <summary>
         /// 比较字节数组。
         /// </summary>
-        /// <param name="bytesA"></param>
-        /// <param name="bytesB"></param>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static bool Compare(byte[] bytesA, byte[] bytesB)
+        public static bool SequenceEqual(byte[] first, byte[] second)
         {
-            if (bytesA.Length == bytesB.Length)
+            if (first.Length == second.Length)
             {
-                for (int i = 0; i < bytesA.Length; i++)
+                for (int i = 0; i < first.Length; i++)
                 {
-                    if (bytesA[i] != bytesB[i])
+                    if (first[i] != second[i])
                     {
                         return false;
                     }
@@ -48,47 +48,20 @@ namespace Honoo
         /// <summary>
         /// 比较字节数组。
         /// </summary>
-        /// <param name="bufferA"></param>
-        /// <param name="bufferB"></param>
+        /// <param name="first"></param>
+        /// <param name="firstOffset"></param>
+        /// <param name="second"></param>
+        /// <param name="secondOffset"></param>
         /// <param name="length"></param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static bool Compare(byte[] bufferA, byte[] bufferB, int length)
+        public static bool SequenceEqual(byte[] first, int firstOffset, byte[] second, int secondOffset, int length)
         {
-            if (bufferA.Length >= length && bufferB.Length >= length)
+            if (first.Length - firstOffset >= length && second.Length - secondOffset >= length)
             {
                 for (int i = 0; i < length; i++)
                 {
-                    if (bufferA[i] != bufferB[i])
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// 比较字节数组。
-        /// </summary>
-        /// <param name="bufferA"></param>
-        /// <param name="offsetA"></param>
-        /// <param name="bufferB"></param>
-        /// <param name="offsetB"></param>
-        /// <param name="length"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception" />
-        public static bool Compare(byte[] bufferA, int offsetA, byte[] bufferB, int offsetB, int length)
-        {
-            if (bufferA.Length - offsetA >= length && bufferB.Length - offsetB >= length)
-            {
-                for (int i = 0; i < length; i++)
-                {
-                    if (bufferA[offsetA + i] != bufferB[offsetB + i])
+                    if (first[firstOffset + i] != second[secondOffset + i])
                     {
                         return false;
                     }
