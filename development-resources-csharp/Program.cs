@@ -11,7 +11,7 @@ namespace Honoo
         private static void Main()
         {
             TestBinaries();
-
+            TextChange();
             //
             Console.ReadKey(true);
         }
@@ -37,7 +37,8 @@ namespace Honoo
 
         private static void TestBinaries()
         {
-            byte[] bytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 };
+            byte[] bytes = new byte[19];
+            new Random().NextBytes(bytes);
             Console.WriteLine(BitConverter.ToInt16(bytes, 6));
             Console.WriteLine(Honoo.Binaries.ToInt16(true, bytes, 6, 2));
             Console.WriteLine(BitConverter.ToInt32(bytes, 4));
@@ -52,7 +53,7 @@ namespace Honoo
             Console.WriteLine(Honoo.Binaries.ToUInt64(true, bytes));
 
             Console.WriteLine(BitConverter.ToString(bytes));
-            Console.WriteLine(Honoo.Binaries.ToString(bytes, 0, bytes.Length, "-", 4, "    "));
+            Console.WriteLine(Honoo.Binaries.ToString(bytes, 0, bytes.Length, ":", 4, "    "));
 
             Console.WriteLine(Honoo.Binaries.ToUInt64(true, Honoo.Binaries.GetBytes(true, BitConverter.ToUInt64(bytes, 0))));
         }
@@ -72,7 +73,28 @@ namespace Honoo
             permutation.Output(Created, counter);
             Console.WriteLine($"permutation n={a.Length} m={m} Due count={permutation.GetCount()}");
             Console.WriteLine($"permutation output count={counter.Count}");
-            Console.ReadKey(true);
+        }
+
+        private static void TextChange()
+        {
+            long length = 934772112;
+            var value = Honoo.Integer.GetSize(length, Integer.SizeRadix10.Auto, 2, out string unit);
+            Console.WriteLine(value + " " + unit);
+            value = Honoo.Integer.GetSize(length, Integer.SizeRadix10.GB, 2, out unit);
+            Console.WriteLine(value + " " + unit);
+            value = Honoo.Integer.GetSize(length, Integer.SizeRadix2.Auto, 2, out unit);
+            Console.WriteLine(value + " " + unit);
+            value = Honoo.Integer.GetSize(length, Integer.SizeRadix2.GiB, 2, out unit);
+            Console.WriteLine(value + " " + unit);
+
+            value = Honoo.Integer.GetSpeed(length, Integer.SpeedRadix2.Auto, 2, out unit);
+            Console.WriteLine(value + " " + unit);
+            value = Honoo.Integer.GetSpeed(length, Integer.SpeedRadix2.GiBps, 2, out unit);
+            Console.WriteLine(value + " " + unit);
+            value = Honoo.Integer.GetSpeed(length, Integer.SpeedBits.Auto, 2, out unit);
+            Console.WriteLine(value + " " + unit);
+            value = Honoo.Integer.GetSpeed(length, Integer.SpeedBits.Gbps, 2, out unit);
+            Console.WriteLine(value + " " + unit);
         }
 
         internal sealed class Counter

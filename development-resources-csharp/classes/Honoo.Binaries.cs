@@ -638,25 +638,22 @@ namespace Honoo
                         result.Append(indent);
                     }
                     newLine = false;
-                    continue;
                 }
                 else if (lineBreaks > 0 && count >= lineBreaks)
                 {
                     result.Append(Environment.NewLine);
                     newLine = true;
                     count = 0;
-                    continue;
                 }
-                result.Append(buffer[offset].ToString("x2"));
-                count++;
-                offset++;
-                if (lineBreaks > 0 && count >= lineBreaks)
+                else
                 {
-                    continue;
-                }
-                else if (offset < length && split.Length > 0)
-                {
-                    result.Append(split);
+                    result.Append(buffer[offset].ToString("x2"));
+                    count++;
+                    offset++;
+                    if (split.Length > 0 && offset < length)
+                    {
+                        result.Append(split);
+                    }
                 }
             }
             return result.ToString();
