@@ -1,10 +1,8 @@
 ﻿/*
- * Copyright
- *
  * https://github.com/LokiHonoo/development-resources
  * Copyright (C) Loki Honoo 2015. All rights reserved.
  *
- * This code page is published under the terms of the MIT license.
+ * This code page is published by the MIT license.
  */
 
 /*
@@ -962,7 +960,7 @@ namespace Honoo.Data
             tmp.AppendLine("/*");
             tmp.AppendLine("Dump by Honoo.Data.SQLiteHelper");
             tmp.AppendLine("https://github.com/LokiHonoo/development-resources");
-            tmp.AppendLine("This code page is published under the terms of the MIT license.");
+            tmp.AppendLine("This code page is published by the MIT license.");
             tmp.AppendLine();
             tmp.AppendLine("DataSource     : " + connection.DataSource);
             tmp.AppendLine("Server Version : " + connection.ServerVersion);
