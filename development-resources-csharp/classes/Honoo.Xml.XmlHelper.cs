@@ -19,7 +19,12 @@ namespace Honoo.Xml
         /// <summary>
         /// 写设置参数。
         /// </summary>
-        private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings { Indent = true, NewLineChars = Environment.NewLine, Encoding = new UTF8Encoding(false) };
+        private static readonly XmlWriterSettings _writerSettings = new XmlWriterSettings
+        {
+            Indent = true,
+            NewLineChars = Environment.NewLine,
+            Encoding = new UTF8Encoding(false)
+        };
 
         /// <summary>
         /// 返回格式化后的 XmlDocument 字符串。

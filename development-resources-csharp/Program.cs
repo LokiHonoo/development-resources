@@ -10,6 +10,7 @@ namespace Honoo
 
         private static void Main()
         {
+            //TestPermutationAndCombination();
             TestBinaries();
             TextChange();
             //
@@ -65,35 +66,35 @@ namespace Honoo
             Counter counter = new Counter();
             Collections.Generic.Combination<int> combination = new Collections.Generic.Combination<int>(a, m);
             combination.Output(Created, counter);
-            Console.WriteLine($"combination n={a.Length} m={m} Due count={combination.GetCount()}");
+            Console.WriteLine($"combination n={a.Length} m={m} Due count={combination.Count}");
             Console.WriteLine($"combination output count={counter.Count}");
             Console.ReadKey(true);
             counter.Count = 0;
             Collections.Generic.Permutation<int> permutation = new Collections.Generic.Permutation<int>(a, m);
             permutation.Output(Created, counter);
-            Console.WriteLine($"permutation n={a.Length} m={m} Due count={permutation.GetCount()}");
+            Console.WriteLine($"permutation n={a.Length} m={m} Due count={permutation.Count}");
             Console.WriteLine($"permutation output count={counter.Count}");
         }
 
         private static void TextChange()
         {
             long length = 934772112;
-            var value = Honoo.Integer.GetSize(length, Integer.SizeRadix10.Auto, 2, out string unit);
+            var value = Honoo.Numerical.GetSize(length, Numerical.Size1000.Auto, 2, out string unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Integer.GetSize(length, Integer.SizeRadix10.GB, 2, out unit);
+            value = Honoo.Numerical.GetSize(length, Numerical.Size1000.GB, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Integer.GetSize(length, Integer.SizeRadix2.Auto, 2, out unit);
+            value = Honoo.Numerical.GetSize(length, Numerical.Size1024.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Integer.GetSize(length, Integer.SizeRadix2.GiB, 2, out unit);
+            value = Honoo.Numerical.GetSize(length, Numerical.Size1024.GiB, 2, out unit);
             Console.WriteLine(value + " " + unit);
 
-            value = Honoo.Integer.GetSpeed(length, Integer.SpeedRadix2.Auto, 2, out unit);
+            value = Honoo.Numerical.GetSpeed(length, Numerical.Speed1024.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Integer.GetSpeed(length, Integer.SpeedRadix2.GiBps, 2, out unit);
+            value = Honoo.Numerical.GetSpeed(length, Numerical.Speed1024.GiBps, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Integer.GetSpeed(length, Integer.SpeedBits.Auto, 2, out unit);
+            value = Honoo.Numerical.GetSpeed(length, Numerical.SpeedBits.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Integer.GetSpeed(length, Integer.SpeedBits.Gbps, 2, out unit);
+            value = Honoo.Numerical.GetSpeed(length, Numerical.SpeedBits.Gbps, 2, out unit);
             Console.WriteLine(value + " " + unit);
         }
 

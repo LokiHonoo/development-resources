@@ -20,7 +20,13 @@ namespace Honoo.Collections.Generic
         #region 成员
 
         private readonly T[] _array;
+        private readonly BigInteger _count;
         private readonly int _m;
+
+        /// <summary>
+        /// 获取可组合的集合数量。
+        /// </summary>
+        public BigInteger Count => _count;
 
         #endregion 成员
 
@@ -58,15 +64,7 @@ namespace Honoo.Collections.Generic
             _array = new T[array.Count];
             array.CopyTo(_array, 0);
             _m = m;
-        }
-
-        /// <summary>
-        /// 计算可组合数量。
-        /// </summary>
-        /// <returns></returns>
-        public string GetCount()
-        {
-            return C(_array.Length, _m).ToString();
+            _count = C(_array.Length, _m);
         }
 
         /// <summary>
@@ -76,12 +74,11 @@ namespace Honoo.Collections.Generic
         /// <exception cref="Exception" />
         public IList<T[]> Output()
         {
-            BigInteger count = C(_array.Length, _m);
-            if (count > int.MaxValue)
+            if (_count > int.MaxValue)
             {
                 throw new Exception("可计算的组合数量超出了容器容量 (Int32)。");
             }
-            List<T[]> result = new List<T[]>((int)count);
+            List<T[]> result = new List<T[]>((int)_count);
             Output((r, s) => { result.Add(r); }, null);
             return result;
         }
@@ -169,7 +166,13 @@ namespace Honoo.Collections.Generic
         #region 成员
 
         private readonly T[] _array;
+        private readonly BigInteger _count;
         private readonly int _m;
+
+        /// <summary>
+        /// 获取可排列的集合数量。
+        /// </summary>
+        public BigInteger Count => _count;
 
         #endregion 成员
 
@@ -207,15 +210,7 @@ namespace Honoo.Collections.Generic
             _array = new T[array.Count];
             array.CopyTo(_array, 0);
             _m = m;
-        }
-
-        /// <summary>
-        /// 计算可排列数量。
-        /// </summary>
-        /// <returns></returns>
-        public string GetCount()
-        {
-            return P(_array.Length, _m).ToString();
+            _count = P(_array.Length, _m);
         }
 
         /// <summary>
@@ -225,12 +220,11 @@ namespace Honoo.Collections.Generic
         /// <exception cref="Exception" />
         public IList<T[]> Output()
         {
-            BigInteger count = P(_array.Length, _m);
-            if (count > int.MaxValue)
+            if (_count > int.MaxValue)
             {
                 throw new Exception("可计算的排列数量超出了容器容量 (Int32)。");
             }
-            List<T[]> result = new List<T[]>((int)count);
+            List<T[]> result = new List<T[]>((int)_count);
             Output((r, s) => { result.Add(r); }, null);
             return result;
         }
