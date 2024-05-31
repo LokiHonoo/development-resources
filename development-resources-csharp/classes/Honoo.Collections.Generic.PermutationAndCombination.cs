@@ -72,7 +72,7 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public IList<T[]> Output()
+        public List<T[]> Output()
         {
             if (_count > int.MaxValue)
             {
@@ -218,7 +218,7 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public IList<T[]> Output()
+        public List<T[]> Output()
         {
             if (_count > int.MaxValue)
             {
