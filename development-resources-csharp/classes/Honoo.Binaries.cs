@@ -77,51 +77,64 @@ namespace Honoo
         #region 转换
 
         /// <summary>
-        /// 将十六进制字符串转换为字节数组。字符串必须是无分隔符的表示形式。
+        /// 指定输出字节数组大小端，将十六进制字符串转换为字节数组。字符串必须是无分隔符的表示形式。
         /// </summary>
+        /// <param name="littleEndian">指示输出字节数组的大小端模式。</param>
         /// <param name="hex">无分隔符的十六进制字符串。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] GetBytes(string hex)
+        public static byte[] GetBytes(bool littleEndian, string hex)
         {
             if (hex.Length % 2 > 0)
             {
-                hex = hex.PadLeft(hex.Length + 1, '0');
+                throw new ArgumentException("Hex string length must be multiple of 2.");
             }
             byte[] result = new byte[hex.Length / 2];
-            for (int i = 0; i < result.Length; i++)
+            if (littleEndian)
             {
-                result[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+                for (int i = result.Length - 1; i >= 0; i--)
+                {
+                    result[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < result.Length; i++)
+                {
+                    result[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+                }
             }
             return result;
         }
 
         /// <summary>
-        /// 移除指定的字符串，将十六进制字符串转换为字节数组。
+        /// 指定输出字节数组大小端，移除指定的字符串，将十六进制字符串转换为字节数组。
         /// </summary>
+        /// <param name="littleEndian">指示输出字节数组的大小端模式。</param>
         /// <param name="hex">十六进制字符串。</param>
         /// <param name="replace">要移除的字符串。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] GetBytes(string hex, string replace)
+        public static byte[] GetBytes(bool littleEndian, string hex, string replace)
         {
-            return GetBytes(hex.Replace(replace, string.Empty));
+            return GetBytes(littleEndian, hex.Replace(replace, string.Empty));
         }
 
         /// <summary>
-        /// 移除多个指定的字符串，将十六进制字符串转换为字节数组。
+        /// 指定输出字节数组大小端，移除多个指定的字符串，将十六进制字符串转换为字节数组。
         /// </summary>
+        /// <param name="littleEndian">指示输出字节数组的大小端模式。</param>
         /// <param name="hex">十六进制字符串。</param>
         /// <param name="replaces">要移除的字符串集合。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] GetBytes(string hex, string[] replaces)
+        public static byte[] GetBytes(bool littleEndian, string hex, string[] replaces)
         {
             foreach (var replace in replaces)
             {
                 hex = hex.Replace(replace, string.Empty);
             }
-            return GetBytes(hex);
+            return GetBytes(littleEndian, hex);
         }
 
         /// <summary>
@@ -287,6 +300,48 @@ namespace Honoo
                 result[7] = (byte)value;
             }
             return result;
+        }
+
+        /// <summary>
+        /// 指定输入字节数组大小端，将字节数组转换为十六进制文本。
+        /// </summary>
+        /// <param name="littleEndian">指示 <paramref name="bytes"/> 的大小端模式。</param>
+        /// <param name="bytes">要转换的字节数组。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception" />
+        public static string ToHex(bool littleEndian, byte[] bytes)
+        {
+            return ToHex(littleEndian, bytes, 0, bytes.Length);
+        }
+
+        /// <summary>
+        /// 指定输入字节数组大小端，将字节数组转换为十六进制文本。
+        /// </summary>
+        /// <param name="littleEndian">指示 <paramref name="buffer"/> 的大小端模式。</param>
+        /// <param name="buffer">要转换的字节数组。</param>
+        /// <param name="buffer">字节数组。</param>
+        /// <param name="offset">读取的字节数组偏移量。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception" />
+        public static string ToHex(bool littleEndian, byte[] buffer, int offset, int length)
+        {
+            StringBuilder result = new StringBuilder();
+            int end = offset + length;
+            if (littleEndian)
+            {
+                for (int i = end - 1; i >= offset; i--)
+                {
+                    result.Append(buffer[i].ToString("x2"));
+                }
+            }
+            else
+            {
+                for (int i = offset; i < end; i++)
+                {
+                    result.Append(buffer[i].ToString("x2"));
+                }
+            }
+            return result.ToString();
         }
 
         /// <summary>
@@ -617,13 +672,13 @@ namespace Honoo
         /// <param name="offset">读取的字节数组偏移量。</param>
         /// <param name="split">指定每个字节之间的分隔符。</param>
         /// <param name="lineBreaks">转换指定的字节个数后换行。设置为 0 不换行。</param>
-        /// <param name="indent">指定每行缩进的占位字符。</param>
+        /// <param name="indents">指定每行缩进的占位字符。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static string ToString(byte[] buffer, int offset, int length, string split, int lineBreaks, string indent)
+        public static string ToString(byte[] buffer, int offset, int length, string split, int lineBreaks, string indents)
         {
             split = split ?? string.Empty;
-            indent = indent ?? string.Empty;
+            indents = indents ?? string.Empty;
             StringBuilder result = new StringBuilder();
             bool newLine = true;
             int count = 0;
@@ -631,9 +686,9 @@ namespace Honoo
             {
                 if (newLine)
                 {
-                    if (indent.Length > 0)
+                    if (indents.Length > 0)
                     {
-                        result.Append(indent);
+                        result.Append(indents);
                     }
                     newLine = false;
                 }
