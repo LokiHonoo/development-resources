@@ -12,7 +12,7 @@ namespace Honoo
     /// <summary>
     /// 数值对象辅助。
     /// </summary>
-    public static class Numerical
+    public static class Numeric
     {
         #region 转换
 

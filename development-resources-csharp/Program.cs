@@ -81,22 +81,22 @@ namespace Honoo
         private static void TextChange()
         {
             long length = 934772112;
-            var value = Honoo.Numerical.GetSize(length, Numerical.Size1000.Auto, 2, out string unit);
+            var value = Honoo.Numeric.GetSize(length, Numeric.Size1000.Auto, 2, out string unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numerical.GetSize(length, Numerical.Size1000.GB, 2, out unit);
+            value = Honoo.Numeric.GetSize(length, Numeric.Size1000.GB, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numerical.GetSize(length, Numerical.Size1024.Auto, 2, out unit);
+            value = Honoo.Numeric.GetSize(length, Numeric.Size1024.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numerical.GetSize(length, Numerical.Size1024.GiB, 2, out unit);
+            value = Honoo.Numeric.GetSize(length, Numeric.Size1024.GiB, 2, out unit);
             Console.WriteLine(value + " " + unit);
 
-            value = Honoo.Numerical.GetSpeed(length, Numerical.Speed1024.Auto, 2, out unit);
+            value = Honoo.Numeric.GetSpeed(length, Numeric.Speed1024.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numerical.GetSpeed(length, Numerical.Speed1024.GiBps, 2, out unit);
+            value = Honoo.Numeric.GetSpeed(length, Numeric.Speed1024.GiBps, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numerical.GetSpeed(length, Numerical.SpeedBits.Auto, 2, out unit);
+            value = Honoo.Numeric.GetSpeed(length, Numeric.SpeedBits.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numerical.GetSpeed(length, Numerical.SpeedBits.Gbps, 2, out unit);
+            value = Honoo.Numeric.GetSpeed(length, Numeric.SpeedBits.Gbps, 2, out unit);
             Console.WriteLine(value + " " + unit);
         }
 
