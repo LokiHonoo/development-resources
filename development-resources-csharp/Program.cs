@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Honoo.IO;
+using System;
 
 namespace Honoo
 {
@@ -81,22 +82,22 @@ namespace Honoo
         private static void TextChange()
         {
             long length = 934772112;
-            var value = Honoo.Numeric.GetSize(length, Numeric.Size1000.Auto, 2, out string unit);
+            var value = Numeric.GetSize(length, Numeric.Thousands.Auto, 2, out string unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numeric.GetSize(length, Numeric.Size1000.GB, 2, out unit);
+            value = Numeric.GetSize(length, Numeric.Thousands.GB, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numeric.GetSize(length, Numeric.Size1024.Auto, 2, out unit);
+            value = Numeric.GetSize(length, Numeric.Kilo.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numeric.GetSize(length, Numeric.Size1024.GiB, 2, out unit);
+            value = Numeric.GetSize(length, Numeric.Kilo.GiB, 2, out unit);
             Console.WriteLine(value + " " + unit);
 
-            value = Honoo.Numeric.GetSpeed(length, Numeric.Speed1024.Auto, 2, out unit);
+            value = Numeric.GetSpeed(length, Numeric.BytesPerSecond.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numeric.GetSpeed(length, Numeric.Speed1024.GiBps, 2, out unit);
+            value = Numeric.GetSpeed(length, Numeric.BytesPerSecond.GiBps, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numeric.GetSpeed(length, Numeric.SpeedBits.Auto, 2, out unit);
+            value = Numeric.GetSpeed(length, Numeric.BitsPerSecond.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Honoo.Numeric.GetSpeed(length, Numeric.SpeedBits.Gbps, 2, out unit);
+            value = Numeric.GetSpeed(length, Numeric.BitsPerSecond.Gbps, 2, out unit);
             Console.WriteLine(value + " " + unit);
         }
 
