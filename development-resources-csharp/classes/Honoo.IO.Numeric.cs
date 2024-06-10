@@ -237,13 +237,13 @@ namespace Honoo.IO
         /// <summary>
         /// 将字节速度数值转换为指定单位。
         /// </summary>
-        /// <param name="byteLength">字节数值。</param>
+        /// <param name="bytesPerSecond">字节数值。</param>
         /// <param name="radix">字节类型的速度单位。</param>
         /// <param name="places">保留小数位数。</param>
         /// <param name="unit">字节数值的容量单位的字符串表示。</param>
-        public static double GetSpeed(long byteLength, BytesPerSecond radix, int places, out string unit)
+        public static double GetSpeed(long bytesPerSecond, BytesPerSecond radix, int places, out string unit)
         {
-            double value = byteLength;
+            double value = bytesPerSecond;
             int unitIndex = 0;
             if (radix == BytesPerSecond.Auto)
             {
@@ -279,13 +279,13 @@ namespace Honoo.IO
         /// <summary>
         /// 将字节速度数值转换为指定单位。
         /// </summary>
-        /// <param name="byteLength">字节数值。</param>
+        /// <param name="bytesPerSecond">字节数值。</param>
         /// <param name="radix">位类型的速度单位。</param>
         /// <param name="places">保留小数位数。</param>
         /// <param name="unit">字节数值的容量单位的字符串表示。</param>
-        public static double GetSpeed(long byteLength, BitsPerSecond radix, int places, out string unit)
+        public static double GetSpeed(long bytesPerSecond, BitsPerSecond radix, int places, out string unit)
         {
-            double value = byteLength * 8;
+            double value = bytesPerSecond * 8;
             int unitIndex = 0;
             if (radix == BitsPerSecond.Auto)
             {
