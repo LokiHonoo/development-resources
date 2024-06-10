@@ -68,6 +68,28 @@ namespace Honoo.Collections.Generic
         }
 
         /// <summary>
+        /// 指定 n、 m 值求可组合的数量。
+        /// </summary>
+        /// <param name="n">指定元素总数。</param>
+        /// <param name="m">指定选择的元素数量。</param>
+        /// <returns></returns>
+        public static BigInteger C(int n, int m)
+        {
+            BigInteger numerator = BigInteger.One;
+            BigInteger denominator = BigInteger.One;
+            for (int i = 0; i < m; i++)
+            {
+                numerator *= n;
+                n--;
+            }
+            for (int i = m; i >= 1; i--)
+            {
+                denominator *= i;
+            }
+            return numerator / denominator;
+        }
+
+        /// <summary>
         /// 输出组合的集合。组合的结果是元素的浅表复制。
         /// </summary>
         /// <returns></returns>
@@ -91,28 +113,6 @@ namespace Honoo.Collections.Generic
         public void Output(CreatedCallback created, object userState)
         {
             Combine(_array, _m, 0, _m, created, userState);
-        }
-
-        /// <summary>
-        /// 指定 n、 m 值求可组合的数量。
-        /// </summary>
-        /// <param name="n">指定元素总数。</param>
-        /// <param name="m">指定选择的元素数量。</param>
-        /// <returns></returns>
-        private static BigInteger C(int n, int m)
-        {
-            BigInteger numerator = BigInteger.One;
-            BigInteger denominator = BigInteger.One;
-            for (int i = 0; i < m; i++)
-            {
-                numerator *= n;
-                n--;
-            }
-            for (int i = m; i >= 1; i--)
-            {
-                denominator *= i;
-            }
-            return numerator / denominator;
         }
 
         /// <summary>
@@ -214,6 +214,23 @@ namespace Honoo.Collections.Generic
         }
 
         /// <summary>
+        /// 指定 n、 m 值求可排列的数量。
+        /// </summary>
+        /// <param name="n">指定元素总数。</param>
+        /// <param name="m">指定选择的元素数量。</param>
+        /// <returns></returns>
+        public static BigInteger P(int n, int m)
+        {
+            BigInteger integer = BigInteger.One;
+            for (int i = 0; i < m; i++)
+            {
+                integer *= n;
+                n--;
+            }
+            return integer;
+        }
+
+        /// <summary>
         /// 输出排列的集合。排列的结果是元素的浅表复制。
         /// </summary>
         /// <returns></returns>
@@ -245,23 +262,6 @@ namespace Honoo.Collections.Generic
                 Combination<T> combination = new Combination<T>(_array, _m);
                 combination.Output((r, s) => { Permutate(r, 0, created, s); }, userState);
             }
-        }
-
-        /// <summary>
-        /// 指定 n、 m 值求可排列的数量。
-        /// </summary>
-        /// <param name="n">指定元素总数。</param>
-        /// <param name="m">指定选择的元素数量。</param>
-        /// <returns></returns>
-        private static BigInteger P(int n, int m)
-        {
-            BigInteger integer = BigInteger.One;
-            for (int i = 0; i < m; i++)
-            {
-                integer *= n;
-                n--;
-            }
-            return integer;
         }
 
         /// <summary>

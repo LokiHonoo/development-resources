@@ -238,48 +238,6 @@ namespace Honoo.IO
         /// 将字节速度数值转换为指定单位。
         /// </summary>
         /// <param name="bytesPerSecond">字节数值。</param>
-        /// <param name="radix">字节类型的速度单位。</param>
-        /// <param name="places">保留小数位数。</param>
-        /// <param name="unit">字节数值的容量单位的字符串表示。</param>
-        public static double GetSpeed(long bytesPerSecond, BytesPerSecond radix, int places, out string unit)
-        {
-            double value = bytesPerSecond;
-            int unitIndex = 0;
-            if (radix == BytesPerSecond.Auto)
-            {
-                while (value >= 1024 && unitIndex < 7)
-                {
-                    value /= 1024;
-                    unitIndex++;
-                }
-            }
-            else
-            {
-                int unitLimit = (int)radix - 1;
-                while (unitIndex < unitLimit)
-                {
-                    value /= 1024;
-                    unitIndex++;
-                }
-            }
-            switch (unitIndex)
-            {
-                case 7: unit = "BiB/s"; break;
-                case 6: unit = "EiB/s"; break;
-                case 5: unit = "PiB/s"; break;
-                case 4: unit = "TiB/s"; break;
-                case 3: unit = "GiB/s"; break;
-                case 2: unit = "MiB/s"; break;
-                case 1: unit = "KiB/s"; break;
-                case 0: default: unit = "B/s"; break;
-            }
-            return Math.Round(value, places);
-        }
-
-        /// <summary>
-        /// 将字节速度数值转换为指定单位。
-        /// </summary>
-        /// <param name="bytesPerSecond">字节数值。</param>
         /// <param name="radix">位类型的速度单位。</param>
         /// <param name="places">保留小数位数。</param>
         /// <param name="unit">字节数值的容量单位的字符串表示。</param>
@@ -314,6 +272,48 @@ namespace Honoo.IO
                 case 2: unit = "Mbps"; break;
                 case 1: unit = "Kbps"; break;
                 case 0: default: unit = "bps"; break;
+            }
+            return Math.Round(value, places);
+        }
+
+        /// <summary>
+        /// 将字节速度数值转换为指定单位。
+        /// </summary>
+        /// <param name="bytesPerSecond">字节数值。</param>
+        /// <param name="radix">字节类型的速度单位。</param>
+        /// <param name="places">保留小数位数。</param>
+        /// <param name="unit">字节数值的容量单位的字符串表示。</param>
+        public static double GetSpeed(long bytesPerSecond, BytesPerSecond radix, int places, out string unit)
+        {
+            double value = bytesPerSecond;
+            int unitIndex = 0;
+            if (radix == BytesPerSecond.Auto)
+            {
+                while (value >= 1024 && unitIndex < 7)
+                {
+                    value /= 1024;
+                    unitIndex++;
+                }
+            }
+            else
+            {
+                int unitLimit = (int)radix - 1;
+                while (unitIndex < unitLimit)
+                {
+                    value /= 1024;
+                    unitIndex++;
+                }
+            }
+            switch (unitIndex)
+            {
+                case 7: unit = "BiB/s"; break;
+                case 6: unit = "EiB/s"; break;
+                case 5: unit = "PiB/s"; break;
+                case 4: unit = "TiB/s"; break;
+                case 3: unit = "GiB/s"; break;
+                case 2: unit = "MiB/s"; break;
+                case 1: unit = "KiB/s"; break;
+                case 0: default: unit = "B/s"; break;
             }
             return Math.Round(value, places);
         }
