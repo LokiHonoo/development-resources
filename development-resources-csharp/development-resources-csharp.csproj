@@ -12,16 +12,10 @@
     <RepositoryUrl>https://github.com/LokiHonoo/development-resources</RepositoryUrl>
     <PackageProjectUrl>https://github.com/LokiHonoo/development-resources</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<AnalysisLevel>latest-all</AnalysisLevel>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<BaseOutputPath>..\bin\</BaseOutputPath>
   </PropertyGroup>
-
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<OutputPath>..\bin\Debug</OutputPath>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<OutputPath>..\bin\Release</OutputPath>
-	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net40'">
 		<PackageReference Include="MySql.Data" Version="6.9.12" />
@@ -47,12 +41,4 @@
 
 	</ItemGroup>
 	
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.Data.SQLite" Version="1.0.117" />
-  </ItemGroup>
-
 </Project>
