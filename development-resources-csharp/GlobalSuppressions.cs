@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0090:使用 \"new(...)\"")]
 [assembly: SuppressMessage("Style", "IDE0063:使用简单的 \"using\" 语句")]
-[assembly: SuppressMessage("Style", "IDE0180:使用元组交换值", Justification = "<挂起>")]
+[assembly: SuppressMessage("Style", "IDE0180:使用元组交换值")]
 [assembly: SuppressMessage("Style", "IDE0066:将 switch 语句转换为表达式")]
 [assembly: SuppressMessage("Style", "IDE0057:使用范围运算符")]
+[assembly: SuppressMessage("Style", "IDE0130:命名空间与文件夹结构不匹配")]
