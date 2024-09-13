@@ -17,6 +17,14 @@ namespace Honoo.Threading
         private static Mutex _mutex;
 
         /// <summary>
+        /// 释放 Mutex 关闭启动检查。关闭后程序可以重复启动。
+        /// </summary>
+        public static void DisableCheck()
+        {
+            _mutex?.Dispose();
+        }
+
+        /// <summary>
         /// 检测重复启动。如果具有相同自定义约束的项目存在，返回 true。
         /// </summary>
         /// <param name="unique">
