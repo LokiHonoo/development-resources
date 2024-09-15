@@ -1043,6 +1043,8 @@ namespace Honoo.Illumination
 
         #endregion 成员
 
+        #region 构造
+
         /// <summary>
         /// 初始化 Reference 类的新实例。
         /// </summary>
@@ -1453,6 +1455,8 @@ namespace Honoo.Illumination
                     break;
             }
         }
+
+        #endregion 构造
 
         /// <summary>
         /// 获取 3x3 矩阵的行列式。

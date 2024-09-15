@@ -41,6 +41,8 @@ namespace Honoo.Collections.Generic
 
         #endregion 委托
 
+        #region 构造
+
         /// <summary>
         /// 求数组 m 个元素的组合。组合的结果是元素的浅表复制。
         /// </summary>
@@ -63,6 +65,8 @@ namespace Honoo.Collections.Generic
             _m = m;
             _count = C(_array.Length, _m);
         }
+
+        #endregion 构造
 
         /// <summary>
         /// 指定 n、 m 值求可组合的数量。
@@ -188,6 +192,8 @@ namespace Honoo.Collections.Generic
 
         #endregion 委托
 
+        #region 构造
+
         /// <summary>
         /// 求数组 m 个元素的排列。排列的结果是元素的浅表复制。
         /// </summary>
@@ -210,6 +216,8 @@ namespace Honoo.Collections.Generic
             _m = m;
             _count = P(_array.Length, _m);
         }
+
+        #endregion 构造
 
         /// <summary>
         /// 指定 n、 m 值求可排列的数量。
