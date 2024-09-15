@@ -5,13 +5,7 @@
  * This code page is published by the MIT license.
  */
 
-/*
- * PackageReference: MySqlConnector or MySql.Data
- */
-
-//
-using MySql.Data.MySqlClient; // MySql.Data
-//using MySqlConnector; // MySqlConnector
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -26,51 +20,6 @@ namespace Honoo.Data
     /// </summary>
     public static class MySqlHelper
     {
-        #region ConnectionBehavior
-
-        private static MySqlConnectionBehavior _dataAdapterConnectionBehavior = MySqlConnectionBehavior.Auto;
-        private static MySqlConnectionBehavior _dataReaderConnectionBehavior = MySqlConnectionBehavior.Manual;
-        private static MySqlConnectionBehavior _executeConnectionBehavior = MySqlConnectionBehavior.Manual;
-        private static MySqlConnectionBehavior _transactionConnectionBehavior = MySqlConnectionBehavior.Manual;
-
-        /// <summary>
-        /// Connection open/close behavior when using DataAdapter. Default Auto.
-        /// </summary>
-        public static MySqlConnectionBehavior DataAdapterConnectionBehavior
-        {
-            get => _dataAdapterConnectionBehavior;
-            set => _dataAdapterConnectionBehavior = value;
-        }
-
-        /// <summary>
-        /// Connection open/close behavior when using DataReader. Default Manual.
-        /// </summary>
-        public static MySqlConnectionBehavior DataReaderConnectionBehavior
-        {
-            get => _dataReaderConnectionBehavior;
-            set => _dataReaderConnectionBehavior = value;
-        }
-
-        /// <summary>
-        /// Connection open/close behavior when using Execute. Default Manual.
-        /// </summary>
-        public static MySqlConnectionBehavior ExecuteConnectionBehavior
-        {
-            get => _executeConnectionBehavior;
-            set => _executeConnectionBehavior = value;
-        }
-
-        /// <summary>
-        /// Connection open/close behavior when using Transaction. Default Manual.
-        /// </summary>
-        public static MySqlConnectionBehavior TransactionConnectionBehavior
-        {
-            get => _transactionConnectionBehavior;
-            set => _transactionConnectionBehavior = value;
-        }
-
-        #endregion ConnectionBehavior
-
         #region Connection
 
         /// <summary>
@@ -248,7 +197,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText)
         {
@@ -260,26 +209,17 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            int result;
             using (MySqlDataAdapter dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
-                result = dataAdapter.Fill(dataSet);
+                return dataAdapter.Fill(dataSet);
             }
-            return result;
         }
 
         /// <summary>
@@ -287,7 +227,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText)
         {
@@ -299,34 +239,26 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            int result;
             using (MySqlDataAdapter dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
-                result = dataAdapter.Fill(dataTable);
+                return dataAdapter.Fill(dataTable);
             }
-            return result;
         }
 
         /// <summary>
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText)
         {
             return new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -336,9 +268,10 @@ namespace Honoo.Data
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             MySqlDataAdapter result = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -350,7 +283,7 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static DataSet GetDataSet(MySqlConnection connection, string selectCommandText)
         {
@@ -361,19 +294,12 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static DataSet GetDataSet(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
             DataSet result = new DataSet();
             using (MySqlDataAdapter dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
@@ -387,7 +313,7 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static DataTable GetDataTable(MySqlConnection connection, string selectCommandText)
         {
@@ -398,19 +324,12 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static DataTable GetDataTable(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
             DataTable result = new DataTable();
             using (MySqlDataAdapter dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
@@ -422,59 +341,37 @@ namespace Honoo.Data
 
         #endregion DataAdapter
 
-        #region DataReader
+        #region Command, DataReader, XmlReader
 
         /// <summary>
-        /// Get DataReader.
+        /// Get Command. Create DataReader by Command.ExecuteReader(commandBehavior). Create XmlReader by Command.ExecuteXmlReader().
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static MySqlDataReader GetDataReader(MySqlConnection connection, string commandText)
+        public static MySqlCommand GetCommand(MySqlConnection connection, CommandType commandType, string commandText)
         {
-            return GetDataReader(connection, commandText, null);
+            return GetCommand(connection, commandType, commandText, null);
         }
 
         /// <summary>
-        /// Get DataReader.
+        /// Get Command. Create DataReader by Command.ExecuteReader(commandBehavior). Create XmlReader by Command.ExecuteXmlReader().
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static MySqlDataReader GetDataReader(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static MySqlCommand GetCommand(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            CommandBehavior commandBehavior;
-            if (_dataReaderConnectionBehavior == MySqlConnectionBehavior.Manual)
-            {
-                if (connection.State != ConnectionState.Open)
-                {
-                    throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-                }
-                commandBehavior = CommandBehavior.Default;
-            }
-            else
-            {
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                    commandBehavior = CommandBehavior.CloseConnection;
-                }
-                else
-                {
-                    commandBehavior = CommandBehavior.Default;
-                }
-            }
-            MySqlCommand command = new MySqlCommand(commandText, connection);
+            MySqlCommand command = new MySqlCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-            return command.ExecuteReader(commandBehavior);
+            return command;
         }
 
-        #endregion DataReader
+        #endregion Command, DataReader, XmlReader
 
         #region Execute
 
@@ -482,76 +379,29 @@ namespace Honoo.Data
         /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(MySqlConnection connection, string commandText)
+        public static int ExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText)
         {
-            return ExecuteNonQuery(connection, commandText, null);
+            return ExecuteNonQuery(connection, commandType, commandText, null);
         }
 
         /// <summary>
         /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static int ExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_executeConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            int result;
-            using (MySqlCommand command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                ConnectionState state = connection.State;
-                if (state != ConnectionState.Open) { connection.Open(); }
-                result = command.ExecuteNonQuery();
-                if (state != ConnectionState.Open) { connection.Close(); }
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Executing stored procedure.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
-        public static void ExecuteProcedure(MySqlConnection connection, string procedure)
-        {
-            ExecuteProcedure(connection, procedure, null);
-        }
-
-        /// <summary>
-        /// Executing stored procedure.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
-        /// <param name="parameters">Parameters.</param>
-        public static void ExecuteProcedure(MySqlConnection connection, string procedure, params MySqlParameter[] parameters)
-        {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_executeConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            using (MySqlCommand command = new MySqlCommand(procedure, connection) { CommandType = CommandType.StoredProcedure })
+            using (MySqlCommand command = new MySqlCommand(commandText, connection) { CommandType = commandType })
             {
                 if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                ConnectionState state = connection.State;
-                if (state != ConnectionState.Open) { connection.Open(); }
-                command.ExecuteNonQuery();
-                if (state != ConnectionState.Open) { connection.Close(); }
+                return command.ExecuteNonQuery();
             }
         }
 
@@ -559,41 +409,30 @@ namespace Honoo.Data
         /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(MySqlConnection connection, string commandText)
+        public static object ExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText)
         {
-            return ExecuteScalar(connection, commandText, null);
+            return ExecuteScalar(connection, commandType, commandText, null);
         }
 
         /// <summary>
         /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(MySqlConnection connection, string commandText, params MySqlParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static object ExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
         {
-            if (connection is null)
+            using (MySqlCommand command = new MySqlCommand(commandText, connection) { CommandType = commandType })
             {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_executeConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            object result;
-            using (MySqlCommand command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
                 if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                ConnectionState state = connection.State;
-                if (state != ConnectionState.Open) { connection.Open(); }
-                result = command.ExecuteScalar();
-                if (state != ConnectionState.Open) { connection.Close(); }
+                return command.ExecuteScalar();
             }
-            return result;
         }
 
         #endregion Execute
@@ -604,53 +443,50 @@ namespace Honoo.Data
         /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText)
+        public static int TransactionExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText)
         {
-            return TransactionExecuteNonQuery(connection, commandText, IsolationLevel.RepeatableRead, null);
+            return TransactionExecuteNonQuery(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
         /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText, IsolationLevel isolationLevel)
+        public static int TransactionExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
-            return TransactionExecuteNonQuery(connection, commandText, isolationLevel, null);
+            return TransactionExecuteNonQuery(connection, commandType, commandText, isolationLevel, null);
         }
 
         /// <summary>
         /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(MySqlConnection connection, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        public static int TransactionExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-
-            if (_transactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
             int result = 0;
             Exception exception = null;
-            ConnectionState state = connection.State;
-            if (state != ConnectionState.Open) { connection.Open(); }
             using (MySqlTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                using (MySqlCommand command = connection.CreateCommand())
+                using (MySqlCommand command = new MySqlCommand(commandText, connection) { CommandType = commandType })
                 {
-                    command.CommandText = commandText;
                     if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
                     {
@@ -668,7 +504,6 @@ namespace Honoo.Data
                     }
                 }
             }
-            if (state != ConnectionState.Open) { connection.Close(); }
             if (exception is null)
             {
                 return result;
@@ -680,128 +515,53 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction. Auto rollback if failed.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
-        public static void TransactionExecuteProcedure(MySqlConnection connection, string procedure)
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
+        /// <returns></returns>
+        public static object TransactionExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText)
         {
-            TransactionExecuteProcedure(connection, procedure, IsolationLevel.RepeatableRead, null);
+            return TransactionExecuteScalar(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction. Auto rollback if failed.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
-        public static void TransactionExecuteProcedure(MySqlConnection connection, string procedure, IsolationLevel isolationLevel)
+        /// <returns></returns>
+        public static object TransactionExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
-            TransactionExecuteProcedure(connection, procedure, isolationLevel, null);
+            return TransactionExecuteScalar(connection, commandType, commandText, isolationLevel, null);
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction. Auto rollback if failed.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
-        public static void TransactionExecuteProcedure(MySqlConnection connection, string procedure, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        public static object TransactionExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_transactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            Exception exception = null;
-            ConnectionState state = connection.State;
-            if (state != ConnectionState.Open) { connection.Open(); }
-            using (MySqlTransaction transaction = connection.BeginTransaction(isolationLevel))
-            {
-                using (MySqlCommand command = connection.CreateCommand())
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = procedure;
-                    if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                    try
-                    {
-                        command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        try
-                        {
-                            transaction.Rollback();
-                        }
-                        catch { }
-                        exception = ex;
-                    }
-                }
-            }
-            if (state != ConnectionState.Open) { connection.Close(); }
-            if (exception != null)
-            {
-                throw exception;
-            }
-        }
-
-        /// <summary>
-        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
-        /// <returns></returns>
-        public static object TransactionExecuteScalar(MySqlConnection connection, string commandText)
-        {
-            return TransactionExecuteScalar(connection, commandText, IsolationLevel.RepeatableRead, null);
-        }
-
-        /// <summary>
-        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
-        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
-        /// <returns></returns>
-        public static object TransactionExecuteScalar(MySqlConnection connection, string commandText, IsolationLevel isolationLevel)
-        {
-            return TransactionExecuteScalar(connection, commandText, isolationLevel, null);
-        }
-
-        /// <summary>
-        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
-        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
-        /// <param name="parameters">Parameters.</param>
-        /// <returns></returns>
-        public static object TransactionExecuteScalar(MySqlConnection connection, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
-        {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_transactionConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
             object result = null;
             Exception exception = null;
-            ConnectionState state = connection.State;
-            if (state != ConnectionState.Open) { connection.Open(); }
             using (MySqlTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                using (MySqlCommand command = connection.CreateCommand())
+                using (MySqlCommand command = new MySqlCommand(commandText, connection) { CommandType = commandType })
                 {
-                    command.CommandText = commandText;
                     if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
                     {
@@ -819,7 +579,6 @@ namespace Honoo.Data
                     }
                 }
             }
-            if (state != ConnectionState.Open) { connection.Close(); }
             if (exception is null)
             {
                 return result;
@@ -856,25 +615,10 @@ namespace Honoo.Data
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         public static void Dump(MySqlConnection connection, MySqlDumpManifest manifest, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (manifest is null)
-            {
-                throw new ArgumentNullException(nameof(manifest));
-            }
             if (textWriter is null)
             {
                 throw new ArgumentNullException(nameof(textWriter));
             }
-            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            ConnectionState connectionState = connection.State;
-            if (connectionState != ConnectionState.Open) { connection.Open(); }
-            //
             MySqlSummary summary = BuildSummary(connection, manifest);
             bool cancel = false;
             long index = 0;
@@ -909,7 +653,6 @@ namespace Honoo.Data
                 DumpRecords(connection, manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
             }
             textWriter.Flush();
-            if (connectionState != ConnectionState.Open) { connection.Close(); }
             cancelled = cancel;
         }
 
@@ -919,11 +662,11 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="manifest">Dump manifest.</param>
         /// <param name="folder">Save to folder.</param>
-        /// <param name="fileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
+        /// <param name="splitFileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
         /// <param name="encoding">File encoding.</param>
-        public static void DumpToFiles(MySqlConnection connection, MySqlDumpManifest manifest, string folder, long fileSize, Encoding encoding)
+        public static void DumpToFiles(MySqlConnection connection, MySqlDumpManifest manifest, string folder, long splitFileSize, Encoding encoding)
         {
-            DumpToFiles(connection, manifest, folder, fileSize, encoding, null, null, out _);
+            DumpToFiles(connection, manifest, folder, splitFileSize, encoding, null, null, out _);
         }
 
         /// <summary>
@@ -932,7 +675,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="manifest">Dump manifest.</param>
         /// <param name="folder">Save to folder.</param>
-        /// <param name="fileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
+        /// <param name="splitFileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
         /// <param name="encoding">File encoding.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
@@ -940,38 +683,20 @@ namespace Honoo.Data
         public static void DumpToFiles(MySqlConnection connection,
                                        MySqlDumpManifest manifest,
                                        string folder,
-                                       long fileSize,
+                                       long splitFileSize,
                                        Encoding encoding,
                                        MySqlWrittenCallback written,
                                        object userState,
                                        out bool cancelled)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (manifest is null)
-            {
-                throw new ArgumentNullException(nameof(manifest));
-            }
-            if (encoding is null)
-            {
-                throw new ArgumentNullException(nameof(encoding));
-            }
             if (!Directory.Exists(folder))
             {
                 Directory.CreateDirectory(folder);
             }
-            if (fileSize < 1024 * 1024)
+            if (splitFileSize < 1024 * 1024)
             {
                 throw new ArgumentException("File size cannot be less than 1 MB.");
             }
-            if (_dataAdapterConnectionBehavior == MySqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            ConnectionState connectionState = connection.State;
-            if (connectionState != ConnectionState.Open) { connection.Open(); }
             //
             MySqlSummary summary = BuildSummary(connection, manifest);
             bool cancel = false;
@@ -1012,9 +737,8 @@ namespace Honoo.Data
             }
             if (!cancel && summary.RecordCount > 0)
             {
-                DumpRecords(connection, manifest.Tables, folder, fileSize, encoding, ref index, summary.Total, written, userState, ref cancel);
+                DumpRecords(connection, manifest.Tables, folder, splitFileSize, encoding, ref index, summary.Total, written, userState, ref cancel);
             }
-            if (connectionState != ConnectionState.Open) { connection.Close(); }
             cancelled = cancel;
         }
 
@@ -1074,6 +798,14 @@ namespace Honoo.Data
 
         private static MySqlSummary BuildSummary(MySqlConnection connection, MySqlDumpManifest manifest)
         {
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+            if (manifest is null)
+            {
+                throw new ArgumentNullException(nameof(manifest));
+            }
             MySqlSummary summary = new MySqlSummary();
             List<string> union = new List<string>();
             foreach (MySqlTableDumpProject table in manifest.Tables)
@@ -1286,7 +1018,7 @@ namespace Honoo.Data
         private static void DumpRecords(MySqlConnection connection,
                                         List<MySqlTableDumpProject> tables,
                                         string folder,
-                                        long fileSize,
+                                        long splitFileSize,
                                         Encoding encoding,
                                         ref long index,
                                         long total,
@@ -1302,13 +1034,16 @@ namespace Honoo.Data
                 }
                 if (!table.Ignore && table.IncludingRecord)
                 {
-                    using (MySqlDataReader reader = GetDataReader(connection, "SELECT * FROM `" + table.TableName + "`;"))
+                    using (MySqlCommand command = GetCommand(connection, CommandType.Text, "SELECT * FROM `" + table.TableName + "`;"))
                     {
-                        if (reader.HasRows)
+                        using (MySqlDataReader reader = command.ExecuteReader(CommandBehavior.Default))
                         {
-                            DumpRecords(table.TableName, reader, folder, fileSize, encoding, ref index, total, written, userState, ref cancel);
+                            if (reader.HasRows)
+                            {
+                                DumpRecords(table.TableName, reader, folder, splitFileSize, encoding, ref index, total, written, userState, ref cancel);
+                            }
+                            reader.Close();
                         }
-                        //reader.Close();
                     }
                 }
             }
@@ -1335,60 +1070,63 @@ namespace Honoo.Data
                 if (!table.Ignore && table.IncludingRecord)
                 {
                     string tableName = table.TableName;
-                    using (MySqlDataReader reader = GetDataReader(connection, "SELECT * FROM `" + tableName + "`;"))
+                    using (MySqlCommand command = GetCommand(connection, CommandType.Text, "SELECT * FROM `" + tableName + "`;"))
                     {
-                        if (reader.HasRows)
+                        using (MySqlDataReader reader = command.ExecuteReader(CommandBehavior.Default))
                         {
-                            tmp.AppendLine("-- ----------------------------");
-                            tmp.AppendLine("-- Records of " + tableName);
-                            tmp.AppendLine("-- ----------------------------");
-                            while (reader.Read())
+                            if (reader.HasRows)
                             {
-                                if (cancel)
+                                tmp.AppendLine("-- ----------------------------");
+                                tmp.AppendLine("-- Records of " + tableName);
+                                tmp.AppendLine("-- ----------------------------");
+                                while (reader.Read())
                                 {
-                                    break;
-                                }
-                                tmp.Append("INSERT INTO `" + tableName + "` VALUES");
-                                tmp.Append('(');
-                                for (int i = 0; i < reader.FieldCount; i++)
-                                {
-                                    object val = reader.GetValue(i);
-                                    if (val == DBNull.Value)
+                                    if (cancel)
                                     {
-                                        tmp.Append("NULL");
+                                        break;
                                     }
-                                    else
+                                    tmp.Append("INSERT INTO `" + tableName + "` VALUES");
+                                    tmp.Append('(');
+                                    for (int i = 0; i < reader.FieldCount; i++)
                                     {
-                                        switch (val)
+                                        object val = reader.GetValue(i);
+                                        if (val == DBNull.Value)
                                         {
-                                            case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
-                                            case bool value: tmp.Append(value ? 1 : 0); break;
-                                            case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case uint value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case long value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case ulong value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            default: tmp.Append("'" + val.ToString() + "'"); break;
+                                            tmp.Append("NULL");
+                                        }
+                                        else
+                                        {
+                                            switch (val)
+                                            {
+                                                case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
+                                                case bool value: tmp.Append(value ? 1 : 0); break;
+                                                case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case uint value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case long value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case ulong value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                default: tmp.Append("'" + val.ToString() + "'"); break;
+                                            }
+                                        }
+                                        if (i < reader.FieldCount - 1)
+                                        {
+                                            tmp.Append(',');
                                         }
                                     }
-                                    if (i < reader.FieldCount - 1)
-                                    {
-                                        tmp.Append(',');
-                                    }
+                                    tmp.AppendLine(");");
+                                    textWriter.Write(tmp);
+                                    tmp.Clear();
+                                    index++;
+                                    written?.Invoke(index, total, MySqlDumpProjectType.Record, tableName, userState, ref cancel);
                                 }
-                                tmp.AppendLine(");");
-                                textWriter.Write(tmp);
-                                tmp.Clear();
-                                index++;
-                                written?.Invoke(index, total, MySqlDumpProjectType.Record, tableName, userState, ref cancel);
                             }
+                            reader.Close();
                         }
-                        //reader.Close();
                     }
                 }
             }
@@ -1399,7 +1137,7 @@ namespace Honoo.Data
         private static void DumpRecords(string tableName,
                                         MySqlDataReader reader,
                                         string folder,
-                                        long fileSize,
+                                        long splitFileSize,
                                         Encoding encoding,
                                         ref long index,
                                         long total,
@@ -1457,7 +1195,7 @@ namespace Honoo.Data
                     }
                 }
                 tmp.AppendLine(");");
-                if (streamWriter.BaseStream.Length + (tmp.Length * 3) > fileSize)
+                if (streamWriter.BaseStream.Length + (tmp.Length * 3) > splitFileSize)
                 {
                     streamWriter.WriteLine();
                     streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
@@ -1620,26 +1358,6 @@ namespace Honoo.Data
         #endregion Private class
     }
 
-    #region ConnectionBehavior
-
-    /// <summary>
-    /// The mode of the connection when querying.
-    /// </summary>
-    public enum MySqlConnectionBehavior
-    {
-        /// <summary>Does not open automatically.
-        /// If the connection is not open  when the querying, an exception is thrown.</summary>
-        Manual,
-
-        /// <summary>
-        /// If the connection is not open, automatically open and close when the query is complete.
-        /// If the connection is already open, keep it turned on when the query is complete.
-        /// </summary>
-        Auto
-    }
-
-    #endregion ConnectionBehavior
-
     #region Dump
 
     /// <summary>
@@ -1697,31 +1415,37 @@ namespace Honoo.Data
         /// <summary>
         /// Events dump project.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         public List<MySqlDumpProject> Events { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Functions dump project.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         public List<MySqlDumpProject> Functions { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Procedures dump project.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         public List<MySqlDumpProject> Procedures { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Tables dump project.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         public List<MySqlTableDumpProject> Tables { get; } = new List<MySqlTableDumpProject>();
 
         /// <summary>
         /// Triggers dump project.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         public List<MySqlDumpProject> Triggers { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Views dump project.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         public List<MySqlDumpProject> Views { get; } = new List<MySqlDumpProject>();
     }
 
@@ -2031,11 +1755,11 @@ namespace Honoo.Data
         /// <summary>
         /// Deletes the event.
         /// </summary>
-        /// <param name="event_">The name of the event.</param>
+        /// <param name="eventName">The name of the event.</param>
         /// <returns></returns>
-        public static string DropEvent(string event_)
+        public static string DropEvent(string eventName)
         {
-            return "DROP EVENT IF EXISTS `" + event_ + "`;";
+            return "DROP EVENT IF EXISTS `" + eventName + "`;";
         }
 
         /// <summary>
@@ -2091,11 +1815,11 @@ namespace Honoo.Data
         /// <summary>
         /// Displays the creation script for the stored procedure with the specified name.
         /// </summary>
-        /// <param name="event_">The name of the event.</param>
+        /// <param name="eventName">The name of the event.</param>
         /// <returns></returns>
-        public static string ShowCreateEvent(string event_)
+        public static string ShowCreateEvent(string eventName)
         {
-            return "SHOW CREATE EVENT `" + event_ + "`;";
+            return "SHOW CREATE EVENT `" + eventName + "`;";
         }
 
         /// <summary>

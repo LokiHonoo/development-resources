@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net481</TargetFramework>
+		<RootNamespace>Honoo</RootNamespace>
+		<PackageId>development-resources-csharp</PackageId>
+		<Authors>Loki Honoo</Authors>
+		<Company>Loki Honoo</Company>
+		<Product>development-resources</Product>
+		<Copyright>Copyright (C) Loki Honoo 2015. All rights reserved.</Copyright>
+		<RepositoryUrl>https://github.com/LokiHonoo/development-resources</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/LokiHonoo/development-resources</PackageProjectUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Description>Development resource and notes.</Description>
+		<AnalysisLevel>latest-all</AnalysisLevel>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<BaseOutputPath>..\bin\</BaseOutputPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Folder Include="classes\" />
+	</ItemGroup>
+
+</Project>

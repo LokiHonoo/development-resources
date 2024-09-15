@@ -5,10 +5,6 @@
  * This code page is published by the MIT license.
  */
 
-/*
- * PackageReference: System.Data.SQLite
- */
-
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -24,51 +20,6 @@ namespace Honoo.Data
     /// </summary>
     public static class SQLiteHelper
     {
-        #region ConnectionBehavior
-
-        private static SQLiteConnectionBehavior _dataAdapterConnectionBehavior = SQLiteConnectionBehavior.Auto;
-        private static SQLiteConnectionBehavior _dataReaderConnectionBehavior = SQLiteConnectionBehavior.Manual;
-        private static SQLiteConnectionBehavior _executeConnectionBehavior = SQLiteConnectionBehavior.Manual;
-        private static SQLiteConnectionBehavior _transactionConnectionBehavior = SQLiteConnectionBehavior.Manual;
-
-        /// <summary>
-        /// Connection open/close behavior when using DataAdapter. Default Auto.
-        /// </summary>
-        public static SQLiteConnectionBehavior DataAdapterConnectionBehavior
-        {
-            get => _dataAdapterConnectionBehavior;
-            set => _dataAdapterConnectionBehavior = value;
-        }
-
-        /// <summary>
-        /// Connection open/close behavior when using DataReader. Default Manual.
-        /// </summary>
-        public static SQLiteConnectionBehavior DataReaderConnectionBehavior
-        {
-            get => _dataReaderConnectionBehavior;
-            set => _dataReaderConnectionBehavior = value;
-        }
-
-        /// <summary>
-        /// Connection open/close behavior when using Execute. Default Manual.
-        /// </summary>
-        public static SQLiteConnectionBehavior ExecuteConnectionBehavior
-        {
-            get => _executeConnectionBehavior;
-            set => _executeConnectionBehavior = value;
-        }
-
-        /// <summary>
-        /// Connection open/close behavior when using Transaction. Default Manual.
-        /// </summary>
-        public static SQLiteConnectionBehavior TransactionConnectionBehavior
-        {
-            get => _transactionConnectionBehavior;
-            set => _transactionConnectionBehavior = value;
-        }
-
-        #endregion ConnectionBehavior
-
         #region Connection
 
         /// <summary>
@@ -78,10 +29,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static SQLiteConnection BuildConnection(SQLiteConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder is null)
-            {
-                throw new ArgumentNullException(nameof(connectionStringBuilder));
-            }
+            ArgumentNullException.ThrowIfNull(connectionStringBuilder);
             return new SQLiteConnection(connectionStringBuilder.ConnectionString);
         }
 
@@ -103,7 +51,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static SQLiteConnection BuildConnection(string dataSource, string password)
         {
-            SQLiteConnectionStringBuilder connectionStringBuilder = new SQLiteConnectionStringBuilder() { DataSource = dataSource };
+            SQLiteConnectionStringBuilder connectionStringBuilder = new() { DataSource = dataSource };
             if (!string.IsNullOrEmpty(password)) { connectionStringBuilder.Password = password; }
             return new SQLiteConnection(connectionStringBuilder.ConnectionString);
         }
@@ -115,10 +63,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string BuildConnectionString(SQLiteConnectionStringBuilder connectionStringBuilder)
         {
-            if (connectionStringBuilder is null)
-            {
-                throw new ArgumentNullException(nameof(connectionStringBuilder));
-            }
+            ArgumentNullException.ThrowIfNull(connectionStringBuilder);
             return connectionStringBuilder.ConnectionString;
         }
 
@@ -130,7 +75,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string BuildConnectionString(string dataSource, string password)
         {
-            SQLiteConnectionStringBuilder connectionStringBuilder = new SQLiteConnectionStringBuilder() { DataSource = dataSource };
+            SQLiteConnectionStringBuilder connectionStringBuilder = new() { DataSource = dataSource };
             if (!string.IsNullOrEmpty(password)) { connectionStringBuilder.Password = password; }
             return connectionStringBuilder.ConnectionString;
         }
@@ -144,7 +89,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText)
         {
@@ -156,26 +101,15 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static int FillDataSet(DataSet dataSet, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[]? parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            int result;
-            using (SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
-            {
-                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
-                result = dataAdapter.Fill(dataSet);
-            }
-            return result;
+            using SQLiteDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
+            return dataAdapter.Fill(dataSet);
         }
 
         /// <summary>
@@ -183,7 +117,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText)
         {
@@ -195,34 +129,24 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static int FillDataTable(DataTable dataTable, SQLiteConnection connection, string selectCommandText, params SQLiteParameter[]? parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            int result;
-            using (SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
-            {
-                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
-                result = dataAdapter.Fill(dataTable);
-            }
-            return result;
+            using SQLiteDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
+            return dataAdapter.Fill(dataTable);
         }
 
         /// <summary>
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText)
         {
             return new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -232,13 +156,14 @@ namespace Honoo.Data
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static SQLiteDataAdapter GetDataAdapter(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[]? parameters)
         {
-            SQLiteDataAdapter result = new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
-            if (parameters != null && parameters.Length > 0) { result.SelectCommand.Parameters.AddRange(parameters); }
+            SQLiteDataAdapter result = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+            if (parameters != null && parameters.Length > 0) { result.SelectCommand?.Parameters.AddRange(parameters); }
             return result;
         }
 
@@ -246,7 +171,7 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText)
         {
@@ -257,23 +182,16 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static DataSet GetDataSet(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[]? parameters)
         {
-            if (connection is null)
+            DataSet result = new();
+            using (SQLiteDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            DataSet result = new DataSet();
-            using (SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
-            {
-                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
+                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
                 dataAdapter.Fill(result);
             }
             return result;
@@ -283,7 +201,7 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText)
         {
@@ -294,23 +212,16 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static DataTable GetDataTable(SQLiteConnection connection, string selectCommandText, params SQLiteParameter[]? parameters)
         {
-            if (connection is null)
+            DataTable result = new();
+            using (SQLiteDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            DataTable result = new DataTable();
-            using (SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
-            {
-                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
+                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
                 dataAdapter.Fill(result);
             }
             return result;
@@ -318,59 +229,37 @@ namespace Honoo.Data
 
         #endregion DataAdapter
 
-        #region DataReader
+        #region Command, DataReader, XmlReader
 
         /// <summary>
-        /// Get DataReader.
+        /// Get Command. Create DataReader by Command.ExecuteReader(commandBehavior). Create XmlReader by Command.ExecuteXmlReader().
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText)
+        public static SQLiteCommand GetCommand(SQLiteConnection connection, CommandType commandType, string commandText)
         {
-            return GetDataReader(connection, commandText, null);
+            return GetCommand(connection, commandType, commandText, null);
         }
 
         /// <summary>
-        /// Get DataReader.
+        /// Get Command. Create DataReader by Command.ExecuteReader(commandBehavior). Create XmlReader by Command.ExecuteXmlReader().
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static SQLiteDataReader GetDataReader(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static SQLiteCommand GetCommand(SQLiteConnection connection, CommandType commandType, string commandText, params SQLiteParameter[]? parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            CommandBehavior commandBehavior;
-            if (_dataReaderConnectionBehavior == SQLiteConnectionBehavior.Manual)
-            {
-                if (connection.State != ConnectionState.Open)
-                {
-                    throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-                }
-                commandBehavior = CommandBehavior.Default;
-            }
-            else
-            {
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                    commandBehavior = CommandBehavior.CloseConnection;
-                }
-                else
-                {
-                    commandBehavior = CommandBehavior.Default;
-                }
-            }
-            SQLiteCommand command = new SQLiteCommand(commandText, connection);
+            SQLiteCommand command = new(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-            return command.ExecuteReader(commandBehavior);
+            return command;
         }
 
-        #endregion DataReader
+        #endregion Command, DataReader, XmlReader
 
         #region Execute
 
@@ -378,118 +267,56 @@ namespace Honoo.Data
         /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(SQLiteConnection connection, string commandText)
+        public static int ExecuteNonQuery(SQLiteConnection connection, CommandType commandType, string commandText)
         {
-            return ExecuteNonQuery(connection, commandText, null);
+            return ExecuteNonQuery(connection, commandType, commandText, null);
         }
 
         /// <summary>
         /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static int ExecuteNonQuery(SQLiteConnection connection, CommandType commandType, string commandText, params SQLiteParameter[]? parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_executeConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            int result;
-            using (SQLiteCommand command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                ConnectionState state = connection.State;
-                if (state != ConnectionState.Open) { connection.Open(); }
-                result = command.ExecuteNonQuery();
-                if (state != ConnectionState.Open) { connection.Close(); }
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Executing stored procedure.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql command.</param>
-        public static void ExecuteProcedure(SQLiteConnection connection, string procedure)
-        {
-            ExecuteProcedure(connection, procedure, null);
-        }
-
-        /// <summary>
-        /// Executing stored procedure.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
-        /// <param name="parameters">Parameters.</param>
-        public static void ExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters)
-        {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_executeConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            using (SQLiteCommand command = new SQLiteCommand(procedure, connection) { CommandType = CommandType.StoredProcedure })
-            {
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                ConnectionState state = connection.State;
-                if (state != ConnectionState.Open) { connection.Open(); }
-                command.ExecuteNonQuery();
-                if (state != ConnectionState.Open) { connection.Close(); }
-            }
+            using SQLiteCommand command = new(commandText, connection) { CommandType = commandType };
+            if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
+            return command.ExecuteNonQuery();
         }
 
         /// <summary>
         /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(SQLiteConnection connection, string commandText)
+        public static object? ExecuteScalar(SQLiteConnection connection, CommandType commandType, string commandText)
         {
-            return ExecuteScalar(connection, commandText, null);
+            return ExecuteScalar(connection, commandType, commandText, null);
         }
 
         /// <summary>
         /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static object? ExecuteScalar(SQLiteConnection connection, CommandType commandType, string commandText, params SQLiteParameter[]? parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_executeConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            object result;
-            using (SQLiteCommand command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                ConnectionState state = connection.State;
-                if (state != ConnectionState.Open) { connection.Open(); }
-                result = command.ExecuteScalar();
-                if (state != ConnectionState.Open) { connection.Close(); }
-            }
-            return result;
+            using SQLiteCommand command = new(commandText, connection) { CommandType = commandType };
+            if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
+            return command.ExecuteScalar();
         }
 
         #endregion Execute
@@ -500,62 +327,62 @@ namespace Honoo.Data
         /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText)
+        public static int TransactionExecuteNonQuery(SQLiteConnection connection, CommandType commandType, string commandText)
         {
-            return TransactionExecuteNonQuery(connection, commandText, null);
+            return TransactionExecuteNonQuery(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
         /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
+        /// <returns></returns>
+        public static int TransactionExecuteNonQuery(SQLiteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        {
+            return TransactionExecuteNonQuery(connection, commandType, commandText, isolationLevel, null);
+        }
+
+        /// <summary>
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
+        /// </summary>
+        /// <param name="connection">Connection.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        public static int TransactionExecuteNonQuery(SQLiteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SQLiteParameter[]? parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_transactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
+            ArgumentNullException.ThrowIfNull(connection);
             int result = 0;
-            Exception exception = null;
-            ConnectionState state = connection.State;
-            if (state != ConnectionState.Open) { connection.Open(); }
-            using (SQLiteCommand command = connection.CreateCommand())
+            Exception? exception = null;
+            using (SQLiteTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                StringBuilder sql = new StringBuilder();
-                sql.AppendLine("BEGIN TRANSACTION;");
-                sql.Append(commandText);
-                sql.AppendLine(";");
-                sql.AppendLine("COMMIT;");
-                command.CommandText = sql.ToString();
+                using SQLiteCommand command = new(commandText, connection) { CommandType = commandType };
                 if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                 try
                 {
-                    result = command.ExecuteNonQuery();
+                    result += command.ExecuteNonQuery();
+                    transaction.Commit();
                 }
                 catch (Exception ex)
                 {
-                    using (SQLiteCommand rollback = connection.CreateCommand())
+                    try
                     {
-                        command.CommandText = "ROLLBACK;";
-                        try
-                        {
-                            command.ExecuteNonQuery();
-                        }
-                        catch { }
+                        transaction.Rollback();
                     }
+                    catch { }
                     exception = ex;
                 }
             }
-            if (state != ConnectionState.Open) { connection.Close(); }
             if (exception is null)
             {
                 return result;
@@ -567,130 +394,65 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction. Auto rollback if failed.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
-        public static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure)
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
+        /// <returns></returns>
+        public static object? TransactionExecuteScalar(SQLiteConnection connection, CommandType commandType, string commandText)
         {
-            TransactionExecuteProcedure(connection, procedure, null);
-        }
-
-        /// <summary>
-        /// Executing stored procedure by transaction. Auto rollback if failed.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
-        /// <param name="parameters">Parameters.</param>
-        public static void TransactionExecuteProcedure(SQLiteConnection connection, string procedure, params SQLiteParameter[] parameters)
-        {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_transactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            Exception exception = null;
-            ConnectionState state = connection.State;
-            if (state != ConnectionState.Open) { connection.Open(); }
-            using (SQLiteCommand command = connection.CreateCommand())
-            {
-                command.CommandType = CommandType.StoredProcedure;
-                StringBuilder sql = new StringBuilder();
-                sql.AppendLine("BEGIN TRANSACTION;");
-                sql.Append(procedure);
-                sql.AppendLine(";");
-                sql.AppendLine("COMMIT;");
-                command.CommandText = sql.ToString();
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                try
-                {
-                    command.ExecuteNonQuery();
-                }
-                catch (Exception ex)
-                {
-                    using (SQLiteCommand rollback = connection.CreateCommand())
-                    {
-                        command.CommandText = "ROLLBACK;";
-                        try
-                        {
-                            command.ExecuteNonQuery();
-                        }
-                        catch { }
-                    }
-                    exception = ex;
-                }
-            }
-            if (state != ConnectionState.Open) { connection.Close(); }
-            if (exception != null)
-            {
-                throw exception;
-            }
+            return TransactionExecuteScalar(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
         /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(SQLiteConnection connection, string commandText)
+        public static object? TransactionExecuteScalar(SQLiteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
-            return TransactionExecuteScalar(connection, commandText, null);
+            return TransactionExecuteScalar(connection, commandType, commandText, isolationLevel, null);
         }
 
         /// <summary>
         /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
+        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(SQLiteConnection connection, string commandText, params SQLiteParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        public static object? TransactionExecuteScalar(SQLiteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SQLiteParameter[]? parameters)
         {
-            if (connection is null)
+            ArgumentNullException.ThrowIfNull(connection);
+            object? result = null;
+            Exception? exception = null;
+            using (SQLiteTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (_transactionConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            object result = null;
-            Exception exception = null;
-            ConnectionState state = connection.State;
-            if (state != ConnectionState.Open) { connection.Open(); }
-            using (SQLiteCommand command = connection.CreateCommand())
-            {
-                StringBuilder sql = new StringBuilder();
-                sql.AppendLine("BEGIN TRANSACTION;");
-                sql.Append(commandText);
-                sql.AppendLine(";");
-                sql.AppendLine("COMMIT;");
-                command.CommandText = sql.ToString();
+                using SQLiteCommand command = new(commandText, connection) { CommandType = commandType };
                 if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                 try
                 {
                     result = command.ExecuteScalar();
+                    transaction.Commit();
                 }
                 catch (Exception ex)
                 {
-                    using (SQLiteCommand rollback = connection.CreateCommand())
+                    try
                     {
-                        command.CommandText = "ROLLBACK;";
-                        try
-                        {
-                            command.ExecuteNonQuery();
-                        }
-                        catch { }
+                        transaction.Rollback();
                     }
+                    catch { }
                     exception = ex;
                 }
             }
-            if (state != ConnectionState.Open) { connection.Close(); }
             if (exception is null)
             {
                 return result;
@@ -728,29 +490,11 @@ namespace Honoo.Data
         public static void Dump(SQLiteConnection connection,
                                 SQLiteDumpManifest manifest,
                                 TextWriter textWriter,
-                                SQLiteWrittenCallback written,
-                                object userState,
+                                SQLiteWrittenCallback? written,
+                                object? userState,
                                 out bool cancelled)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (manifest is null)
-            {
-                throw new ArgumentNullException(nameof(manifest));
-            }
-            if (textWriter is null)
-            {
-                throw new ArgumentNullException(nameof(textWriter));
-            }
-            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            ConnectionState connectionState = connection.State;
-            if (connectionState != ConnectionState.Open) { connection.Open(); }
-            //
+            ArgumentNullException.ThrowIfNull(textWriter);
             SQLiteSummary summary = BuildSummary(connection, manifest);
             bool cancel = false;
             long index = 0;
@@ -758,20 +502,18 @@ namespace Honoo.Data
             written?.Invoke(0, summary.Total, SQLiteDumpProjectType.Summary, string.Empty, userState, ref cancel);
             if (!cancel)
             {
-                using (DataSet ds = GetDataSet(connection, SQLiteCommandText.ShowTables() + SQLiteCommandText.ShowViews() + SQLiteCommandText.ShowTriggers()))
+                using DataSet ds = GetDataSet(connection, SQLiteCommandText.ShowTables() + SQLiteCommandText.ShowViews() + SQLiteCommandText.ShowTriggers());
+                if (!cancel && summary.TableCount > 0)
                 {
-                    if (!cancel && summary.TableCount > 0)
-                    {
-                        DumpTables(ds.Tables[0], manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
-                    }
-                    if (!cancel && summary.ViewCount > 0)
-                    {
-                        DumpViews(ds.Tables[1], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
-                    }
-                    if (!cancel && summary.TriggerCount > 0)
-                    {
-                        DumpTriggers(ds.Tables[2], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
-                    }
+                    DumpTables(ds.Tables[0], manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
+                }
+                if (!cancel && summary.ViewCount > 0)
+                {
+                    DumpViews(ds.Tables[1], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
+                }
+                if (!cancel && summary.TriggerCount > 0)
+                {
+                    DumpTriggers(ds.Tables[2], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
                 }
             }
             if (!cancel && summary.RecordCount > 0)
@@ -779,7 +521,6 @@ namespace Honoo.Data
                 DumpRecords(connection, manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
             }
             textWriter.Flush();
-            if (connectionState != ConnectionState.Open) { connection.Close(); }
             cancelled = cancel;
         }
 
@@ -802,7 +543,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="manifest">Dump manifest.</param>
         /// <param name="folder">Save to folder.</param>
-        /// <param name="fileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
+        /// <param name="splitFileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
         /// <param name="encoding">File encoding.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
@@ -810,75 +551,51 @@ namespace Honoo.Data
         public static void DumpToFiles(SQLiteConnection connection,
                                        SQLiteDumpManifest manifest,
                                        string folder,
-                                       long fileSize,
+                                       long splitFileSize,
                                        Encoding encoding,
-                                       SQLiteWrittenCallback written,
-                                       object userState,
+                                       SQLiteWrittenCallback? written,
+                                       object? userState,
                                        out bool cancelled)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            if (manifest is null)
-            {
-                throw new ArgumentNullException(nameof(manifest));
-            }
-            if (encoding is null)
-            {
-                throw new ArgumentNullException(nameof(encoding));
-            }
             if (!Directory.Exists(folder))
             {
                 Directory.CreateDirectory(folder);
             }
-            if (fileSize < 1024 * 1024)
+            if (splitFileSize < 1024 * 1024)
             {
                 throw new ArgumentException("File size cannot be less than 1 MB.");
             }
-            if (_dataAdapterConnectionBehavior == SQLiteConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            ConnectionState connectionState = connection.State;
-            if (connectionState != ConnectionState.Open) { connection.Open(); }
-            //
             SQLiteSummary summary = BuildSummary(connection, manifest);
             bool cancel = false;
             long index = 0;
             string file = Path.Combine(folder, "!schema.sql");
-            using (FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
+            using (FileStream stream = new(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
             {
-                using (StreamWriter textWriter = new StreamWriter(stream, encoding))
+                using StreamWriter textWriter = new(stream, encoding);
+                textWriter.Write(summary.Text);
+                written?.Invoke(0, summary.Total, SQLiteDumpProjectType.Summary, string.Empty, userState, ref cancel);
+                if (!cancel)
                 {
-                    textWriter.Write(summary.Text);
-                    written?.Invoke(0, summary.Total, SQLiteDumpProjectType.Summary, string.Empty, userState, ref cancel);
-                    if (!cancel)
+                    using DataSet ds = GetDataSet(connection, SQLiteCommandText.ShowTables() + SQLiteCommandText.ShowViews() + SQLiteCommandText.ShowTriggers());
+                    if (!cancel && summary.TableCount > 0)
                     {
-                        using (DataSet ds = GetDataSet(connection, SQLiteCommandText.ShowTables() + SQLiteCommandText.ShowViews() + SQLiteCommandText.ShowTriggers()))
-                        {
-                            if (!cancel && summary.TableCount > 0)
-                            {
-                                DumpTables(ds.Tables[0], manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
-                            }
-                            if (!cancel && summary.ViewCount > 0)
-                            {
-                                DumpViews(ds.Tables[1], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
-                            }
-                            if (!cancel && summary.TriggerCount > 0)
-                            {
-                                DumpTriggers(ds.Tables[2], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
-                            }
-                            textWriter.Flush();
-                        }
+                        DumpTables(ds.Tables[0], manifest.Tables, textWriter, ref index, summary.Total, written, userState, ref cancel);
                     }
+                    if (!cancel && summary.ViewCount > 0)
+                    {
+                        DumpViews(ds.Tables[1], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
+                    }
+                    if (!cancel && summary.TriggerCount > 0)
+                    {
+                        DumpTriggers(ds.Tables[2], manifest.Triggers, textWriter, ref index, summary.Total, written, userState, ref cancel);
+                    }
+                    textWriter.Flush();
                 }
             }
             if (!cancel && summary.RecordCount > 0)
             {
-                DumpRecords(connection, manifest.Tables, folder, fileSize, encoding, ref index, summary.Total, written, userState, ref cancel);
+                DumpRecords(connection, manifest.Tables, folder, splitFileSize, encoding, ref index, summary.Total, written, userState, ref cancel);
             }
-            if (connectionState != ConnectionState.Open) { connection.Close(); }
             cancelled = cancel;
         }
 
@@ -889,12 +606,8 @@ namespace Honoo.Data
         /// <returns></returns>
         public static SQLiteDumpManifest GetDumpManifest(SQLiteConnection connection)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-            SQLiteDumpManifest manifest = new SQLiteDumpManifest();
-            using (DataTable dt = GetDataTable(connection, "SELECT type, name FROM `sqlite_master`;"))
+            SQLiteDumpManifest manifest = new();
+            using (DataTable dt = GetDataTable(connection, "SELECT type, name FROM `SQLite_master`;"))
             {
                 if (dt.Rows.Count > 0)
                 {
@@ -921,8 +634,11 @@ namespace Honoo.Data
 
         private static SQLiteSummary BuildSummary(SQLiteConnection connection, SQLiteDumpManifest manifest)
         {
-            SQLiteSummary summary = new SQLiteSummary();
-            List<string> union = new List<string>();
+            ArgumentNullException.ThrowIfNull(connection);
+
+            ArgumentNullException.ThrowIfNull(manifest);
+            SQLiteSummary summary = new();
+            List<string> union = [];
             foreach (SQLiteTableDumpProject table in manifest.Tables)
             {
                 if (!table.Ignore)
@@ -936,10 +652,8 @@ namespace Honoo.Data
             }
             if (union.Count > 0)
             {
-                using (DataTable dt = GetDataTable(connection, string.Join(" UNION ALL ", union) + ";"))
-                {
-                    summary.RecordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString(), CultureInfo.InvariantCulture);
-                }
+                using DataTable dt = GetDataTable(connection, string.Join(" UNION ALL ", union) + ";");
+                summary.RecordCount = long.Parse(dt.Compute("SUM(count)", string.Empty).ToString()!, CultureInfo.InvariantCulture);
             }
             foreach (SQLiteDumpProject view in manifest.Views)
             {
@@ -956,7 +670,7 @@ namespace Honoo.Data
                 }
             }
             summary.Total = summary.TableCount + summary.ViewCount + summary.TriggerCount + summary.RecordCount;
-            StringBuilder tmp = new StringBuilder();
+            StringBuilder tmp = new();
             tmp.AppendLine("/*");
             tmp.AppendLine("Dump by Honoo.Data.SQLiteHelper");
             tmp.AppendLine("https://github.com/LokiHonoo/development-resources");
@@ -986,11 +700,11 @@ namespace Honoo.Data
                                         TextWriter textWriter,
                                         ref long index,
                                         long total,
-                                        SQLiteWrittenCallback written,
-                                        object userState,
+                                        SQLiteWrittenCallback? written,
+                                        object? userState,
                                         ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            StringBuilder tmp = new();
             textWriter.WriteLine("PRAGMA foreign_keys = OFF;");
             textWriter.WriteLine();
             foreach (SQLiteTableDumpProject table in tables)
@@ -1001,52 +715,51 @@ namespace Honoo.Data
                 }
                 if (!table.Ignore && table.IncludingRecord)
                 {
-                    using (SQLiteDataReader reader = GetDataReader(connection, "SELECT * FROM `" + table.TableName + "`;"))
+                    using SQLiteCommand command = GetCommand(connection, CommandType.Text, "SELECT * FROM `" + table.TableName + "`;");
+                    using SQLiteDataReader reader = command.ExecuteReader(CommandBehavior.Default);
+                    if (reader.HasRows)
                     {
-                        if (reader.HasRows)
+                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- Records of " + table.TableName);
+                        tmp.AppendLine("-- ----------------------------");
+                        while (reader.Read())
                         {
-                            tmp.AppendLine("-- ----------------------------");
-                            tmp.AppendLine("-- Records of " + table.TableName);
-                            tmp.AppendLine("-- ----------------------------");
-                            while (reader.Read())
+                            if (cancel)
                             {
-                                if (cancel)
-                                {
-                                    break;
-                                }
-                                tmp.Append("INSERT INTO `" + table.TableName + "` VALUES");
-                                tmp.Append('(');
-                                for (int i = 0; i < reader.FieldCount; i++)
-                                {
-                                    object val = reader.GetValue(i);
-                                    if (val == DBNull.Value)
-                                    {
-                                        tmp.Append("NULL");
-                                    }
-                                    else
-                                    {
-                                        switch (val)
-                                        {
-                                            case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
-                                            case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
-                                            default: tmp.Append("'" + val.ToString() + "'"); break;
-                                        }
-                                    }
-                                    if (i < reader.FieldCount - 1)
-                                    {
-                                        tmp.Append(',');
-                                    }
-                                }
-                                tmp.AppendLine(");");
-                                textWriter.Write(tmp);
-                                tmp.Clear();
-                                index++;
-                                written?.Invoke(index, total, SQLiteDumpProjectType.Record, table.TableName, userState, ref cancel);
+                                break;
                             }
+                            tmp.Append("INSERT INTO `" + table.TableName + "` VALUES");
+                            tmp.Append('(');
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                object val = reader.GetValue(i);
+                                if (val == DBNull.Value)
+                                {
+                                    tmp.Append("NULL");
+                                }
+                                else
+                                {
+                                    switch (val)
+                                    {
+                                        case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty, StringComparison.Ordinal) + "'"); break;
+                                        case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                        case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                        default: tmp.Append("'" + val.ToString() + "'"); break;
+                                    }
+                                }
+                                if (i < reader.FieldCount - 1)
+                                {
+                                    tmp.Append(',');
+                                }
+                            }
+                            tmp.AppendLine(");");
+                            textWriter.Write(tmp);
+                            tmp.Clear();
+                            index++;
+                            written?.Invoke(index, total, SQLiteDumpProjectType.Record, table.TableName, userState, ref cancel);
                         }
-                        //reader.Close();
                     }
+                    reader.Close();
                 }
             }
             textWriter.WriteLine();
@@ -1056,12 +769,12 @@ namespace Honoo.Data
         private static void DumpRecords(SQLiteConnection connection,
                                         List<SQLiteTableDumpProject> tables,
                                         string folder,
-                                        long fileSize,
+                                        long splitFileSize,
                                         Encoding encoding,
                                         ref long index,
                                         long total,
-                                        SQLiteWrittenCallback written,
-                                        object userState,
+                                        SQLiteWrittenCallback? written,
+                                        object? userState,
                                         ref bool cancel)
         {
             foreach (SQLiteTableDumpProject table in tables)
@@ -1072,14 +785,13 @@ namespace Honoo.Data
                 }
                 if (!table.Ignore && table.IncludingRecord)
                 {
-                    using (SQLiteDataReader reader = GetDataReader(connection, "SELECT * FROM `" + table.TableName + "`;"))
+                    using SQLiteCommand command = GetCommand(connection, CommandType.Text, "SELECT * FROM `" + table.TableName + "`;");
+                    using SQLiteDataReader reader = command.ExecuteReader(CommandBehavior.Default);
+                    if (reader.HasRows)
                     {
-                        if (reader.HasRows)
-                        {
-                            DumpRecords(table.TableName, reader, folder, fileSize, encoding, ref index, total, written, userState, ref cancel);
-                        }
-                        //reader.Close();
+                        DumpRecords(table.TableName, reader, folder, splitFileSize, encoding, ref index, total, written, userState, ref cancel);
                     }
+                    reader.Close();
                 }
             }
         }
@@ -1087,19 +799,19 @@ namespace Honoo.Data
         private static void DumpRecords(string tableName,
                                         SQLiteDataReader reader,
                                         string folder,
-                                        long fileSize,
+                                        long splitFileSize,
                                         Encoding encoding,
                                         ref long index,
                                         long total,
-                                        SQLiteWrittenCallback written,
-                                        object userState,
+                                        SQLiteWrittenCallback? written,
+                                        object? userState,
                                         ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            StringBuilder tmp = new();
             int sn = 0;
             string file = Path.Combine(folder, "records@" + tableName + ".sql");
-            FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
-            StreamWriter streamWriter = new StreamWriter(stream, encoding);
+            FileStream stream = new(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
+            StreamWriter streamWriter = new(stream, encoding);
             streamWriter.WriteLine("PRAGMA foreign_keys = OFF;");
             streamWriter.WriteLine();
             streamWriter.WriteLine("-- ----------------------------");
@@ -1124,7 +836,7 @@ namespace Honoo.Data
                     {
                         switch (val)
                         {
-                            case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
+                            case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty, StringComparison.Ordinal) + "'"); break;
                             case int value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                             case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                             default: tmp.Append("'" + val.ToString() + "'"); break;
@@ -1136,7 +848,7 @@ namespace Honoo.Data
                     }
                 }
                 tmp.AppendLine(");");
-                if (streamWriter.BaseStream.Length + (tmp.Length * 3) > fileSize)
+                if (streamWriter.BaseStream.Length + (tmp.Length * 3) > splitFileSize)
                 {
                     streamWriter.WriteLine();
                     streamWriter.WriteLine("PRAGMA foreign_keys = ON;");
@@ -1174,11 +886,11 @@ namespace Honoo.Data
                                        TextWriter textWriter,
                                        ref long index,
                                        long total,
-                                       SQLiteWrittenCallback written,
-                                       object userState,
+                                       SQLiteWrittenCallback? written,
+                                       object? userState,
                                        ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            StringBuilder tmp = new();
             foreach (SQLiteTableDumpProject table in tables)
             {
                 if (cancel)
@@ -1207,11 +919,11 @@ namespace Honoo.Data
                                          TextWriter textWriter,
                                          ref long index,
                                          long total,
-                                         SQLiteWrittenCallback written,
-                                         object userState,
+                                         SQLiteWrittenCallback? written,
+                                         object? userState,
                                          ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            StringBuilder tmp = new();
             foreach (SQLiteDumpProject trigger in triggers)
             {
                 if (cancel)
@@ -1242,11 +954,11 @@ namespace Honoo.Data
                                       TextWriter textWriter,
                                       ref long index,
                                       long total,
-                                      SQLiteWrittenCallback written,
-                                      object userState,
+                                      SQLiteWrittenCallback? written,
+                                      object? userState,
                                       ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            StringBuilder tmp = new();
             foreach (SQLiteDumpProject view in views)
             {
                 if (cancel)
@@ -1287,22 +999,6 @@ namespace Honoo.Data
         #endregion Private class
     }
 
-    #region ConnectionBehavior
-
-    /// <summary>
-    /// The mode of the connection when querying.
-    /// </summary>
-    public enum SQLiteConnectionBehavior
-    {
-        /// <summary>Does not open automatically. If the connection is not open  when the querying, an exception is thrown.</summary>
-        Manual,
-
-        /// <summary>If the connection is not open, automatically open and close when the query is complete. If the connection is already open, keep it turned on when the query is complete.</summary>
-        Auto
-    }
-
-    #endregion ConnectionBehavior
-
     #region Dump
 
     /// <summary>
@@ -1314,7 +1010,7 @@ namespace Honoo.Data
     /// <param name="association">The name associated with dumping.</param>
     /// <param name="userState">User state.</param>
     /// <param name="cancel">Cancel dump.</param>
-    public delegate void SQLiteWrittenCallback(long written, long total, SQLiteDumpProjectType projectType, string association, object userState, ref bool cancel);
+    public delegate void SQLiteWrittenCallback(long written, long total, SQLiteDumpProjectType projectType, string association, object? userState, ref bool cancel);
 
     /// <summary>
     /// Note the type of dumping in the progress report.
@@ -1346,78 +1042,68 @@ namespace Honoo.Data
         /// <summary>
         /// Tables dump project.
         /// </summary>
-        public List<SQLiteTableDumpProject> Tables { get; } = new List<SQLiteTableDumpProject>();
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
+        public List<SQLiteTableDumpProject> Tables { get; } = [];
 
         /// <summary>
         /// Triggers dump project.
         /// </summary>
-        public List<SQLiteDumpProject> Triggers { get; } = new List<SQLiteDumpProject>();
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
+        public List<SQLiteDumpProject> Triggers { get; } = [];
 
         /// <summary>
         /// Views dump project.
         /// </summary>
-        public List<SQLiteDumpProject> Views { get; } = new List<SQLiteDumpProject>();
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
+        public List<SQLiteDumpProject> Views { get; } = [];
     }
 
     /// <summary>
     /// Dump project.
     /// </summary>
-    public sealed class SQLiteDumpProject
+    /// <remarks>
+    /// Dump project.
+    /// </remarks>
+    /// <param name="name">Project name.</param>
+    /// <param name="ignore">Ignore this project.</param>
+    public sealed class SQLiteDumpProject(string name, bool ignore)
     {
-        /// <summary>
-        /// Dump project.
-        /// </summary>
-        /// <param name="name">Project name.</param>
-        /// <param name="ignore">Ignore this project.</param>
-        public SQLiteDumpProject(string name, bool ignore)
-        {
-            this.Name = name;
-            this.Ignore = ignore;
-        }
-
         /// <summary>
         /// Ignore this project. Default false.
         /// </summary>
-        public bool Ignore { get; set; }
+        public bool Ignore { get; set; } = ignore;
 
         /// <summary>
         /// Project name.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; } = name;
     }
 
     /// <summary>
     /// Table dump project.
     /// </summary>
-    public sealed class SQLiteTableDumpProject
+    /// <remarks>
+    /// Table dump project.
+    /// </remarks>
+    /// <param name="tableName">Table name.</param>
+    /// <param name="ignore">Ignore this project.</param>
+    /// <param name="includingRecord">Dump records.</param>
+    public sealed class SQLiteTableDumpProject(string tableName, bool ignore, bool includingRecord)
     {
-        /// <summary>
-        /// Table dump project.
-        /// </summary>
-        /// <param name="tableName">Table name.</param>
-        /// <param name="ignore">Ignore this project.</param>
-        /// <param name="includingRecord">Dump records.</param>
-        public SQLiteTableDumpProject(string tableName, bool ignore, bool includingRecord)
-        {
-            this.TableName = tableName;
-            this.Ignore = ignore;
-            this.IncludingRecord = includingRecord;
-        }
-
         /// <summary>
         /// Ignore this project. Default false.
         /// </summary>
-        public bool Ignore { get; set; }
+        public bool Ignore { get; set; } = ignore;
 
         /// <summary>
         /// Dump including records.
         /// </summary>
-        public bool IncludingRecord { get; set; }
+        public bool IncludingRecord { get; set; } = includingRecord;
 
         /// <summary>
         /// Table name.
         /// </summary>
-        public string TableName { get; }
+        public string TableName { get; } = tableName;
     }
 
     #endregion Dump
@@ -1437,7 +1123,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string ShowVersion()
         {
-            return "SELECT SQLITE_VERSION();";
+            return "SELECT SQLite_VERSION();";
         }
 
         #endregion Database
@@ -1450,7 +1136,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string ShowTables()
         {
-            return "SELECT * FROM `sqlite_master` WHERE `type` = 'table';";
+            return "SELECT * FROM `SQLite_master` WHERE `type` = 'table';";
         }
 
         /// <summary>
@@ -1460,7 +1146,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string ShowTables(string like)
         {
-            return "SELECT * FROM `sqlite_master` WHERE `type` = 'table' AND `name` LIKE '" + like + "';";
+            return "SELECT * FROM `SQLite_master` WHERE `type` = 'table' AND `name` LIKE '" + like + "';";
         }
 
         /// <summary>
@@ -1469,7 +1155,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string ShowTriggers()
         {
-            return "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger';";
+            return "SELECT * FROM `SQLite_master` WHERE `type` = 'trigger';";
         }
 
         /// <summary>
@@ -1479,7 +1165,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string ShowTriggers(string like)
         {
-            return "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger' AND `name` LIKE '" + like + "';";
+            return "SELECT * FROM `SQLite_master` WHERE `type` = 'trigger' AND `name` LIKE '" + like + "';";
         }
 
         /// <summary>
@@ -1490,7 +1176,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string ShowTriggers(string like, string table)
         {
-            return "SELECT * FROM `sqlite_master` WHERE `type` = 'trigger' AND `tbl_name` = '" + table + "' AND `name` LIKE '" + like + "';";
+            return "SELECT * FROM `SQLite_master` WHERE `type` = 'trigger' AND `tbl_name` = '" + table + "' AND `name` LIKE '" + like + "';";
         }
 
         /// <summary>
@@ -1499,7 +1185,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string ShowViews()
         {
-            return "SELECT * FROM `sqlite_master` WHERE `type` = 'view';";
+            return "SELECT * FROM `SQLite_master` WHERE `type` = 'view';";
         }
 
         /// <summary>
@@ -1509,7 +1195,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string ShowViews(string like)
         {
-            return "SELECT * FROM `sqlite_master` WHERE `type` = 'view' AND `name` LIKE '" + like + "';";
+            return "SELECT * FROM `SQLite_master` WHERE `type` = 'view' AND `name` LIKE '" + like + "';";
         }
 
         /// <summary>

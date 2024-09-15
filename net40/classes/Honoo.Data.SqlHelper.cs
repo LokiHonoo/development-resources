@@ -9,7 +9,6 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
-using System.Xml;
 
 namespace Honoo.Data
 {
@@ -18,51 +17,6 @@ namespace Honoo.Data
     /// </summary>
     public static class SqlHelper
     {
-        #region ConnectionBehavior
-
-        private static SqlConnectionBehavior _dataAdapterConnectionBehavior = SqlConnectionBehavior.Auto;
-        private static SqlConnectionBehavior _dataReaderConnectionBehavior = SqlConnectionBehavior.Manual;
-        private static SqlConnectionBehavior _executeConnectionBehavior = SqlConnectionBehavior.Manual;
-        private static SqlConnectionBehavior _transactionConnectionBehavior = SqlConnectionBehavior.Manual;
-
-        /// <summary>
-        /// Connection open/close behavior when using DataAdapter. Default Auto.
-        /// </summary>
-        public static SqlConnectionBehavior DataAdapterConnectionBehavior
-        {
-            get => _dataAdapterConnectionBehavior;
-            set => _dataAdapterConnectionBehavior = value;
-        }
-
-        /// <summary>
-        /// Connection open/close behavior when using DataReader. Default Manual.
-        /// </summary>
-        public static SqlConnectionBehavior DataReaderConnectionBehavior
-        {
-            get => _dataReaderConnectionBehavior;
-            set => _dataReaderConnectionBehavior = value;
-        }
-
-        /// <summary>
-        /// Connection open/close behavior when using Execute. Default Manual.
-        /// </summary>
-        public static SqlConnectionBehavior ExecuteConnectionBehavior
-        {
-            get => _executeConnectionBehavior;
-            set => _executeConnectionBehavior = value;
-        }
-
-        /// <summary>
-        /// Connection open/close behavior when using Transaction. Default Manual.
-        /// </summary>
-        public static SqlConnectionBehavior TransactionConnectionBehavior
-        {
-            get => _transactionConnectionBehavior;
-            set => _transactionConnectionBehavior = value;
-        }
-
-        #endregion ConnectionBehavior
-
         #region Connection
 
         /// <summary>
@@ -76,7 +30,6 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
-
             return new SqlConnection(connectionStringBuilder.ConnectionString);
         }
 
@@ -147,7 +100,6 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connectionStringBuilder));
             }
-
             return connectionStringBuilder.ConnectionString;
         }
 
@@ -206,7 +158,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText)
         {
@@ -218,27 +170,17 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataSet">DataSet.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_dataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            int result;
             using (SqlDataAdapter dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
-                result = dataAdapter.Fill(dataSet);
+                return dataAdapter.Fill(dataSet);
             }
-            return result;
         }
 
         /// <summary>
@@ -246,7 +188,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText)
         {
@@ -258,35 +200,30 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="dataTable">DataTable.</param>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-
-            if (_dataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            int result;
             using (SqlDataAdapter dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
-                result = dataAdapter.Fill(dataTable);
+                return dataAdapter.Fill(dataTable);
             }
-            return result;
         }
 
         /// <summary>
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText)
         {
             return new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -296,9 +233,10 @@ namespace Honoo.Data
         /// Get DataAdapter.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
             SqlDataAdapter result = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -310,7 +248,7 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static DataSet GetDataSet(SqlConnection connection, string selectCommandText)
         {
@@ -321,20 +259,12 @@ namespace Honoo.Data
         /// Create a new DataSet with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static DataSet GetDataSet(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_dataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
             DataSet result = new DataSet();
             using (SqlDataAdapter dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
@@ -348,7 +278,7 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         public static DataTable GetDataTable(SqlConnection connection, string selectCommandText)
         {
@@ -359,20 +289,12 @@ namespace Honoo.Data
         /// Create a new DataTable with records and schemas.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="selectCommandText">Sql command.</param>
+        /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         public static DataTable GetDataTable(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_dataAdapterConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
             DataTable result = new DataTable();
             using (SqlDataAdapter dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
@@ -384,106 +306,37 @@ namespace Honoo.Data
 
         #endregion DataAdapter
 
-        #region DataReader
+        #region Command, DataReader, XmlReader
 
         /// <summary>
-        /// Get DataReader.
+        /// Get Command. Create DataReader by Command.ExecuteReader(commandBehavior). Create XmlReader by Command.ExecuteXmlReader().
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static SqlDataReader GetDataReader(SqlConnection connection, string commandText)
+        public static SqlCommand GetCommand(SqlConnection connection, CommandType commandType, string commandText)
         {
-            return GetDataReader(connection, commandText, null);
+            return GetCommand(connection, commandType, commandText, null);
         }
 
         /// <summary>
-        /// Get DataReader.
+        /// Get Command. Create DataReader by Command.ExecuteReader(commandBehavior). Create XmlReader by Command.ExecuteXmlReader().
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static SqlDataReader GetDataReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static SqlCommand GetCommand(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            CommandBehavior commandBehavior;
-            if (_dataReaderConnectionBehavior == SqlConnectionBehavior.Manual)
-            {
-                if (connection.State != ConnectionState.Open)
-                {
-                    throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-                }
-                commandBehavior = CommandBehavior.Default;
-            }
-            else
-            {
-                if (connection.State != ConnectionState.Open)
-                {
-                    connection.Open();
-                    commandBehavior = CommandBehavior.CloseConnection;
-                }
-                else
-                {
-                    commandBehavior = CommandBehavior.Default;
-                }
-            }
-            SqlCommand command = new SqlCommand(commandText, connection);
+            SqlCommand command = new SqlCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-            return command.ExecuteReader(commandBehavior);
+            return command;
         }
 
-        #endregion DataReader
-
-        #region XmlReader
-
-        /// <summary>
-        /// Get XmlReader.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
-        /// <returns></returns>
-        public static XmlReader GetXmlReader(SqlConnection connection, string commandText)
-        {
-            return GetXmlReader(connection, commandText, null);
-        }
-
-        /// <summary>
-        /// Get XmlReader.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
-        /// <param name="parameters">Parameters.</param>
-        /// <returns></returns>
-        public static XmlReader GetXmlReader(SqlConnection connection, string commandText, params SqlParameter[] parameters)
-        {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_executeConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            XmlReader result;
-            using (SqlCommand command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                ConnectionState state = connection.State;
-                if (state != ConnectionState.Open) { connection.Open(); }
-                result = command.ExecuteXmlReader();
-                if (state != ConnectionState.Open) { connection.Close(); }
-            }
-            return result;
-        }
-
-        #endregion XmlReader
+        #endregion Command, DataReader, XmlReader
 
         #region Execute
 
@@ -491,78 +344,29 @@ namespace Honoo.Data
         /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(SqlConnection connection, string commandText)
+        public static int ExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText)
         {
-            return ExecuteNonQuery(connection, commandText, null);
+            return ExecuteNonQuery(connection, commandType, commandText, null);
         }
 
         /// <summary>
         /// Execute the sql command. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static int ExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_executeConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            int result;
-            using (SqlCommand command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                ConnectionState state = connection.State;
-                if (state != ConnectionState.Open) { connection.Open(); }
-                result = command.ExecuteNonQuery();
-                if (state != ConnectionState.Open) { connection.Close(); }
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Executing stored procedure.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
-        public static void ExecuteProcedure(SqlConnection connection, string procedure)
-        {
-            ExecuteProcedure(connection, procedure, null);
-        }
-
-        /// <summary>
-        /// Executing stored procedure.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
-        /// <param name="parameters">Parameters.</param>
-        public static void ExecuteProcedure(SqlConnection connection, string procedure, params SqlParameter[] parameters)
-        {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_executeConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            using (SqlCommand command = new SqlCommand(procedure, connection) { CommandType = CommandType.StoredProcedure })
+            using (SqlCommand command = new SqlCommand(commandText, connection) { CommandType = commandType })
             {
                 if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                ConnectionState state = connection.State;
-                if (state != ConnectionState.Open) { connection.Open(); }
-                command.ExecuteNonQuery();
-                if (state != ConnectionState.Open) { connection.Close(); }
+                return command.ExecuteNonQuery();
             }
         }
 
@@ -570,42 +374,30 @@ namespace Honoo.Data
         /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(SqlConnection connection, string commandText)
+        public static object ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText)
         {
-            return ExecuteScalar(connection, commandText, null);
+            return ExecuteScalar(connection, commandType, commandText, null);
         }
 
         /// <summary>
         /// Execute the sql command. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(SqlConnection connection, string commandText, params SqlParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        public static object ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
         {
-            if (connection is null)
+            using (SqlCommand command = new SqlCommand(commandText, connection) { CommandType = commandType })
             {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_executeConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            object result;
-            using (SqlCommand command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
                 if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                ConnectionState state = connection.State;
-                if (state != ConnectionState.Open) { connection.Open(); }
-                result = command.ExecuteScalar();
-                if (state != ConnectionState.Open) { connection.Close(); }
+                return command.ExecuteScalar();
             }
-            return result;
         }
 
         #endregion Execute
@@ -616,53 +408,50 @@ namespace Honoo.Data
         /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SqlConnection connection, string commandText)
+        public static int TransactionExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText)
         {
-            return TransactionExecuteNonQuery(connection, commandText, IsolationLevel.ReadCommitted, null);
+            return TransactionExecuteNonQuery(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
         /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SqlConnection connection, string commandText, IsolationLevel isolationLevel)
+        public static int TransactionExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
-            return TransactionExecuteNonQuery(connection, commandText, isolationLevel, null);
+            return TransactionExecuteNonQuery(connection, commandType, commandText, isolationLevel, null);
         }
 
         /// <summary>
         /// Execute the sql command by transaction. Auto rollback if failed. Returns the number of rows affected.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SqlConnection connection, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        public static int TransactionExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-
-            if (_transactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
             int result = 0;
             Exception exception = null;
-            ConnectionState state = connection.State;
-            if (state != ConnectionState.Open) { connection.Open(); }
             using (SqlTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                using (SqlCommand command = connection.CreateCommand())
+                using (SqlCommand command = new SqlCommand(commandText, connection) { CommandType = commandType })
                 {
-                    command.CommandText = commandText;
                     if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
                     {
@@ -680,7 +469,6 @@ namespace Honoo.Data
                     }
                 }
             }
-            if (state != ConnectionState.Open) { connection.Close(); }
             if (exception is null)
             {
                 return result;
@@ -692,128 +480,53 @@ namespace Honoo.Data
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction. Auto rollback if failed.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
-        public static void TransactionExecuteProcedure(SqlConnection connection, string procedure)
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
+        /// <returns></returns>
+        public static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText)
         {
-            TransactionExecuteProcedure(connection, procedure, IsolationLevel.ReadCommitted, null);
+            return TransactionExecuteScalar(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction. Auto rollback if failed.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
-        public static void TransactionExecuteProcedure(SqlConnection connection, string procedure, IsolationLevel isolationLevel)
+        /// <returns></returns>
+        public static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
-            TransactionExecuteProcedure(connection, procedure, isolationLevel, null);
+            return TransactionExecuteScalar(connection, commandType, commandText, isolationLevel, null);
         }
 
         /// <summary>
-        /// Executing stored procedure by transaction. Auto rollback if failed.
+        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
         /// </summary>
         /// <param name="connection">Connection.</param>
-        /// <param name="procedure">Sql procedure.</param>
+        /// <param name="commandType">Sql command type.</param>
+        /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <param name="parameters">Parameters.</param>
-        public static void TransactionExecuteProcedure(SqlConnection connection, string procedure, IsolationLevel isolationLevel, params SqlParameter[] parameters)
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        public static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
             if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_transactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
-            }
-            Exception exception = null;
-            ConnectionState state = connection.State;
-            if (state != ConnectionState.Open) { connection.Open(); }
-            using (SqlTransaction transaction = connection.BeginTransaction(isolationLevel))
-            {
-                using (SqlCommand command = connection.CreateCommand())
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.CommandText = procedure;
-                    if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                    try
-                    {
-                        command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        try
-                        {
-                            transaction.Rollback();
-                        }
-                        catch { }
-                        exception = ex;
-                    }
-                }
-            }
-            if (state != ConnectionState.Open) { connection.Close(); }
-            if (exception != null)
-            {
-                throw exception;
-            }
-        }
-
-        /// <summary>
-        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
-        /// <returns></returns>
-        public static object TransactionExecuteScalar(SqlConnection connection, string commandText)
-        {
-            return TransactionExecuteScalar(connection, commandText, IsolationLevel.ReadCommitted, null);
-        }
-
-        /// <summary>
-        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
-        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
-        /// <returns></returns>
-        public static object TransactionExecuteScalar(SqlConnection connection, string commandText, IsolationLevel isolationLevel)
-        {
-            return TransactionExecuteScalar(connection, commandText, isolationLevel, null);
-        }
-
-        /// <summary>
-        /// Execute the sql command by transaction. Auto rollback if failed. Returns the first column of the first row in the query result set.
-        /// </summary>
-        /// <param name="connection">Connection.</param>
-        /// <param name="commandText">Sql command.</param>
-        /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
-        /// <param name="parameters">Parameters.</param>
-        /// <returns></returns>
-        public static object TransactionExecuteScalar(SqlConnection connection, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
-        {
-            if (connection is null)
-            {
-                throw new ArgumentNullException(nameof(connection));
-            }
-
-            if (_transactionConnectionBehavior == SqlConnectionBehavior.Manual && connection.State != ConnectionState.Open)
-            {
-                throw new InvalidOperationException("Connection must be Open. Current state is " + connection.State.ToString());
             }
             object result = null;
             Exception exception = null;
-            ConnectionState state = connection.State;
-            if (state != ConnectionState.Open) { connection.Open(); }
             using (SqlTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                using (SqlCommand command = connection.CreateCommand())
+                using (SqlCommand command = new SqlCommand(commandText, connection) { CommandType = commandType })
                 {
-                    command.CommandText = commandText;
                     if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
                     {
@@ -831,7 +544,6 @@ namespace Honoo.Data
                     }
                 }
             }
-            if (state != ConnectionState.Open) { connection.Close(); }
             if (exception is null)
             {
                 return result;
@@ -844,22 +556,6 @@ namespace Honoo.Data
 
         #endregion Transaction
     }
-
-    #region ConnectionBehavior
-
-    /// <summary>
-    /// The mode of the connection when querying.
-    /// </summary>
-    public enum SqlConnectionBehavior
-    {
-        /// <summary>Does not open automatically. If the connection is not open  when the querying, an exception is thrown.</summary>
-        Manual,
-
-        /// <summary>If the connection is not open, automatically open and close when the query is complete. If the connection is already open, keep it turned on when the query is complete.</summary>
-        Auto
-    }
-
-    #endregion ConnectionBehavior
 
     #region CommandText
 

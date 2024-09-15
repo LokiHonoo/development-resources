@@ -3,19 +3,13 @@ using System;
 
 namespace Honoo
 {
-    internal class Program
+    internal sealed class Program
     {
-        //private static readonly Stopwatch _stopwatch = Stopwatch.StartNew();
-
         #region Main
 
         private static void Main()
         {
-            //TestPermutationAndCombination();
-            TestBinaries();
-            TextChange();
-            //
-            Console.ReadKey(true);
+            Console.WriteLine();
         }
 
         #endregion Main

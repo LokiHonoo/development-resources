@@ -1,3 +1,13 @@
 # development-resources
 
-开发资源存档和笔记。
+- [development-resources](#development-resources)
+  - [INTRODUCTION](#introduction)
+  - [LICENSE](#license)
+
+## INTRODUCTION
+
+Development resource and notes.
+
+## LICENSE
+
+[MIT](LICENSE) license.

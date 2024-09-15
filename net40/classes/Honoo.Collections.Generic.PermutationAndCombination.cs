@@ -55,11 +55,11 @@ namespace Honoo.Collections.Generic
             }
             if (array.Count == 0)
             {
-                throw new Exception("元素数组不能是空数组。");
+                throw new ArgumentException("元素数组不能是空数组。");
             }
             if (m < 1 || m > array.Count)
             {
-                throw new Exception("m 的值不能小于 1 或大于元素数组的最大长度。");
+                throw new ArgumentOutOfRangeException(nameof(m), "m 的值不能小于 1 或大于元素数组的最大长度。");
             }
             _array = new T[array.Count];
             array.CopyTo(_array, 0);
@@ -73,6 +73,7 @@ namespace Honoo.Collections.Generic
         /// <param name="n">指定元素总数。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1000:不要在泛型类型中声明静态成员", Justification = "<挂起>")]
         public static BigInteger C(int n, int m)
         {
             BigInteger numerator = BigInteger.One;
@@ -94,11 +95,13 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         public List<T[]> Output()
         {
             if (_count > int.MaxValue)
             {
-                throw new Exception("可计算的组合数量超出了容器容量 (Int32)。");
+                throw new IndexOutOfRangeException("可计算的组合数量超出了容器容量 (Int32)。");
             }
             List<T[]> result = new List<T[]>((int)_count);
             Output((r, s) => { result.Add(r); }, null);
@@ -149,6 +152,7 @@ namespace Honoo.Collections.Generic
         /// <param name="array">元素数组。</param>
         /// <param name="indexA">要交换的第一个元素的索引。</param>
         /// <param name="indexB">要交换的第二个元素的索引。</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0180:使用元组交换值", Justification = "<挂起>")]
         private static void Swap(T[] array, int indexA, int indexB)
         {
             T tmp = array[indexA];
@@ -201,11 +205,11 @@ namespace Honoo.Collections.Generic
             }
             if (array.Count == 0)
             {
-                throw new Exception("元素数组不能是空数组。");
+                throw new ArgumentException("元素数组不能是空数组。");
             }
             if (m < 1 || m > array.Count)
             {
-                throw new Exception("m 的值不能小于 1 或大于元素数组的最大长度。");
+                throw new ArgumentOutOfRangeException(nameof(m), "m 的值不能小于 1 或大于元素数组的最大长度。");
             }
             _array = new T[array.Count];
             array.CopyTo(_array, 0);
@@ -219,6 +223,7 @@ namespace Honoo.Collections.Generic
         /// <param name="n">指定元素总数。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1000:不要在泛型类型中声明静态成员", Justification = "<挂起>")]
         public static BigInteger P(int n, int m)
         {
             BigInteger integer = BigInteger.One;
@@ -235,11 +240,13 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
         public List<T[]> Output()
         {
             if (_count > int.MaxValue)
             {
-                throw new Exception("可计算的排列数量超出了容器容量 (Int32)。");
+                throw new IndexOutOfRangeException("可计算的排列数量超出了容器容量 (Int32)。");
             }
             List<T[]> result = new List<T[]>((int)_count);
             Output((r, s) => { result.Add(r); }, null);
@@ -303,6 +310,7 @@ namespace Honoo.Collections.Generic
         /// <param name="array">元素数组。</param>
         /// <param name="indexA">要交换的第一个元素的索引。</param>
         /// <param name="indexB">要交换的第二个元素的索引。</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0180:使用元组交换值", Justification = "<挂起>")]
         private static void Swap(T[] array, int indexA, int indexB)
         {
             T tmp = array[indexA];

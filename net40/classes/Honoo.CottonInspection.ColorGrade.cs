@@ -19,6 +19,7 @@ namespace Honoo.CottonInspection
         /// <summary>
         /// 颜色级和聚焦扫描值对应关系表。
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
         private static readonly byte[,] _table = new byte[501, 141] {
             { 21, 21, 21, 21, 21, 21, 21, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14 },
             { 31, 21, 21, 21, 21, 21, 21, 21, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14 },
@@ -562,6 +563,7 @@ namespace Honoo.CottonInspection
         /// <param name="b">黄色深度。Lab 值中的 b。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
         public static byte GetGrade(double rd, double b)
         {
             b = Math.Round(b, 1);
@@ -585,6 +587,7 @@ namespace Honoo.CottonInspection
         /// <param name="value">颜色级数字值。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
         public static string GetName(byte value)
         {
             switch (value)
