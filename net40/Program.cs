@@ -9,7 +9,10 @@ namespace Honoo
 
         private static void Main()
         {
-            Console.WriteLine();
+            TestBinaries();
+            TestPermutationAndCombination();
+            TestNumericChange();
+            Console.ReadKey(true);
         }
 
         #endregion Main
@@ -31,6 +34,7 @@ namespace Honoo
             ((Counter)userState).Count++;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5394:请勿使用不安全的随机性", Justification = "<挂起>")]
         private static void TestBinaries()
         {
             byte[] bytes = new byte[19];
@@ -56,24 +60,7 @@ namespace Honoo
             Console.WriteLine(Honoo.Binaries.ToUInt64(true, Honoo.Binaries.GetBytes(true, BitConverter.ToUInt64(bytes, 0))));
         }
 
-        private static void TestPermutationAndCombination()
-        {
-            int[] a = new int[] { 11, 22, 33, 44, 55, 66, 77, 88, 99 };
-            int m = 5;
-            Counter counter = new Counter();
-            Collections.Generic.Combination<int> combination = new Collections.Generic.Combination<int>(a, m);
-            combination.Output(Created, counter);
-            Console.WriteLine($"combination n={a.Length} m={m} Due count={combination.Count}");
-            Console.WriteLine($"combination output count={counter.Count}");
-            Console.ReadKey(true);
-            counter.Count = 0;
-            Collections.Generic.Permutation<int> permutation = new Collections.Generic.Permutation<int>(a, m);
-            permutation.Output(Created, counter);
-            Console.WriteLine($"permutation n={a.Length} m={m} Due count={permutation.Count}");
-            Console.WriteLine($"permutation output count={counter.Count}");
-        }
-
-        private static void TextChange()
+        private static void TestNumericChange()
         {
             long length = 934772112;
             var value = Numeric.GetSize(length, Numeric.SizeThousands.Auto, 2, out string unit);
@@ -97,6 +84,23 @@ namespace Honoo
             Console.WriteLine(value + " " + unit);
             value = Numeric.GetSpeed(length, Numeric.SpeedBits.Gbps, 2, out unit);
             Console.WriteLine(value + " " + unit);
+        }
+
+        private static void TestPermutationAndCombination()
+        {
+            int[] a = new int[] { 11, 22, 33, 44, 55, 66, 77, 88, 99 };
+            int m = 5;
+            Counter counter = new Counter();
+            Collections.Generic.Combination<int> combination = new Collections.Generic.Combination<int>(a, m);
+            combination.Output(Created, counter);
+            Console.WriteLine($"combination n={a.Length} m={m} Due count={combination.Count}");
+            Console.WriteLine($"combination output count={counter.Count}");
+            Console.ReadKey(true);
+            counter.Count = 0;
+            Collections.Generic.Permutation<int> permutation = new Collections.Generic.Permutation<int>(a, m);
+            permutation.Output(Created, counter);
+            Console.WriteLine($"permutation n={a.Length} m={m} Due count={permutation.Count}");
+            Console.WriteLine($"permutation output count={counter.Count}");
         }
 
         internal sealed class Counter

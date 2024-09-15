@@ -6,7 +6,7 @@ namespace Honoo
     {
         private static void Main()
         {
-            Console.WriteLine();
+            Console.ReadKey(true);
         }
     }
 }

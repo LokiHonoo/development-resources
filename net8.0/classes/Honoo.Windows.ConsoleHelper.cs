@@ -19,16 +19,19 @@ namespace Honoo.Windows
 
         #region Native
 
-        [LibraryImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "SYSLIB1054:使用 “LibraryImportAttribute” 而不是 “DllImportAttribute” 在编译时生成 P/Invoke 封送代码", Justification = "<挂起>")]
         private static extern bool GetConsoleMode(IntPtr consoleHandle, out uint mode);
 
-        [LibraryImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "SYSLIB1054:使用 “LibraryImportAttribute” 而不是 “DllImportAttribute” 在编译时生成 P/Invoke 封送代码", Justification = "<挂起>")]
         private static extern IntPtr GetStdHandle(int consoleHandle);
 
-        [LibraryImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "SYSLIB1054:使用 “LibraryImportAttribute” 而不是 “DllImportAttribute” 在编译时生成 P/Invoke 封送代码", Justification = "<挂起>")]
         private static extern bool SetConsoleMode(IntPtr consoleHandle, uint mode);
 
         #endregion Native
@@ -75,8 +78,9 @@ namespace Honoo.Windows
 
         #region Native
 
-        [LibraryImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "SYSLIB1054:使用 “LibraryImportAttribute” 而不是 “DllImportAttribute” 在编译时生成 P/Invoke 封送代码", Justification = "<挂起>")]
         private static extern bool SetConsoleCtrlHandler(CtrlHandlerRoutine routine, bool add);
 
         #endregion Native
