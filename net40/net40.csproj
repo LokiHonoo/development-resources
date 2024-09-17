@@ -5,8 +5,8 @@
     <TargetFramework>net40</TargetFramework>
     <RootNamespace>Honoo</RootNamespace>
 	<PackageId>development-resources-csharp</PackageId>
-	<Authors>Loki Honoo</Authors>
-	<Company>Loki Honoo</Company>
+	<Authors>LokiHonoo</Authors>
+	<Company>LokiHonoo</Company>
 	<Product>development-resources</Product>
 	<Copyright>Copyright (C) Loki Honoo 2015. All rights reserved.</Copyright>
 	<RepositoryUrl>https://github.com/LokiHonoo/development-resources</RepositoryUrl>
