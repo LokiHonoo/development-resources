@@ -1,4 +1,11 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * https://github.com/LokiHonoo/development-resources
+ * Copyright (C) Loki Honoo 2015. All rights reserved.
+ *
+ * This code page is published by the MIT license.
+ */
+
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
