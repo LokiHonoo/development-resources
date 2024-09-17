@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
-namespace Honoo.Collections.Generic
+namespace Honoo.Collections.ObjectModel
 {
     /// <summary>
     /// Represents a observable collection of keys and values.
@@ -17,7 +17,7 @@ namespace Honoo.Collections.Generic
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
     [System.Serializable]
-    public class ObservableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged where TKey : notnull
+    public class ObservableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, INotifyCollectionChanged, INotifyPropertyChanged
     {
         //private int _index;
 
@@ -41,12 +41,12 @@ namespace Honoo.Collections.Generic
         /// <summary>
         /// Occurs when the collection changes.
         /// </summary>
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Occurs when the collection changes.
@@ -161,11 +161,12 @@ namespace Honoo.Collections.Generic
             foreach (var item in this)
             {
                 index++;
-                if (item!.Key.Equals(key))
+                if (item.Key.Equals(key))
                 {
                     pair = item;
                     return true;
                 }
+                index++;
             }
             index = -1;
             pair = default;
