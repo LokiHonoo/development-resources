@@ -17,7 +17,7 @@ namespace Honoo.IO
         #region 转换
 
         /// <summary>
-        /// 字节类型的容量单位。单位进位是 1024 字节。
+        /// 字节类型的容量单位。单位进位是 1024 字节。单位是 B， KiB， MiB 等。
         /// </summary>
         public enum SizeKilo
         {
@@ -50,7 +50,7 @@ namespace Honoo.IO
         }
 
         /// <summary>
-        /// 字节类型的容量单位。单位进位是 1000 字节。
+        /// 字节类型的容量单位。单位进位是 1000 字节。单位是 B， KB， MB 等。
         /// </summary>
         public enum SizeThousands
         {
@@ -83,7 +83,7 @@ namespace Honoo.IO
         }
 
         /// <summary>
-        /// 位类型的每秒速度单位。单位进位是 1000 位。
+        /// 位类型的每秒速度单位。单位进位是 1000 位。单位是 bps， Kbps， Mbps 等。
         /// </summary>
         public enum SpeedBits
         {
@@ -116,7 +116,7 @@ namespace Honoo.IO
         }
 
         /// <summary>
-        /// 字节类型的每秒速度单位。单位进位是 1024 字节。
+        /// 字节类型的每秒速度单位。单位进位是 1024 字节。单位是 B/s， KiB/s， MiB/s 等。
         /// </summary>
         public enum SpeedKilo
         {
@@ -149,7 +149,7 @@ namespace Honoo.IO
         }
 
         /// <summary>
-        /// 字节类型的每秒速度单位。单位进位是 1000 字节。
+        /// 字节类型的每秒速度单位。单位进位是 1000 字节。单位是 B/s， KB/s， MB/s 等。
         /// </summary>
         public enum SpeedThousands
         {
