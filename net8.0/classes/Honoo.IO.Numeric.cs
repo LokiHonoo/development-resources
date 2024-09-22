@@ -310,19 +310,6 @@ namespace Honoo.IO
         }
 
         /// <summary>
-        /// 根据字节数值和处理时间计算并转换为指定单位。
-        /// </summary>
-        /// <param name="byteLength">字节数值。</param>
-        /// <param name="durationSeconds">以秒为单位的处理时间。</param>
-        /// <param name="radix">位类型的速度单位。</param>
-        /// <param name="places">保留小数位数。</param>
-        /// <param name="unit">字节数值的容量单位的字符串表示。</param>
-        public static double GetSpeed(long byteLength, double durationSeconds, SpeedBits radix, int places, out string unit)
-        {
-            return GetSpeed((long)(byteLength / durationSeconds), radix, places, out unit);
-        }
-
-        /// <summary>
         /// 将字节速度数值转换为指定单位。
         /// </summary>
         /// <param name="bytesPerSecond">每秒字节数值。</param>
@@ -365,19 +352,6 @@ namespace Honoo.IO
         }
 
         /// <summary>
-        /// 根据字节数值和处理时间计算并转换为指定单位。
-        /// </summary>
-        /// <param name="byteLength">字节数值。</param>
-        /// <param name="durationSeconds">以秒为单位的处理时间。</param>
-        /// <param name="radix">位类型的速度单位。</param>
-        /// <param name="places">保留小数位数。</param>
-        /// <param name="unit">字节数值的容量单位的字符串表示。</param>
-        public static double GetSpeed(long byteLength, double durationSeconds, SpeedKilo radix, int places, out string unit)
-        {
-            return GetSpeed((long)(byteLength / durationSeconds), radix, places, out unit);
-        }
-
-        /// <summary>
         /// 将字节速度数值转换为指定单位。
         /// </summary>
         /// <param name="bytesPerSecond">每秒字节数值。</param>
@@ -417,19 +391,6 @@ namespace Honoo.IO
                 _ => "B/s",
             };
             return Math.Round(value, places);
-        }
-
-        /// <summary>
-        /// 根据字节数值和处理时间计算并转换为指定单位。
-        /// </summary>
-        /// <param name="byteLength">字节数值。</param>
-        /// <param name="durationSeconds">以秒为单位的处理时间。</param>
-        /// <param name="radix">位类型的速度单位。</param>
-        /// <param name="places">保留小数位数。</param>
-        /// <param name="unit">字节数值的容量单位的字符串表示。</param>
-        public static double GetSpeed(long byteLength, double durationSeconds, SpeedThousands radix, int places, out string unit)
-        {
-            return GetSpeed((long)(byteLength / durationSeconds), radix, places, out unit);
         }
 
         #endregion 转换
