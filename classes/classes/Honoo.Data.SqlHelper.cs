@@ -4,10 +4,11 @@
  *
  * This code page is published by the MIT license.
  */
+#pragma warning disable CS0618 // 类型或成员已过时
 
-using Microsoft.Data.SqlClient;
 using System;
 using System.Data;
+using System.Data.SqlClient;
 using System.Globalization;
 
 namespace Honoo.Data
@@ -26,7 +27,10 @@ namespace Honoo.Data
         /// <returns></returns>
         public static SqlConnection BuildConnection(SqlConnectionStringBuilder connectionStringBuilder)
         {
-            ArgumentNullException.ThrowIfNull(connectionStringBuilder);
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
             return new SqlConnection(connectionStringBuilder.ConnectionString);
         }
 
@@ -50,7 +54,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static SqlConnection BuildConnection(string dataSource, string userID, string password, string catalog)
         {
-            SqlConnectionStringBuilder connectionStringBuilder = new()
+            var connectionStringBuilder = new SqlConnectionStringBuilder()
             {
                 IntegratedSecurity = false,
                 PersistSecurityInfo = false,
@@ -74,7 +78,7 @@ namespace Honoo.Data
         public static SqlConnection BuildConnection(string server, uint port, string userID, string password, string catalog)
         {
             string dataSource = string.Format(CultureInfo.InvariantCulture, "{0},{1}", server, port);
-            SqlConnectionStringBuilder connectionStringBuilder = new()
+            var connectionStringBuilder = new SqlConnectionStringBuilder()
             {
                 IntegratedSecurity = false,
                 PersistSecurityInfo = false,
@@ -93,7 +97,10 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string BuildConnectionString(SqlConnectionStringBuilder connectionStringBuilder)
         {
-            ArgumentNullException.ThrowIfNull(connectionStringBuilder);
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
             return connectionStringBuilder.ConnectionString;
         }
 
@@ -107,7 +114,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string BuildConnectionString(string dataSource, string userID, string password, string catalog)
         {
-            SqlConnectionStringBuilder connectionStringBuilder = new()
+            var connectionStringBuilder = new SqlConnectionStringBuilder()
             {
                 IntegratedSecurity = false,
                 PersistSecurityInfo = false,
@@ -131,7 +138,7 @@ namespace Honoo.Data
         public static string BuildConnectionString(string server, uint port, string userID, string password, string catalog)
         {
             string dataSource = string.Format(CultureInfo.InvariantCulture, "{0},{1}", server, port);
-            SqlConnectionStringBuilder connectionStringBuilder = new()
+            var connectionStringBuilder = new SqlConnectionStringBuilder()
             {
                 IntegratedSecurity = false,
                 PersistSecurityInfo = false,
@@ -168,11 +175,14 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText, params SqlParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            using SqlDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
-            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
-            return dataAdapter.Fill(dataSet);
+            using (var dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            {
+                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
+                return dataAdapter.Fill(dataSet);
+            }
         }
 
         /// <summary>
@@ -196,11 +206,18 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText, params SqlParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            using SqlDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
-            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
-            return dataAdapter.Fill(dataTable);
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+            using (var dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            {
+                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
+                return dataAdapter.Fill(dataTable);
+            }
         }
 
         /// <summary>
@@ -210,6 +227,7 @@ namespace Honoo.Data
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText)
         {
             return new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -223,11 +241,12 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            SqlDataAdapter result = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
-            if (parameters != null && parameters.Length > 0) { result.SelectCommand.Parameters.AddRange(parameters); }
-            return result;
+            var dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
+            return dataAdapter;
         }
 
         /// <summary>
@@ -249,10 +268,11 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static DataSet GetDataSet(SqlConnection connection, string selectCommandText, params SqlParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static DataSet GetDataSet(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            DataSet result = new();
-            using (SqlDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            var result = new DataSet();
+            using (var dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 dataAdapter.Fill(result);
@@ -279,10 +299,11 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static DataTable GetDataTable(SqlConnection connection, string selectCommandText, params SqlParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static DataTable GetDataTable(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
-            DataTable result = new();
-            using (SqlDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            var result = new DataTable();
+            using (var dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 dataAdapter.Fill(result);
@@ -315,9 +336,10 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static SqlCommand GetCommand(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static SqlCommand GetCommand(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
         {
-            SqlCommand command = new(commandText, connection) { CommandType = commandType };
+            var command = new SqlCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
             return command;
         }
@@ -347,11 +369,14 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static int ExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static int ExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
         {
-            using SqlCommand command = new(commandText, connection) { CommandType = commandType };
-            if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-            return command.ExecuteNonQuery();
+            using (var command = new SqlCommand(commandText, connection) { CommandType = commandType })
+            {
+                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
+                return command.ExecuteNonQuery();
+            }
         }
 
         /// <summary>
@@ -361,7 +386,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object? ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText)
+        public static object ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText)
         {
             return ExecuteScalar(connection, commandType, commandText, null);
         }
@@ -375,11 +400,14 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static object? ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static object ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
         {
-            using SqlCommand command = new(commandText, connection) { CommandType = commandType };
-            if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-            return command.ExecuteScalar();
+            using (var command = new SqlCommand(commandText, connection) { CommandType = commandType })
+            {
+                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
+                return command.ExecuteScalar();
+            }
         }
 
         #endregion Execute
@@ -422,28 +450,34 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
-        public static int TransactionExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqlParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static int TransactionExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
-            ArgumentNullException.ThrowIfNull(connection);
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
             int result = 0;
-            Exception? exception = null;
+            Exception exception = null;
             using (SqlTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                using SqlCommand command = new(commandText, connection) { CommandType = commandType };
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                try
+                using (var command = new SqlCommand(commandText, connection) { CommandType = commandType })
                 {
-                    result += command.ExecuteNonQuery();
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
+                    if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
                     {
-                        transaction.Rollback();
+                        result += command.ExecuteNonQuery();
+                        transaction.Commit();
                     }
-                    catch { }
-                    exception = ex;
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch { }
+                        exception = ex;
+                    }
                 }
             }
             if (exception is null)
@@ -463,7 +497,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object? TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText)
+        public static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
@@ -476,7 +510,7 @@ namespace Honoo.Data
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static object? TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        public static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, isolationLevel, null);
         }
@@ -492,28 +526,34 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
-        public static object? TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqlParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
-            ArgumentNullException.ThrowIfNull(connection);
-            object? result = null;
-            Exception? exception = null;
+            if (connection is null)
+            {
+                throw new ArgumentNullException(nameof(connection));
+            }
+            object result = null;
+            Exception exception = null;
             using (SqlTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                using SqlCommand command = new(commandText, connection) { CommandType = commandType };
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                try
+                using (var command = new SqlCommand(commandText, connection) { CommandType = commandType })
                 {
-                    result = command.ExecuteScalar();
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
+                    if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
                     {
-                        transaction.Rollback();
+                        result = command.ExecuteScalar();
+                        transaction.Commit();
                     }
-                    catch { }
-                    exception = ex;
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch { }
+                        exception = ex;
+                    }
                 }
             }
             if (exception is null)
@@ -775,4 +815,6 @@ namespace Honoo.Data
     }
 
     #endregion CommandText
+
+#pragma warning restore CS0618 // 类型或成员已过时
 }

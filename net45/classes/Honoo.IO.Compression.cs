@@ -43,9 +43,9 @@ namespace Honoo.IO.Compression
         /// <exception cref="Exception" />
         public static byte[] Compress(byte[] bytes, int offset, int count, CompressionLevel level)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                using (DeflateStream zip = new DeflateStream(ms, level))
+                using (var zip = new DeflateStream(ms, level))
                 {
                     zip.Write(bytes, offset, count);
                 }
@@ -78,9 +78,9 @@ namespace Honoo.IO.Compression
         /// <exception cref="Exception" />
         public static byte[] Decompress(byte[] bytes, int offset, int count)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                using (DeflateStream zip = new DeflateStream(new MemoryStream(bytes, offset, count), CompressionMode.Decompress))
+                using (var zip = new DeflateStream(new MemoryStream(bytes, offset, count), CompressionMode.Decompress))
                 {
                     zip.CopyTo(ms);
                 }
@@ -121,9 +121,9 @@ namespace Honoo.IO.Compression
         /// <exception cref="Exception" />
         public static byte[] Compress(byte[] bytes, int offset, int count, CompressionLevel level)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                using (GZipStream zip = new GZipStream(ms, level))
+                using (var zip = new GZipStream(ms, level))
                 {
                     zip.Write(bytes, offset, count);
                 }
@@ -156,9 +156,9 @@ namespace Honoo.IO.Compression
         /// <exception cref="Exception" />
         public static byte[] Decompress(byte[] bytes, int offset, int count)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                using (GZipStream zip = new GZipStream(new MemoryStream(bytes, offset, count), CompressionMode.Decompress))
+                using (var zip = new GZipStream(new MemoryStream(bytes, offset, count), CompressionMode.Decompress))
                 {
                     zip.CopyTo(ms);
                 }

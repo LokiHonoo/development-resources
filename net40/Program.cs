@@ -1,5 +1,7 @@
 ﻿using Honoo.IO;
+using Honoo.Windows;
 using System;
+using System.Xml.Linq;
 
 namespace Honoo
 {
@@ -12,6 +14,7 @@ namespace Honoo
             TestBinaries();
             TestPermutationAndCombination();
             TestNumericChange();
+            TestWMI();
             Console.ReadKey(true);
         }
 
@@ -62,26 +65,26 @@ namespace Honoo
         private static void TestNumericChange()
         {
             long length = 934772112;
-            var value = Numeric.GetSize(length, Numeric.SizeThousands.Auto, 2, out string unit);
+            var value = Numerics.GetSize(length, SizeThousands.Auto, 2, out string unit);
             Console.WriteLine(value + " " + unit);
-            value = Numeric.GetSize(length, Numeric.SizeThousands.GB, 2, out unit);
+            value = Numerics.GetSize(length, SizeThousands.GB, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Numeric.GetSize(length, Numeric.SizeKilo.Auto, 2, out unit);
+            value = Numerics.GetSize(length, SizeKilo.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Numeric.GetSize(length, Numeric.SizeKilo.GiB, 2, out unit);
+            value = Numerics.GetSize(length, SizeKilo.GiB, 2, out unit);
             Console.WriteLine(value + " " + unit);
 
-            value = Numeric.GetSpeed(length, Numeric.SpeedThousands.Auto, 2, out unit);
+            value = Numerics.GetSpeed(length, SpeedThousands.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Numeric.GetSpeed(length, Numeric.SpeedThousands.GBps, 2, out unit);
+            value = Numerics.GetSpeed(length, SpeedThousands.GBps, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Numeric.GetSpeed(length, Numeric.SpeedKilo.Auto, 2, out unit);
+            value = Numerics.GetSpeed(length, SpeedKilo.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Numeric.GetSpeed(length, Numeric.SpeedKilo.GiBps, 2, out unit);
+            value = Numerics.GetSpeed(length, SpeedKilo.GiBps, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Numeric.GetSpeed(length, Numeric.SpeedBits.Auto, 2, out unit);
+            value = Numerics.GetSpeed(length, SpeedBits.Auto, 2, out unit);
             Console.WriteLine(value + " " + unit);
-            value = Numeric.GetSpeed(length, Numeric.SpeedBits.Gbps, 2, out unit);
+            value = Numerics.GetSpeed(length, SpeedBits.Gbps, 2, out unit);
             Console.WriteLine(value + " " + unit);
         }
 
@@ -100,6 +103,15 @@ namespace Honoo
             permutation.Output(Created, counter);
             Console.WriteLine($"permutation n={a.Length} m={m} Due count={permutation.Count}");
             Console.WriteLine($"permutation output count={counter.Count}");
+        }
+
+        private static void TestWMI()
+        {
+            WMI.TryGetValue(Win32Class.Win32_Processor, out XElement[] result);
+            foreach (var item in result)
+            {
+                Console.WriteLine(item);
+            }
         }
 
         internal sealed class Counter

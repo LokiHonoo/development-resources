@@ -7,14 +7,14 @@
 
 using System;
 using System.Data;
-using System.Data.Odbc;
+using System.Data.OleDb;
 
 namespace Honoo.Data
 {
     /// <summary>
-    /// Odbc helper.
+    /// OleDb helper.
     /// </summary>
-    public static class OdbcHelper
+    public static class OleDbHelper
     {
         #region Connection
 
@@ -23,10 +23,13 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static OdbcConnection BuildConnection(OdbcConnectionStringBuilder connectionStringBuilder)
+        public static OleDbConnection BuildConnection(OleDbConnectionStringBuilder connectionStringBuilder)
         {
-            ArgumentNullException.ThrowIfNull(connectionStringBuilder);
-            return new OdbcConnection(connectionStringBuilder.ConnectionString);
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
+            return new OleDbConnection(connectionStringBuilder.ConnectionString);
         }
 
         /// <summary>
@@ -34,9 +37,9 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         /// <returns></returns>
-        public static OdbcConnection BuildConnection(string connectionString)
+        public static OleDbConnection BuildConnection(string connectionString)
         {
-            return new OdbcConnection(connectionString);
+            return new OleDbConnection(connectionString);
         }
 
         /// <summary>
@@ -44,9 +47,12 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(OdbcConnectionStringBuilder connectionStringBuilder)
+        public static string BuildConnectionString(OleDbConnectionStringBuilder connectionStringBuilder)
         {
-            ArgumentNullException.ThrowIfNull(connectionStringBuilder);
+            if (connectionStringBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(connectionStringBuilder));
+            }
             return connectionStringBuilder.ConnectionString;
         }
 
@@ -61,7 +67,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int FillDataSet(DataSet dataSet, OdbcConnection connection, string selectCommandText)
+        public static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText)
         {
             return FillDataSet(dataSet, connection, selectCommandText, null);
         }
@@ -75,11 +81,14 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static int FillDataSet(DataSet dataSet, OdbcConnection connection, string selectCommandText, params OdbcParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static int FillDataSet(DataSet dataSet, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
-            using OdbcDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
-            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
-            return dataAdapter.Fill(dataSet);
+            using (var dataAdapter = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            {
+                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
+                return dataAdapter.Fill(dataSet);
+            }
         }
 
         /// <summary>
@@ -89,7 +98,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int FillDataTable(DataTable dataTable, OdbcConnection connection, string selectCommandText)
+        public static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText)
         {
             return FillDataTable(dataTable, connection, selectCommandText, null);
         }
@@ -103,11 +112,14 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static int FillDataTable(DataTable dataTable, OdbcConnection connection, string selectCommandText, params OdbcParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static int FillDataTable(DataTable dataTable, OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
-            using OdbcDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
-            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
-            return dataAdapter.Fill(dataTable);
+            using (var dataAdapter = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            {
+                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
+                return dataAdapter.Fill(dataTable);
+            }
         }
 
         /// <summary>
@@ -117,9 +129,10 @@ namespace Honoo.Data
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static OdbcDataAdapter GetDataAdapter(OdbcConnection connection, string selectCommandText)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText)
         {
-            return new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+            return new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
         }
 
         /// <summary>
@@ -130,11 +143,12 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static OdbcDataAdapter GetDataAdapter(OdbcConnection connection, string selectCommandText, params OdbcParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static OleDbDataAdapter GetDataAdapter(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
-            OdbcDataAdapter result = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
-            if (parameters != null && parameters.Length > 0) { result.SelectCommand?.Parameters.AddRange(parameters); }
-            return result;
+            var dataAdapter   = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
+            return dataAdapter;
         }
 
         /// <summary>
@@ -143,7 +157,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static DataSet GetDataSet(OdbcConnection connection, string selectCommandText)
+        public static DataSet GetDataSet(OleDbConnection connection, string selectCommandText)
         {
             return GetDataSet(connection, selectCommandText, null);
         }
@@ -156,12 +170,13 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static DataSet GetDataSet(OdbcConnection connection, string selectCommandText, params OdbcParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static DataSet GetDataSet(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
-            DataSet result = new();
-            using (OdbcDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            var result = new DataSet();
+            using (var dataAdapter = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
-                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
+                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 dataAdapter.Fill(result);
             }
             return result;
@@ -173,7 +188,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static DataTable GetDataTable(OdbcConnection connection, string selectCommandText)
+        public static DataTable GetDataTable(OleDbConnection connection, string selectCommandText)
         {
             return GetDataTable(connection, selectCommandText, null);
         }
@@ -186,12 +201,13 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static DataTable GetDataTable(OdbcConnection connection, string selectCommandText, params OdbcParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static DataTable GetDataTable(OleDbConnection connection, string selectCommandText, params OleDbParameter[] parameters)
         {
-            DataTable result = new();
-            using (OdbcDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            var result = new DataTable();
+            using (var dataAdapter = new OleDbDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
-                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
+                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 dataAdapter.Fill(result);
             }
             return result;
@@ -208,7 +224,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static OdbcCommand GetCommand(OdbcConnection connection, CommandType commandType, string commandText)
+        public static OleDbCommand GetCommand(OleDbConnection connection, CommandType commandType, string commandText)
         {
             return GetCommand(connection, commandType, commandText, null);
         }
@@ -222,9 +238,10 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static OdbcCommand GetCommand(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static OleDbCommand GetCommand(OleDbConnection connection, CommandType commandType, string commandText, params OleDbParameter[] parameters)
         {
-            OdbcCommand command = new(commandText, connection) { CommandType = commandType };
+            var command = new OleDbCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
             return command;
         }
@@ -240,7 +257,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText)
+        public static int ExecuteNonQuery(OleDbConnection connection, CommandType commandType, string commandText)
         {
             return ExecuteNonQuery(connection, commandType, commandText, null);
         }
@@ -254,11 +271,14 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static int ExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static int ExecuteNonQuery(OleDbConnection connection, CommandType commandType, string commandText, params OleDbParameter[] parameters)
         {
-            using OdbcCommand command = new(commandText, connection) { CommandType = commandType };
-            if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-            return command.ExecuteNonQuery();
+            using (var command = new OleDbCommand(commandText, connection) { CommandType = commandType })
+            {
+                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
+                return command.ExecuteNonQuery();
+            }
         }
 
         /// <summary>
@@ -268,7 +288,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object? ExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText)
+        public static object ExecuteScalar(OleDbConnection connection, CommandType commandType, string commandText)
         {
             return ExecuteScalar(connection, commandType, commandText, null);
         }
@@ -282,11 +302,14 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        public static object? ExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static object ExecuteScalar(OleDbConnection connection, CommandType commandType, string commandText, params OleDbParameter[] parameters)
         {
-            using OdbcCommand command = new(commandText, connection) { CommandType = commandType };
-            if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-            return command.ExecuteScalar();
+            using (var command = new OleDbCommand(commandText, connection) { CommandType = commandType })
+            {
+                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
+                return command.ExecuteScalar();
+            }
         }
 
         #endregion Execute
@@ -300,7 +323,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText)
+        public static int TransactionExecuteNonQuery(OleDbConnection connection, CommandType commandType, string commandText)
         {
             return TransactionExecuteNonQuery(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
@@ -313,7 +336,7 @@ namespace Honoo.Data
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        public static int TransactionExecuteNonQuery(OleDbConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
             return TransactionExecuteNonQuery(connection, commandType, commandText, isolationLevel, null);
         }
@@ -329,28 +352,34 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params OdbcParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static int TransactionExecuteNonQuery(OleDbConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params OleDbParameter[] parameters)
         {
-            ArgumentNullException.ThrowIfNull(connection);
-            int result = 0;
-            Exception? exception = null;
-            using (OdbcTransaction transaction = connection.BeginTransaction(isolationLevel))
+            if (connection is null)
             {
-                using OdbcCommand command = new(commandText, connection) { CommandType = commandType };
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                try
+                throw new ArgumentNullException(nameof(connection));
+            }
+            int result = 0;
+            Exception exception = null;
+            using (OleDbTransaction transaction = connection.BeginTransaction(isolationLevel))
+            {
+                using (var command = new OleDbCommand(commandText, connection) { CommandType = commandType })
                 {
-                    result += command.ExecuteNonQuery();
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
+                    if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
                     {
-                        transaction.Rollback();
+                        result += command.ExecuteNonQuery();
+                        transaction.Commit();
                     }
-                    catch { }
-                    exception = ex;
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch { }
+                        exception = ex;
+                    }
                 }
             }
             if (exception is null)
@@ -370,7 +399,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object? TransactionExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText)
+        public static object TransactionExecuteScalar(OleDbConnection connection, CommandType commandType, string commandText)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
@@ -383,7 +412,7 @@ namespace Honoo.Data
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static object? TransactionExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        public static object TransactionExecuteScalar(OleDbConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, isolationLevel, null);
         }
@@ -399,28 +428,34 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
-        public static object? TransactionExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params OdbcParameter[]? parameters)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static object TransactionExecuteScalar(OleDbConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params OleDbParameter[] parameters)
         {
-            ArgumentNullException.ThrowIfNull(connection);
-            object? result = null;
-            Exception? exception = null;
-            using (OdbcTransaction transaction = connection.BeginTransaction(isolationLevel))
+            if (connection is null)
             {
-                using OdbcCommand command = new(commandText, connection) { CommandType = commandType };
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                try
+                throw new ArgumentNullException(nameof(connection));
+            }
+            object result = null;
+            Exception exception = null;
+            using (OleDbTransaction transaction = connection.BeginTransaction(isolationLevel))
+            {
+                using (var command = new OleDbCommand(commandText, connection) { CommandType = commandType })
                 {
-                    result = command.ExecuteScalar();
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
+                    if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
                     {
-                        transaction.Rollback();
+                        result = command.ExecuteScalar();
+                        transaction.Commit();
                     }
-                    catch { }
-                    exception = ex;
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch { }
+                        exception = ex;
+                    }
                 }
             }
             if (exception is null)

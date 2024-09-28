@@ -4,8 +4,16 @@
  *
  * This code page is published by the MIT license.
  */
+#if NET40
 
 using MySql.Data.MySqlClient;
+
+#else
+
+using MySqlConnector;
+
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -73,7 +81,7 @@ namespace Honoo.Data
                 server = host;
                 port = 3306;
             }
-            MySqlConnectionStringBuilder connectionStringBuilder = new MySqlConnectionStringBuilder()
+            var connectionStringBuilder = new MySqlConnectionStringBuilder()
             {
                 PersistSecurityInfo = false,
                 Server = server,
@@ -97,7 +105,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static MySqlConnection BuildConnection(string server, uint port, string userID, string password, string database)
         {
-            MySqlConnectionStringBuilder connectionStringBuilder = new MySqlConnectionStringBuilder()
+            var connectionStringBuilder = new MySqlConnectionStringBuilder()
             {
                 PersistSecurityInfo = false,
                 Server = server,
@@ -151,7 +159,7 @@ namespace Honoo.Data
                 server = host;
                 port = 3306;
             }
-            MySqlConnectionStringBuilder connectionStringBuilder = new MySqlConnectionStringBuilder()
+            var connectionStringBuilder = new MySqlConnectionStringBuilder()
             {
                 PersistSecurityInfo = false,
                 Server = server,
@@ -175,7 +183,7 @@ namespace Honoo.Data
         /// <returns></returns>
         public static string BuildConnectionString(string server, uint port, string userID, string password, string database)
         {
-            MySqlConnectionStringBuilder connectionStringBuilder = new MySqlConnectionStringBuilder()
+            var connectionStringBuilder = new MySqlConnectionStringBuilder()
             {
                 PersistSecurityInfo = false,
                 Server = server,
@@ -213,9 +221,10 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            using (MySqlDataAdapter dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            using (var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 return dataAdapter.Fill(dataSet);
@@ -243,9 +252,10 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            using (MySqlDataAdapter dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            using (var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 return dataAdapter.Fill(dataTable);
@@ -259,6 +269,7 @@ namespace Honoo.Data
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText)
         {
             return new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
@@ -272,11 +283,12 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            MySqlDataAdapter result = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
-            if (parameters != null && parameters.Length > 0) { result.SelectCommand.Parameters.AddRange(parameters); }
-            return result;
+            var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
+            return dataAdapter;
         }
 
         /// <summary>
@@ -298,10 +310,11 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static DataSet GetDataSet(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            DataSet result = new DataSet();
-            using (MySqlDataAdapter dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            var result = new DataSet();
+            using (var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 dataAdapter.Fill(result);
@@ -328,10 +341,11 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static DataTable GetDataTable(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            DataTable result = new DataTable();
-            using (MySqlDataAdapter dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            var result = new DataTable();
+            using (var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
                 dataAdapter.Fill(result);
@@ -364,9 +378,10 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static MySqlCommand GetCommand(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
         {
-            MySqlCommand command = new MySqlCommand(commandText, connection) { CommandType = commandType };
+            var command = new MySqlCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
             return command;
         }
@@ -396,9 +411,10 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static int ExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
         {
-            using (MySqlCommand command = new MySqlCommand(commandText, connection) { CommandType = commandType })
+            using (var command = new MySqlCommand(commandText, connection) { CommandType = commandType })
             {
                 if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                 return command.ExecuteNonQuery();
@@ -426,9 +442,10 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static object ExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
         {
-            using (MySqlCommand command = new MySqlCommand(commandText, connection) { CommandType = commandType })
+            using (var command = new MySqlCommand(commandText, connection) { CommandType = commandType })
             {
                 if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                 return command.ExecuteScalar();
@@ -475,6 +492,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static int TransactionExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -485,7 +503,7 @@ namespace Honoo.Data
             Exception exception = null;
             using (MySqlTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                using (MySqlCommand command = new MySqlCommand(commandText, connection) { CommandType = commandType })
+                using (var command = new MySqlCommand(commandText, connection) { CommandType = commandType })
                 {
                     if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
@@ -550,6 +568,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static object TransactionExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
         {
             if (connection is null)
@@ -560,7 +579,7 @@ namespace Honoo.Data
             Exception exception = null;
             using (MySqlTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                using (MySqlCommand command = new MySqlCommand(commandText, connection) { CommandType = commandType })
+                using (var command = new MySqlCommand(commandText, connection) { CommandType = commandType })
                 {
                     if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
@@ -615,11 +634,15 @@ namespace Honoo.Data
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         public static void Dump(MySqlConnection connection, MySqlDumpManifest manifest, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
         {
+            if (manifest is null)
+            {
+                throw new ArgumentNullException(nameof(manifest));
+            }
             if (textWriter is null)
             {
                 throw new ArgumentNullException(nameof(textWriter));
             }
-            MySqlSummary summary = BuildSummary(connection, manifest);
+            var summary = BuildSummary(connection, manifest);
             bool cancel = false;
             long index = 0;
             textWriter.Write(summary.Text);
@@ -698,13 +721,13 @@ namespace Honoo.Data
                 throw new ArgumentException("File size cannot be less than 1 MB.");
             }
             //
-            MySqlSummary summary = BuildSummary(connection, manifest);
+            var summary = BuildSummary(connection, manifest);
             bool cancel = false;
             long index = 0;
             string file = Path.Combine(folder, "!schema.sql");
-            using (FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
+            using (var stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
             {
-                using (StreamWriter textWriter = new StreamWriter(stream, encoding))
+                using (var textWriter = new StreamWriter(stream, encoding))
                 {
                     textWriter.Write(summary.Text);
                     written?.Invoke(0, summary.Total, MySqlDumpProjectType.Summary, string.Empty, userState, ref cancel);
@@ -753,8 +776,8 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(connection));
             }
-            MySqlDumpManifest manifest = new MySqlDumpManifest();
-            StringBuilder sql = new StringBuilder();
+            var manifest = new MySqlDumpManifest();
+            var sql = new StringBuilder();
             sql.AppendLine(MySqlCommandText.ShowTableStatus());
             sql.AppendLine(MySqlCommandText.ShowTriggers());
             sql.AppendLine(MySqlCommandText.ShowFunctionStatus(connection.Database));
@@ -806,8 +829,8 @@ namespace Honoo.Data
             {
                 throw new ArgumentNullException(nameof(manifest));
             }
-            MySqlSummary summary = new MySqlSummary();
-            List<string> union = new List<string>();
+            var summary = new MySqlSummary();
+            var union = new List<string>();
             foreach (MySqlTableDumpProject table in manifest.Tables)
             {
                 if (!table.Ignore)
@@ -870,7 +893,7 @@ namespace Honoo.Data
                 + summary.RecordCount;
             using (DataTable dt = GetDataTable(connection, "SELECT @@version, @@character_set_server, @@collation_server;"))
             {
-                StringBuilder tmp = new StringBuilder();
+                var tmp = new StringBuilder();
                 tmp.AppendLine("/*");
                 tmp.AppendLine("Dump by Honoo.Data.MySqlHelper");
                 tmp.AppendLine("https://github.com/LokiHonoo/development-resources");
@@ -910,7 +933,7 @@ namespace Honoo.Data
                                        object userState,
                                        ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             foreach (MySqlDumpProject event_ in events)
             {
                 if (cancel)
@@ -948,7 +971,7 @@ namespace Honoo.Data
                                           object userState,
                                           ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             foreach (MySqlDumpProject function in functions)
             {
                 if (cancel)
@@ -986,7 +1009,7 @@ namespace Honoo.Data
                                            object userState,
                                            ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             foreach (MySqlDumpProject procedure in procedures)
             {
                 if (cancel)
@@ -1034,7 +1057,7 @@ namespace Honoo.Data
                 }
                 if (!table.Ignore && table.IncludingRecord)
                 {
-                    using (MySqlCommand command = GetCommand(connection, CommandType.Text, "SELECT * FROM `" + table.TableName + "`;"))
+                    using (var command = GetCommand(connection, CommandType.Text, "SELECT * FROM `" + table.TableName + "`;"))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader(CommandBehavior.Default))
                         {
@@ -1048,7 +1071,8 @@ namespace Honoo.Data
                 }
             }
         }
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:为了清晰起见，请指定 StringComparison", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         private static void DumpRecords(MySqlConnection connection,
                                         List<MySqlTableDumpProject> tables,
                                         TextWriter textWriter,
@@ -1058,7 +1082,7 @@ namespace Honoo.Data
                                         object userState,
                                         ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             textWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
             textWriter.WriteLine();
             foreach (MySqlTableDumpProject table in tables)
@@ -1070,7 +1094,7 @@ namespace Honoo.Data
                 if (!table.Ignore && table.IncludingRecord)
                 {
                     string tableName = table.TableName;
-                    using (MySqlCommand command = GetCommand(connection, CommandType.Text, "SELECT * FROM `" + tableName + "`;"))
+                    using (var command = GetCommand(connection, CommandType.Text, "SELECT * FROM `" + tableName + "`;"))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader(CommandBehavior.Default))
                         {
@@ -1133,7 +1157,8 @@ namespace Honoo.Data
             textWriter.WriteLine();
             textWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
         }
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:为了清晰起见，请指定 StringComparison", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         private static void DumpRecords(string tableName,
                                         MySqlDataReader reader,
                                         string folder,
@@ -1145,11 +1170,11 @@ namespace Honoo.Data
                                         object userState,
                                         ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             int sn = 0;
             string file = Path.Combine(folder, "records@" + tableName + ".sql");
-            FileStream stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
-            StreamWriter streamWriter = new StreamWriter(stream, encoding);
+            var stream = new FileStream(file, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read);
+            var streamWriter = new StreamWriter(stream, encoding);
             streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
             streamWriter.WriteLine();
             streamWriter.WriteLine("-- ----------------------------");
@@ -1237,7 +1262,7 @@ namespace Honoo.Data
                                        object userState,
                                        ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             foreach (MySqlTableDumpProject table in tables)
             {
                 if (cancel)
@@ -1273,7 +1298,7 @@ namespace Honoo.Data
                                          object userState,
                                          ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             foreach (MySqlDumpProject trigger in triggers)
             {
                 if (cancel)
@@ -1311,7 +1336,7 @@ namespace Honoo.Data
                                       object userState,
                                       ref bool cancel)
         {
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             foreach (MySqlDumpProject view in views)
             {
                 if (cancel)
@@ -1416,36 +1441,48 @@ namespace Honoo.Data
         /// Events dump project.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
         public List<MySqlDumpProject> Events { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Functions dump project.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
         public List<MySqlDumpProject> Functions { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Procedures dump project.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
         public List<MySqlDumpProject> Procedures { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Tables dump project.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
         public List<MySqlTableDumpProject> Tables { get; } = new List<MySqlTableDumpProject>();
 
         /// <summary>
         /// Triggers dump project.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
         public List<MySqlDumpProject> Triggers { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Views dump project.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
         public List<MySqlDumpProject> Views { get; } = new List<MySqlDumpProject>();
     }
 

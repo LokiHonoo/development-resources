@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0130:命名空间与文件夹结构不匹配")]
+[assembly: SuppressMessage("Maintainability", "CA1515:考虑将公共类型设为内部类型")]

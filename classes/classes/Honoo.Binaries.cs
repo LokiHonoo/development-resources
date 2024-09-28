@@ -27,8 +27,14 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static bool SequenceEqual(byte[] first, byte[] second)
         {
-            ArgumentNullException.ThrowIfNull(first);
-            ArgumentNullException.ThrowIfNull(second);
+            if (first is null)
+            {
+                throw new ArgumentNullException(nameof(first));
+            }
+            if (second is null)
+            {
+                throw new ArgumentNullException(nameof(second));
+            }
             if (first.Length == second.Length)
             {
                 for (int i = 0; i < first.Length; i++)
@@ -58,8 +64,14 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static bool SequenceEqual(byte[] first, int firstOffset, byte[] second, int secondOffset, int length)
         {
-            ArgumentNullException.ThrowIfNull(first);
-            ArgumentNullException.ThrowIfNull(second);
+            if (first is null)
+            {
+                throw new ArgumentNullException(nameof(first));
+            }
+            if (second is null)
+            {
+                throw new ArgumentNullException(nameof(second));
+            }
             if (first.Length - firstOffset >= length && second.Length - secondOffset >= length)
             {
                 for (int i = 0; i < length; i++)
@@ -82,68 +94,71 @@ namespace Honoo
         #region 转换
 
         /// <summary>
-        /// 指定输出字节数组大小端，将十六进制字符串转换为字节数组。字符串必须是无分隔符的表示形式。
+        /// 将十六进制字符串转换为字节数组。字符串必须是无分隔符的表示形式。
         /// </summary>
-        /// <param name="littleEndian">指示输出字节数组的大小端模式。</param>
         /// <param name="hex">无分隔符的十六进制字符串。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] GetBytes(bool littleEndian, string hex)
+        public static byte[] GetBytes(string hex)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(hex);
+            if (string.IsNullOrWhiteSpace(hex))
+            {
+                throw new ArgumentException($"“{nameof(hex)}”can't be null or empty.", nameof(hex));
+            }
             if (hex.Length % 2 > 0)
             {
                 throw new ArgumentException("Hex string length must be multiple of 2.");
             }
             byte[] result = new byte[hex.Length / 2];
-            if (littleEndian)
+            for (int i = 0; i < result.Length; i++)
             {
-                for (int i = result.Length - 1; i >= 0; i--)
-                {
-                    result[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < result.Length; i++)
-                {
-                    result[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
-                }
+                result[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
             }
             return result;
         }
 
         /// <summary>
-        /// 指定输出字节数组大小端，移除指定的字符串，将十六进制字符串转换为字节数组。
+        /// 移除指定的字符串，将十六进制字符串转换为字节数组。
         /// </summary>
-        /// <param name="littleEndian">指示输出字节数组的大小端模式。</param>
         /// <param name="hex">十六进制字符串。</param>
         /// <param name="replace">要移除的字符串。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] GetBytes(bool littleEndian, string hex, string replace)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:为了清晰起见，请指定 StringComparison", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static byte[] GetBytes(string hex, string replace)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(hex);
-            return GetBytes(littleEndian, hex.Replace(replace, string.Empty, StringComparison.Ordinal));
+            if (string.IsNullOrWhiteSpace(hex))
+            {
+                throw new ArgumentException($"“{nameof(hex)}”can't be null or empty.", nameof(hex));
+            }
+            return GetBytes(hex.Replace(replace, string.Empty));
         }
 
         /// <summary>
-        /// 指定输出字节数组大小端，移除多个指定的字符串，将十六进制字符串转换为字节数组。
+        /// 移除多个指定的字符串，将十六进制字符串转换为字节数组。
         /// </summary>
-        /// <param name="littleEndian">指示输出字节数组的大小端模式。</param>
         /// <param name="hex">十六进制字符串。</param>
         /// <param name="replaces">要移除的字符串集合。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] GetBytes(bool littleEndian, string hex, string[] replaces)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:为了清晰起见，请指定 StringComparison", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static byte[] GetBytes(string hex, string[] replaces)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(hex);
-            ArgumentNullException.ThrowIfNull(replaces);
-            foreach (var replace in replaces)
+            if (string.IsNullOrEmpty(hex))
             {
-                hex = hex.Replace(replace, string.Empty, StringComparison.Ordinal);
+                throw new ArgumentException($"“{nameof(hex)}”can't be null or empty.", nameof(hex));
             }
-            return GetBytes(littleEndian, hex);
+            if (replaces is null)
+            {
+                throw new ArgumentNullException(nameof(replaces));
+            }
+            foreach (string replace in replaces)
+            {
+                hex = hex.Replace(replace, string.Empty);
+            }
+            return GetBytes(hex);
         }
 
         /// <summary>
@@ -312,50 +327,6 @@ namespace Honoo
         }
 
         /// <summary>
-        /// 指定输入字节数组大小端，将字节数组转换为十六进制文本。
-        /// </summary>
-        /// <param name="littleEndian">指示 <paramref name="bytes"/> 的大小端模式。</param>
-        /// <param name="bytes">要转换的字节数组。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception" />
-        public static string ToHex(bool littleEndian, byte[] bytes)
-        {
-            ArgumentNullException.ThrowIfNull(bytes);
-            return ToHex(littleEndian, bytes, 0, bytes.Length);
-        }
-
-        /// <summary>
-        /// 指定输入字节数组大小端，将字节数组转换为十六进制文本。
-        /// </summary>
-        /// <param name="littleEndian">指示 <paramref name="buffer"/> 的大小端模式。</param>
-        /// <param name="buffer">要转换的字节数组。</param>
-        /// <param name="offset">读取的字节数组偏移量。</param>
-        /// <param name="length">读取的字节数组长度。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception" />
-        public static string ToHex(bool littleEndian, byte[] buffer, int offset, int length)
-        {
-            ArgumentNullException.ThrowIfNull(buffer);
-            StringBuilder result = new();
-            int end = offset + length;
-            if (littleEndian)
-            {
-                for (int i = end - 1; i >= offset; i--)
-                {
-                    result.Append(buffer[i].ToString("x2", CultureInfo.InvariantCulture));
-                }
-            }
-            else
-            {
-                for (int i = offset; i < end; i++)
-                {
-                    result.Append(buffer[i].ToString("x2", CultureInfo.InvariantCulture));
-                }
-            }
-            return result.ToString();
-        }
-
-        /// <summary>
         /// 指定输入字节数组大小端，根据可读取的字节数组长度（最大 2 字节）转换为对应的数值，并以 Int16 类型输出。
         /// </summary>
         /// <param name="littleEndian">指示 <paramref name="bytes"/> 的大小端模式。</param>
@@ -364,7 +335,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static short ToInt16(bool littleEndian, byte[] bytes)
         {
-            ArgumentNullException.ThrowIfNull(bytes);
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
             return ToInt16(littleEndian, bytes, 0, Math.Min(bytes.Length, 2));
         }
 
@@ -379,7 +353,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static short ToInt16(bool littleEndian, byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 2)
             {
                 throw new ArgumentException("Input length must be between 1 - 2.");
@@ -414,7 +391,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static int ToInt32(bool littleEndian, byte[] bytes)
         {
-            ArgumentNullException.ThrowIfNull(bytes);
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
             return ToInt32(littleEndian, bytes, 0, Math.Min(bytes.Length, 4));
         }
 
@@ -429,7 +409,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static int ToInt32(bool littleEndian, byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 4)
             {
                 throw new ArgumentException("Input length must be between 1 - 4.");
@@ -496,7 +479,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static long ToInt64(bool littleEndian, byte[] bytes)
         {
-            ArgumentNullException.ThrowIfNull(bytes);
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
             return ToInt64(littleEndian, bytes, 0, Math.Min(bytes.Length, 8));
         }
 
@@ -511,7 +497,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static long ToInt64(bool littleEndian, byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 8)
             {
                 throw new ArgumentException("Input length must be between 1 - 8.");
@@ -665,7 +654,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static string ToString(byte[] bytes)
         {
-            ArgumentNullException.ThrowIfNull(bytes);
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
             return ToString(bytes, 0, bytes.Length, string.Empty, 0, string.Empty);
         }
 
@@ -679,7 +671,6 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static string ToString(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
             return ToString(buffer, offset, length, string.Empty, 0, string.Empty);
         }
 
@@ -696,10 +687,13 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static string ToString(byte[] buffer, int offset, int length, string split, int lineBreaks, string indents)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
-            split ??= string.Empty;
-            indents ??= string.Empty;
-            StringBuilder result = new();
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+            split = split ?? string.Empty;
+            indents = indents ?? string.Empty;
+            var result = new StringBuilder();
             bool newLine = true;
             int count = 0;
             while (offset < length)
@@ -741,7 +735,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static ushort ToUInt16(bool littleEndian, byte[] bytes)
         {
-            ArgumentNullException.ThrowIfNull(bytes);
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
             return ToUInt16(littleEndian, bytes, 0, Math.Min(bytes.Length, 2));
         }
 
@@ -756,7 +753,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static ushort ToUInt16(bool littleEndian, byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 2)
             {
                 throw new ArgumentException("Input length must be between 1 - 2.");
@@ -791,7 +791,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static uint ToUInt32(bool littleEndian, byte[] bytes)
         {
-            ArgumentNullException.ThrowIfNull(bytes);
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
             return ToUInt32(littleEndian, bytes, 0, Math.Min(bytes.Length, 4));
         }
 
@@ -806,7 +809,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static uint ToUInt32(bool littleEndian, byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 4)
             {
                 throw new ArgumentException("Input length must be between 1 - 4.");
@@ -873,7 +879,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static ulong ToUInt64(bool littleEndian, byte[] bytes)
         {
-            ArgumentNullException.ThrowIfNull(bytes);
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
             return ToUInt64(littleEndian, bytes, 0, Math.Min(bytes.Length, 8));
         }
 
@@ -888,7 +897,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         public static ulong ToUInt64(bool littleEndian, byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 8)
             {
                 throw new ArgumentException("Input length must be between 1 - 8.");

@@ -40,12 +40,14 @@ namespace Honoo.IO.Compression
         /// <exception cref="Exception" />
         public static byte[] Compress(byte[] bytes, int offset, int count, CompressionLevel level)
         {
-            using MemoryStream ms = new();
-            using (DeflateStream zip = new(ms, level))
+            using (var ms = new MemoryStream())
             {
-                zip.Write(bytes, offset, count);
+                using (var zip = new DeflateStream(ms, level))
+                {
+                    zip.Write(bytes, offset, count);
+                }
+                return ms.ToArray();
             }
-            return ms.ToArray();
         }
 
         /// <summary>
@@ -70,12 +72,14 @@ namespace Honoo.IO.Compression
         /// <exception cref="Exception" />
         public static byte[] Decompress(byte[] bytes, int offset, int count)
         {
-            using MemoryStream ms = new();
-            using (DeflateStream zip = new(new MemoryStream(bytes, offset, count), CompressionMode.Decompress))
+            using (var ms = new MemoryStream())
             {
-                zip.CopyTo(ms);
+                using (var zip = new DeflateStream(new MemoryStream(bytes, offset, count), CompressionMode.Decompress))
+                {
+                    zip.CopyTo(ms);
+                }
+                return ms.ToArray();
             }
-            return ms.ToArray();
         }
     }
 
@@ -108,12 +112,14 @@ namespace Honoo.IO.Compression
         /// <exception cref="Exception" />
         public static byte[] Compress(byte[] bytes, int offset, int count, CompressionLevel level)
         {
-            using MemoryStream ms = new();
-            using (GZipStream zip = new(ms, level))
+            using (var ms = new MemoryStream())
             {
-                zip.Write(bytes, offset, count);
+                using (var zip = new GZipStream(ms, level))
+                {
+                    zip.Write(bytes, offset, count);
+                }
+                return ms.ToArray();
             }
-            return ms.ToArray();
         }
 
         /// <summary>
@@ -138,12 +144,14 @@ namespace Honoo.IO.Compression
         /// <exception cref="Exception" />
         public static byte[] Decompress(byte[] bytes, int offset, int count)
         {
-            using MemoryStream ms = new();
-            using (GZipStream zip = new(new MemoryStream(bytes, offset, count), CompressionMode.Decompress))
+            using (var ms = new MemoryStream())
             {
-                zip.CopyTo(ms);
+                using (var zip = new GZipStream(new MemoryStream(bytes, offset, count), CompressionMode.Decompress))
+                {
+                    zip.CopyTo(ms);
+                }
+                return ms.ToArray();
             }
-            return ms.ToArray();
         }
     }
 }

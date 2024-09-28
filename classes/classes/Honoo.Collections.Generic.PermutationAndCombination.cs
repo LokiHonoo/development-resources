@@ -37,7 +37,7 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <param name="result">组合完成后的一组元素集合。</param>
         /// <param name="userState">传递用户参数。</param>
-        public delegate void CreatedCallback(T[] result, object? userState);
+        public delegate void CreatedCallback(T[] result, object userState);
 
         #endregion 委托
 
@@ -51,7 +51,10 @@ namespace Honoo.Collections.Generic
         /// <exception cref="Exception" />
         public Combination(IList<T> array, int m)
         {
-            ArgumentNullException.ThrowIfNull(array);
+            if (array is null)
+            {
+                throw new ArgumentNullException(nameof(array));
+            }
             if (array.Count == 0)
             {
                 throw new ArgumentException("元素数组不能是空数组。");
@@ -75,6 +78,7 @@ namespace Honoo.Collections.Generic
         /// <param name="m">指定选择的元素数量。</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1000:不要在泛型类型中声明静态成员", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static BigInteger C(int n, int m)
         {
             BigInteger numerator = BigInteger.One;
@@ -98,13 +102,14 @@ namespace Honoo.Collections.Generic
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public List<T[]> Output()
         {
             if (_count > int.MaxValue)
             {
                 throw new IndexOutOfRangeException("可计算的组合数量超出了容器容量 (Int32)。");
             }
-            List<T[]> result = new((int)_count);
+            var result = new List<T[]>((int)_count);
             Output((r, s) => { result.Add(r); }, null);
             return result;
         }
@@ -114,7 +119,7 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        public void Output(CreatedCallback created, object? userState)
+        public void Output(CreatedCallback created, object userState)
         {
             Combine(_array, _m, 0, _m, created, userState);
         }
@@ -128,7 +133,7 @@ namespace Honoo.Collections.Generic
         /// <param name="jj">循环到的盈余分段元素数组的索引。</param>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        private static void Combine(T[] array, int m, int ii, int jj, CreatedCallback created, object? userState)
+        private static void Combine(T[] array, int m, int ii, int jj, CreatedCallback created, object userState)
         {
             for (int i = ii; i < m; i++)
             {
@@ -188,7 +193,7 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <param name="result">排列完成后的一组元素集合。</param>
         /// <param name="userState">传递用户参数。</param>
-        public delegate void CreatedCallback(T[] result, object? userState);
+        public delegate void CreatedCallback(T[] result, object userState);
 
         #endregion 委托
 
@@ -202,7 +207,10 @@ namespace Honoo.Collections.Generic
         /// <exception cref="Exception" />
         public Permutation(IList<T> array, int m)
         {
-            ArgumentNullException.ThrowIfNull(array);
+            if (array is null)
+            {
+                throw new ArgumentNullException(nameof(array));
+            }
             if (array.Count == 0)
             {
                 throw new ArgumentException("元素数组不能是空数组。");
@@ -226,6 +234,7 @@ namespace Honoo.Collections.Generic
         /// <param name="m">指定选择的元素数量。</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1000:不要在泛型类型中声明静态成员", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static BigInteger P(int n, int m)
         {
             BigInteger integer = BigInteger.One;
@@ -244,13 +253,14 @@ namespace Honoo.Collections.Generic
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public List<T[]> Output()
         {
             if (_count > int.MaxValue)
             {
                 throw new IndexOutOfRangeException("可计算的排列数量超出了容器容量 (Int32)。");
             }
-            List<T[]> result = new((int)_count);
+            var result = new List<T[]>((int)_count);
             Output((r, s) => { result.Add(r); }, null);
             return result;
         }
@@ -260,7 +270,7 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        public void Output(CreatedCallback created, object? userState)
+        public void Output(CreatedCallback created, object userState)
         {
             if (_m == _array.Length)
             {
@@ -268,7 +278,7 @@ namespace Honoo.Collections.Generic
             }
             else
             {
-                Combination<T> combination = new(_array, _m);
+                var combination = new Combination<T>(_array, _m);
                 combination.Output((r, s) => { Permutate(r, 0, created, s); }, userState);
             }
         }
@@ -280,7 +290,7 @@ namespace Honoo.Collections.Generic
         /// <param name="ii">已循环到的元素数组的索引。</param>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        private static void Permutate(T[] array, int ii, CreatedCallback created, object? userState)
+        private static void Permutate(T[] array, int ii, CreatedCallback created, object userState)
         {
             if (ii == array.Length - 1)
             {
