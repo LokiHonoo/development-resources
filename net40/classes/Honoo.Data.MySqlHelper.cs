@@ -4,16 +4,8 @@
  *
  * This code page is published by the MIT license.
  */
-#if NET40
 
 using MySql.Data.MySqlClient;
-
-#else
-
-using MySqlConnector;
-
-#endif
-
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -1071,6 +1063,7 @@ namespace Honoo.Data
                 }
             }
         }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:为了清晰起见，请指定 StringComparison", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         private static void DumpRecords(MySqlConnection connection,
@@ -1157,6 +1150,7 @@ namespace Honoo.Data
             textWriter.WriteLine();
             textWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 1;");
         }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:为了清晰起见，请指定 StringComparison", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         private static void DumpRecords(string tableName,

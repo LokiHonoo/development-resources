@@ -4,7 +4,6 @@
  *
  * This code page is published by the MIT license.
  */
-#pragma warning disable CS0618 // 类型或成员已过时
 
 using System;
 using System.Data;
@@ -815,6 +814,4 @@ namespace Honoo.Data
     }
 
     #endregion CommandText
-
-#pragma warning restore CS0618 // 类型或成员已过时
 }

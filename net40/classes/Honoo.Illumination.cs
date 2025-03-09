@@ -166,6 +166,8 @@ namespace Honoo.Illumination
         /// <param name="xyY">xyY 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static double DominantWavelength(double[] xyY, Reference reference)
         {
             if (xyY is null)
@@ -513,6 +515,8 @@ namespace Honoo.Illumination
         /// <param name="XYZ">XYZ 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static double XYZ2CCT(double[] XYZ, Reference reference)
         {
             if (XYZ is null)
