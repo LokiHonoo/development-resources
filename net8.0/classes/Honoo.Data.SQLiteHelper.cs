@@ -5,6 +5,10 @@
  * This code page is published by the MIT license.
  */
 
+/*
+ * Setting password is supported for the System.Data.SQLite 1.0.111.0 or earlier.
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -47,7 +51,7 @@ namespace Honoo.Data
         /// Creating a data connection does not test the validity of the connection.
         /// </summary>
         /// <param name="dataSource">Data file path.</param>
-        /// <param name="password">Password. Warning: Setting password is not supported on the NETSTANDARD and NETCORE. Set this argument to 'null'.</param>
+        /// <param name="password">Password. Warning: Setting password is supported by the System.Data.SQLite 1.0.111.0 or earlier.</param>
         /// <returns></returns>
         public static SQLiteConnection BuildConnection(string dataSource, string password)
         {
@@ -71,7 +75,7 @@ namespace Honoo.Data
         /// Creating a data connection string.
         /// </summary>
         /// <param name="dataSource">Data file path.</param>
-        /// <param name="password">Password. Warning: Setting password is not supported on the NETSTANDARD and NETCORE. Set this argument to 'null'.</param>
+        /// <param name="password">Password. Warning: Setting password is supported by the System.Data.SQLite 1.0.111.0 or earlier.</param>
         /// <returns></returns>
         public static string BuildConnectionString(string dataSource, string password)
         {

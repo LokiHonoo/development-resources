@@ -22,7 +22,7 @@
 		<PackageReference Include="MySql.Data">
 			<Version>6.9.12</Version>
 		</PackageReference>
-		<PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+		<PackageReference Include="System.Data.SQLite" Version="1.0.111" />
 	</ItemGroup>
 	
   <ItemGroup>

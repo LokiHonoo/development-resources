@@ -5,6 +5,11 @@
  * This code page is published by the MIT license.
  */
 
+/*
+ * NET40 is supported for the MySql.Data 6.9.12 or earlier.
+ * MySqlConnector is not supported for NET40.
+ */
+
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
