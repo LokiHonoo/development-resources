@@ -44,23 +44,23 @@ namespace Honoo
             byte[] bytes = new byte[19];
             new Random().NextBytes(bytes);
             Console.WriteLine(BitConverter.ToInt16(bytes, 6));
-            Console.WriteLine(Honoo.Binaries.ToInt16(true, bytes, 6, 2));
+            Console.WriteLine(Honoo.Binaries.LEToInt16(bytes, 6, 2));
             Console.WriteLine(BitConverter.ToInt32(bytes, 4));
-            Console.WriteLine(Honoo.Binaries.ToInt32(true, bytes, 4, 4));
+            Console.WriteLine(Honoo.Binaries.LEToInt32(bytes, 4, 4));
             Console.WriteLine(BitConverter.ToInt64(bytes, 0));
-            Console.WriteLine(Honoo.Binaries.ToInt64(true, bytes));
+            Console.WriteLine(Honoo.Binaries.LEToInt64(bytes, 0, 8));
             Console.WriteLine(BitConverter.ToUInt16(bytes, 6));
-            Console.WriteLine(Honoo.Binaries.ToUInt16(true, bytes, 6, 2));
+            Console.WriteLine(Honoo.Binaries.LEToUInt16(bytes, 6, 2));
             Console.WriteLine(BitConverter.ToUInt32(bytes, 4));
-            Console.WriteLine(Honoo.Binaries.ToUInt32(true, bytes, 4, 4));
+            Console.WriteLine(Honoo.Binaries.LEToUInt32(bytes, 4, 4));
             Console.WriteLine(BitConverter.ToUInt64(bytes, 0));
-            Console.WriteLine(Honoo.Binaries.ToUInt64(true, bytes));
+            Console.WriteLine(Honoo.Binaries.LEToUInt64(bytes, 0, 8));
 
             Console.WriteLine(BitConverter.ToString(bytes));
-            Console.WriteLine(Honoo.Binaries.ToString(bytes));
-            Console.WriteLine(Honoo.Binaries.ToString(bytes, 0, bytes.Length, ":", 4, "    "));
+            Console.WriteLine(Honoo.Binaries.BytesToHex(bytes));
+            Console.WriteLine(Honoo.Binaries.BytesToHex(bytes, 0, bytes.Length, false, ":", 4, "    "));
 
-            Console.WriteLine(Honoo.Binaries.ToUInt64(true, Honoo.Binaries.GetBytes(true, BitConverter.ToUInt64(bytes, 0))));
+            Console.WriteLine(Honoo.Binaries.LEToUInt64(Honoo.Binaries.UInt64ToLE(BitConverter.ToUInt64(bytes, 0)), 0, 8));
         }
 
         private static void TestNumericChange()

@@ -1,8 +1,12 @@
 ﻿/*
  * https://github.com/LokiHonoo/development-resources
- * Copyright (C) Loki Honoo 2015. All rights reserved.
+ * Copyright (C) Loki Honoo 2025. All rights reserved.
  *
  * This code page is published by the MIT license.
+ */
+
+/*
+ * Add package Microsoft.Data.Sqlite.Core, SQLitePCLRaw.bundle_e_sqlcipher to support encryption.
  */
 
 using Microsoft.Data.Sqlite;

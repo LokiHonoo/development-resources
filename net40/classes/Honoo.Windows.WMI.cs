@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*
+ * https://github.com/LokiHonoo/development-resources
+ * Copyright (C) Loki Honoo 2015. All rights reserved.
+ *
+ * This code page is published by the MIT license.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Management;
 using System.Xml.Linq;
