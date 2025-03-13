@@ -5,10 +5,6 @@
  * This code page is published by the MIT license.
  */
 
-/*
- * Setting password is supported by the System.Data.SQLite 1.0.111.0 or earlier.
- */
-
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
