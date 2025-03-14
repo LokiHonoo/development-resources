@@ -78,9 +78,11 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static int FillDataSet(DataSet dataSet, OdbcConnection connection, string selectCommandText, params OdbcParameter[]? parameters)
         {
-            using OdbcDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
-            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
-            return dataAdapter.Fill(dataSet);
+            using (var dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            {
+                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
+                return dataAdapter.Fill(dataSet);
+            }
         }
 
         /// <summary>
@@ -107,9 +109,11 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static int FillDataTable(DataTable dataTable, OdbcConnection connection, string selectCommandText, params OdbcParameter[]? parameters)
         {
-            using OdbcDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
-            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
-            return dataAdapter.Fill(dataTable);
+            using (var dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            {
+                if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
+                return dataAdapter.Fill(dataTable);
+            }
         }
 
         /// <summary>
@@ -136,9 +140,9 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static OdbcDataAdapter GetDataAdapter(OdbcConnection connection, string selectCommandText, params OdbcParameter[]? parameters)
         {
-            OdbcDataAdapter result = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
-            if (parameters != null && parameters.Length > 0) { result.SelectCommand?.Parameters.AddRange(parameters); }
-            return result;
+            var dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
+            if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
+            return dataAdapter;
         }
 
         /// <summary>
@@ -163,13 +167,13 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static DataSet GetDataSet(OdbcConnection connection, string selectCommandText, params OdbcParameter[]? parameters)
         {
-            DataSet result = new();
-            using (OdbcDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            var dataSet = new DataSet();
+            using (var dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
-                dataAdapter.Fill(result);
+                dataAdapter.Fill(dataSet);
             }
-            return result;
+            return dataSet;
         }
 
         /// <summary>
@@ -194,13 +198,13 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static DataTable GetDataTable(OdbcConnection connection, string selectCommandText, params OdbcParameter[]? parameters)
         {
-            DataTable result = new();
-            using (OdbcDataAdapter dataAdapter = new(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
+            var dataTable = new DataTable();
+            using (var dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand?.Parameters.AddRange(parameters); }
-                dataAdapter.Fill(result);
+                dataAdapter.Fill(dataTable);
             }
-            return result;
+            return dataTable;
         }
 
         #endregion DataAdapter
@@ -231,7 +235,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static OdbcCommand GetCommand(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[]? parameters)
         {
-            OdbcCommand command = new(commandText, connection) { CommandType = commandType };
+            var command = new OdbcCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
             return command;
         }
@@ -264,9 +268,11 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static int ExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[]? parameters)
         {
-            using OdbcCommand command = new(commandText, connection) { CommandType = commandType };
-            if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-            return command.ExecuteNonQuery();
+            using (var command = new OdbcCommand(commandText, connection) { CommandType = commandType })
+            {
+                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
+                return command.ExecuteNonQuery();
+            }
         }
 
         /// <summary>
@@ -293,9 +299,11 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static object? ExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[]? parameters)
         {
-            using OdbcCommand command = new(commandText, connection) { CommandType = commandType };
-            if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-            return command.ExecuteScalar();
+            using (var command = new OdbcCommand(commandText, connection) { CommandType = commandType })
+            {
+                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
+                return command.ExecuteScalar();
+            }
         }
 
         #endregion Execute
@@ -337,8 +345,8 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static int TransactionExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params OdbcParameter[]? parameters)
         {
             ArgumentNullException.ThrowIfNull(connection);
@@ -346,21 +354,23 @@ namespace Honoo.Data
             Exception? exception = null;
             using (OdbcTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                using OdbcCommand command = new(commandText, connection) { CommandType = commandType };
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                try
+                using (var command = new OdbcCommand(commandText, connection) { CommandType = commandType })
                 {
-                    result += command.ExecuteNonQuery();
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
+                    if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
                     {
-                        transaction.Rollback();
+                        result += command.ExecuteNonQuery();
+                        transaction.Commit();
                     }
-                    catch { }
-                    exception = ex;
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch { }
+                        exception = ex;
+                    }
                 }
             }
             if (exception is null)
@@ -408,8 +418,8 @@ namespace Honoo.Data
         /// <param name="parameters">Parameters.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static object? TransactionExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params OdbcParameter[]? parameters)
         {
             ArgumentNullException.ThrowIfNull(connection);
@@ -417,21 +427,23 @@ namespace Honoo.Data
             Exception? exception = null;
             using (OdbcTransaction transaction = connection.BeginTransaction(isolationLevel))
             {
-                using OdbcCommand command = new(commandText, connection) { CommandType = commandType };
-                if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
-                try
+                using (var command = new OdbcCommand(commandText, connection) { CommandType = commandType })
                 {
-                    result = command.ExecuteScalar();
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
+                    if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
                     try
                     {
-                        transaction.Rollback();
+                        result = command.ExecuteScalar();
+                        transaction.Commit();
                     }
-                    catch { }
-                    exception = ex;
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch { }
+                        exception = ex;
+                    }
                 }
             }
             if (exception is null)

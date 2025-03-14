@@ -1,5 +1,8 @@
-﻿using Honoo.IO;
+﻿using Honoo.Data;
+using Honoo.IO;
 using System;
+using System.Data;
+using System.Data.SQLite;
 
 namespace Honoo
 {
@@ -9,9 +12,18 @@ namespace Honoo
 
         private static void Main()
         {
-            TestBinaries();
-            TestPermutationAndCombination();
-            TestNumericChange();
+            // TestBinaries();
+            // TestPermutationAndCombination();
+            //TestNumericChange();
+
+            SQLiteConnection connection = SQLiteHelper.BuildConnection("aaa.db", "");
+            connection.Open();
+            SQLiteHelper.ExecuteNonQuery(connection, CommandType.Text, "CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, algorithm TEXT, key BLOB);");
+            SQLiteHelper.ExecuteNonQuery(connection, CommandType.Text,
+                            $"INSERT INTO products (name, description, algorithm, key) VALUES ('aaa', 'sss', 'ddd', x'{Convert.ToHexString(new byte[] { 1, 1, 1 })}');");
+            using var products = SQLiteHelper.GetDataTable(connection, "SELECT id, name, description, algorithm, key FROM products;");
+            connection.Close();
+
             Console.ReadKey(true);
         }
 

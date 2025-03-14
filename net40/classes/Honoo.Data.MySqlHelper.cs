@@ -6,8 +6,7 @@
  */
 
 /*
- * NET40 is supported for the MySql.Data 6.9.12 or earlier.
- * MySqlConnector is not supported for NET40.
+ * MySqlConnector is not supported for NET40. NET40 is need for the MySql.Data 6.9.12 or earlier.
  */
 
 using MySql.Data.MySqlClient;
@@ -310,13 +309,13 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static DataSet GetDataSet(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            var result = new DataSet();
+            var dataSet = new DataSet();
             using (var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
-                dataAdapter.Fill(result);
+                dataAdapter.Fill(dataSet);
             }
-            return result;
+            return dataSet;
         }
 
         /// <summary>
@@ -341,13 +340,13 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         public static DataTable GetDataTable(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
-            var result = new DataTable();
+            var dataTable = new DataTable();
             using (var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
                 if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
-                dataAdapter.Fill(result);
+                dataAdapter.Fill(dataTable);
             }
-            return result;
+            return dataTable;
         }
 
         #endregion DataAdapter
@@ -682,11 +681,11 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="manifest">Dump manifest.</param>
         /// <param name="folder">Save to folder.</param>
-        /// <param name="splitFileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
         /// <param name="encoding">File encoding.</param>
-        public static void DumpToFiles(MySqlConnection connection, MySqlDumpManifest manifest, string folder, long splitFileSize, Encoding encoding)
+        /// <param name="splitFileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
+        public static void DumpToFiles(MySqlConnection connection, MySqlDumpManifest manifest, string folder, Encoding encoding, long splitFileSize)
         {
-            DumpToFiles(connection, manifest, folder, splitFileSize, encoding, null, null, out _);
+            DumpToFiles(connection, manifest, folder, encoding, splitFileSize, null, null, out _);
         }
 
         /// <summary>
@@ -695,16 +694,16 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="manifest">Dump manifest.</param>
         /// <param name="folder">Save to folder.</param>
-        /// <param name="splitFileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
         /// <param name="encoding">File encoding.</param>
+        /// <param name="splitFileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
         public static void DumpToFiles(MySqlConnection connection,
                                        MySqlDumpManifest manifest,
                                        string folder,
-                                       long splitFileSize,
                                        Encoding encoding,
+                                       long splitFileSize,
                                        MySqlWrittenCallback written,
                                        object userState,
                                        out bool cancelled)
@@ -757,7 +756,7 @@ namespace Honoo.Data
             }
             if (!cancel && summary.RecordCount > 0)
             {
-                DumpRecords(connection, manifest.Tables, folder, splitFileSize, encoding, ref index, summary.Total, written, userState, ref cancel);
+                DumpRecords(connection, manifest.Tables, folder, encoding, splitFileSize, ref index, summary.Total, written, userState, ref cancel);
             }
             cancelled = cancel;
         }
@@ -892,29 +891,29 @@ namespace Honoo.Data
             {
                 var tmp = new StringBuilder();
                 tmp.AppendLine("/*");
-                tmp.AppendLine("Dump by Honoo.Data.MySqlHelper");
-                tmp.AppendLine("https://github.com/LokiHonoo/development-resources");
-                tmp.AppendLine("This code page is published by the MIT license.");
-                tmp.AppendLine();
-                tmp.AppendLine("DataSource     : " + connection.DataSource);
-                tmp.AppendLine("Server Version : " + (string)dt.Rows[0][0]);
-                tmp.AppendLine("Character_set  : " + (string)dt.Rows[0][1]);
-                tmp.AppendLine("Collation      : " + (string)dt.Rows[0][2]);
-                tmp.AppendLine("Database       : " + connection.Database);
-                tmp.AppendLine();
-                tmp.AppendLine("Table          : " + summary.TableCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("View           : " + summary.ViewCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Trigger        : " + summary.TriggerCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Function       : " + summary.FunctionCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Procedure      : " + summary.ProcedureCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Event          : " + summary.EventCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine("Record         : " + summary.RecordCount.ToString("n0", CultureInfo.InvariantCulture));
-                tmp.AppendLine();
-                tmp.AppendLine("Dump Time      : " + DateTime.Now);
-                tmp.AppendLine();
-                tmp.AppendLine("Use the console or database tool to recover data.");
-                tmp.AppendLine("If the target database has a table with the same name, the table data is overwritten.");
-                tmp.AppendLine("*/");
+                tmp.AppendLine(" * Dump by Honoo.Data.MySqlHelper");
+                tmp.AppendLine(" * https://github.com/LokiHonoo/development-resources");
+                tmp.AppendLine(" * This code page is published by the MIT license.");
+                tmp.AppendLine(" * ");
+                tmp.AppendLine(" * DataSource     : " + connection.DataSource);
+                tmp.AppendLine(" * Server Version : " + (string)dt.Rows[0][0]);
+                tmp.AppendLine(" * Character_set  : " + (string)dt.Rows[0][1]);
+                tmp.AppendLine(" * Collation      : " + (string)dt.Rows[0][2]);
+                tmp.AppendLine(" * Database       : " + connection.Database);
+                tmp.AppendLine(" * ");
+                tmp.AppendLine(" * Table          : " + summary.TableCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine(" * View           : " + summary.ViewCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine(" * Trigger        : " + summary.TriggerCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine(" * Function       : " + summary.FunctionCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine(" * Procedure      : " + summary.ProcedureCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine(" * Event          : " + summary.EventCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine(" * Record         : " + summary.RecordCount.ToString("n0", CultureInfo.InvariantCulture));
+                tmp.AppendLine(" * ");
+                tmp.AppendLine(" * Dump Time(UTC) : " + DateTime.UtcNow);
+                tmp.AppendLine(" * ");
+                tmp.AppendLine(" * se the console or database tool to recover data.");
+                tmp.AppendLine(" * If the target database has a table with the same name, the table data is overwritten.");
+                tmp.AppendLine(" */");
                 tmp.AppendLine();
                 summary.Text = tmp.ToString();
             }
@@ -942,9 +941,9 @@ namespace Honoo.Data
                     using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateEvent(event_.Name)))
                     {
                         string eventCreate = (string)create.Rows[0][3];
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
                         tmp.AppendLine("-- Event structure for " + event_);
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP EVENT IF EXISTS `" + event_ + "`;");
                         tmp.AppendLine("DELIMITER ;;");
                         tmp.AppendLine(eventCreate + ";;");
@@ -980,9 +979,9 @@ namespace Honoo.Data
                     using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateFunction(function.Name)))
                     {
                         string functionCreate = (string)create.Rows[0][2];
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
                         tmp.AppendLine("-- Function structure for " + function);
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP FUNCTION IF EXISTS `" + function + "`;");
                         tmp.AppendLine("DELIMITER ;;");
                         tmp.AppendLine(functionCreate + ";;");
@@ -1018,9 +1017,9 @@ namespace Honoo.Data
                     using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateProcedure(procedure.Name)))
                     {
                         string procedureCreate = (string)create.Rows[0][2];
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
                         tmp.AppendLine("-- Procedure structure for " + procedure);
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP PROCEDURE IF EXISTS `" + procedure + "`;");
                         tmp.AppendLine("DELIMITER ;;");
                         tmp.AppendLine(procedureCreate + ";;");
@@ -1038,8 +1037,8 @@ namespace Honoo.Data
         private static void DumpRecords(MySqlConnection connection,
                                         List<MySqlTableDumpProject> tables,
                                         string folder,
-                                        long splitFileSize,
                                         Encoding encoding,
+                                        long splitFileSize,
                                         ref long index,
                                         long total,
                                         MySqlWrittenCallback written,
@@ -1060,7 +1059,7 @@ namespace Honoo.Data
                         {
                             if (reader.HasRows)
                             {
-                                DumpRecords(table.TableName, reader, folder, splitFileSize, encoding, ref index, total, written, userState, ref cancel);
+                                DumpRecords(table.TableName, reader, folder, encoding, splitFileSize, ref index, total, written, userState, ref cancel);
                             }
                             reader.Close();
                         }
@@ -1098,9 +1097,9 @@ namespace Honoo.Data
                         {
                             if (reader.HasRows)
                             {
-                                tmp.AppendLine("-- ----------------------------");
+                                tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
                                 tmp.AppendLine("-- Records of " + tableName);
-                                tmp.AppendLine("-- ----------------------------");
+                                tmp.AppendLine("-- --------------------------------------------------------");
                                 while (reader.Read())
                                 {
                                     if (cancel)
@@ -1112,7 +1111,7 @@ namespace Honoo.Data
                                     for (int i = 0; i < reader.FieldCount; i++)
                                     {
                                         object val = reader.GetValue(i);
-                                        if (val == DBNull.Value)
+                                        if (reader.IsDBNull(i))
                                         {
                                             tmp.Append("NULL");
                                         }
@@ -1120,8 +1119,8 @@ namespace Honoo.Data
                                         {
                                             switch (val)
                                             {
-                                                case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
                                                 case bool value: tmp.Append(value ? 1 : 0); break;
+                                                case sbyte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                                                 case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                                                 case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                                                 case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
@@ -1132,6 +1131,7 @@ namespace Honoo.Data
                                                 case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                                                 case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                                                 case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                                                case byte[] value: tmp.Append("UNHEX('" + BitConverter.ToString(value).Replace("-", string.Empty) + "')"); break;
                                                 default: tmp.Append("'" + val.ToString() + "'"); break;
                                             }
                                         }
@@ -1161,8 +1161,8 @@ namespace Honoo.Data
         private static void DumpRecords(string tableName,
                                         MySqlDataReader reader,
                                         string folder,
-                                        long splitFileSize,
                                         Encoding encoding,
+                                        long splitFileSize,
                                         ref long index,
                                         long total,
                                         MySqlWrittenCallback written,
@@ -1176,9 +1176,9 @@ namespace Honoo.Data
             var streamWriter = new StreamWriter(stream, encoding);
             streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
             streamWriter.WriteLine();
-            streamWriter.WriteLine("-- ----------------------------");
+            streamWriter.WriteLine("-- ----------------------------------------------------------------------------------------------------------------");
             streamWriter.WriteLine("-- Records of " + tableName);
-            streamWriter.WriteLine("-- ----------------------------");
+            streamWriter.WriteLine("-- --------------------------------------------------------");
             while (reader.Read())
             {
                 if (cancel)
@@ -1190,7 +1190,7 @@ namespace Honoo.Data
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
                     object val = reader.GetValue(i);
-                    if (val == DBNull.Value)
+                    if (reader.IsDBNull(i))
                     {
                         tmp.Append("NULL");
                     }
@@ -1198,8 +1198,8 @@ namespace Honoo.Data
                     {
                         switch (val)
                         {
-                            case byte[] value: tmp.Append("X'" + BitConverter.ToString(value).Replace("-", string.Empty) + "'"); break;
                             case bool value: tmp.Append(value ? 1 : 0); break;
+                            case sbyte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                             case byte value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                             case short value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                             case ushort value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
@@ -1210,6 +1210,7 @@ namespace Honoo.Data
                             case double value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                             case float value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
                             case decimal value: tmp.Append(value.ToString(CultureInfo.InvariantCulture)); break;
+                            case byte[] value: tmp.Append("UNHEX('" + BitConverter.ToString(value).Replace("-", string.Empty) + "')"); break;
                             default: tmp.Append("'" + val.ToString() + "'"); break;
                         }
                     }
@@ -1234,9 +1235,9 @@ namespace Honoo.Data
                     streamWriter = new StreamWriter(stream, encoding);
                     streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
                     streamWriter.WriteLine();
-                    streamWriter.WriteLine("-- ----------------------------");
+                    streamWriter.WriteLine("-- ----------------------------------------------------------------------------------------------------------------");
                     streamWriter.WriteLine("-- Records of " + tableName);
-                    streamWriter.WriteLine("-- ----------------------------");
+                    streamWriter.WriteLine("-- --------------------------------------------------------");
                 }
                 streamWriter.Write(tmp);
                 tmp.Clear();
@@ -1273,9 +1274,9 @@ namespace Honoo.Data
                     using (DataSet info = GetDataSet(connection, MySqlCommandText.ShowCreateTable(table.TableName) + MySqlCommandText.ShowTableStatus(table.TableName)))
                     {
                         string tableCreate = (string)info.Tables[0].Rows[0][1];
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
                         tmp.AppendLine("-- Table structure for " + table.TableName);
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP TABLE IF EXISTS `" + table.TableName + "`;");
                         tmp.AppendLine(tableCreate + ";");
                         tmp.AppendLine();
@@ -1309,9 +1310,9 @@ namespace Honoo.Data
                     using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateTrigger(trigger.Name)))
                     {
                         string triggerCreate = (string)create.Rows[0][2];
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
                         tmp.AppendLine("-- Trigger structure for " + trigger);
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP TRIGGER IF EXISTS `" + trigger + "`;");
                         tmp.AppendLine("DELIMITER ;;");
                         tmp.AppendLine(triggerCreate + ";;");
@@ -1347,9 +1348,9 @@ namespace Honoo.Data
                     using (DataTable create = GetDataTable(connection, MySqlCommandText.ShowCreateView(view.Name)))
                     {
                         string viewCreate = (string)create.Rows[0][1];
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
                         tmp.AppendLine("-- View structure for " + view);
-                        tmp.AppendLine("-- ----------------------------");
+                        tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP VIEW IF EXISTS `" + view + "`;");
                         tmp.AppendLine(viewCreate + ";");
                         tmp.AppendLine();
@@ -1393,12 +1394,7 @@ namespace Honoo.Data
     /// <param name="association">The name associated with dumping.</param>
     /// <param name="userState">User state.</param>
     /// <param name="cancel">Cancel dump.</param>
-    public delegate void MySqlWrittenCallback(long written,
-                                              long total,
-                                              MySqlDumpProjectType projectType,
-                                              string association,
-                                              object userState,
-                                              ref bool cancel);
+    public delegate void MySqlWrittenCallback(long written, long total, MySqlDumpProjectType projectType, string association, object userState, ref bool cancel);
 
     /// <summary>
     /// Note the type of dumping in the progress report.
