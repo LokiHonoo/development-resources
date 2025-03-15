@@ -170,22 +170,35 @@ namespace Honoo.Data
                 var blobIndexs = new List<int>();
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    switch (reader.GetFieldType(i).Name)
+                    bool exists = false;
+                    string name = reader.GetName(i);
+                    foreach (DataColumn column in dataTable.Columns)
                     {
-                        case "Boolean": dataTable.Columns.Add(reader.GetName(i), typeof(bool)); break;
-                        case "SByte": dataTable.Columns.Add(reader.GetName(i), typeof(sbyte)); break;
-                        case "Byte": dataTable.Columns.Add(reader.GetName(i), typeof(byte)); break;
-                        case "Int16": dataTable.Columns.Add(reader.GetName(i), typeof(short)); break;
-                        case "UInt16": dataTable.Columns.Add(reader.GetName(i), typeof(ushort)); break;
-                        case "Int32": dataTable.Columns.Add(reader.GetName(i), typeof(int)); break;
-                        case "UInt32": dataTable.Columns.Add(reader.GetName(i), typeof(uint)); break;
-                        case "Int64": dataTable.Columns.Add(reader.GetName(i), typeof(long)); break;
-                        case "UInt64": dataTable.Columns.Add(reader.GetName(i), typeof(ulong)); break;
-                        case "Single": dataTable.Columns.Add(reader.GetName(i), typeof(float)); break;
-                        case "Double": dataTable.Columns.Add(reader.GetName(i), typeof(double)); break;
-                        case "Decimal": dataTable.Columns.Add(reader.GetName(i), typeof(decimal)); break;
-                        case "Byte[]": dataTable.Columns.Add(reader.GetName(i), typeof(byte[])); break;
-                        default: dataTable.Columns.Add(reader.GetName(i), typeof(string)); break;
+                        if (name == column.ColumnName)
+                        {
+                            exists = true;
+                            break;
+                        }
+                    }
+                    if (!exists)
+                    {
+                        switch (reader.GetFieldType(i).Name)
+                        {
+                            case "Boolean": dataTable.Columns.Add(name, typeof(bool)); break;
+                            case "SByte": dataTable.Columns.Add(name, typeof(sbyte)); break;
+                            case "Byte": dataTable.Columns.Add(name, typeof(byte)); break;
+                            case "Int16": dataTable.Columns.Add(name, typeof(short)); break;
+                            case "UInt16": dataTable.Columns.Add(name, typeof(ushort)); break;
+                            case "Int32": dataTable.Columns.Add(name, typeof(int)); break;
+                            case "UInt32": dataTable.Columns.Add(name, typeof(uint)); break;
+                            case "Int64": dataTable.Columns.Add(name, typeof(long)); break;
+                            case "UInt64": dataTable.Columns.Add(name, typeof(ulong)); break;
+                            case "Single": dataTable.Columns.Add(name, typeof(float)); break;
+                            case "Double": dataTable.Columns.Add(name, typeof(double)); break;
+                            case "Decimal": dataTable.Columns.Add(name, typeof(decimal)); break;
+                            case "Byte[]": dataTable.Columns.Add(name, typeof(byte[])); break;
+                            default: dataTable.Columns.Add(name, typeof(string)); break;
+                        }
                     }
                 }
                 if (reader.HasRows)
