@@ -798,7 +798,7 @@ namespace Honoo.Data
                             if (reader.HasRows)
                             {
                                 tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                                tmp.AppendLine("-- Records of " + table.TableName);
+                                tmp.AppendLine("-- Records of \"" + table.TableName + "\"");
                                 tmp.AppendLine("-- --------------------------------------------------------");
                                 while (reader.Read())
                                 {
@@ -810,8 +810,8 @@ namespace Honoo.Data
                                     {
                                         string name = reader.GetString(0);
                                         long seq = reader.GetInt64(1);
-                                        tmp.Append("INSERT OR IGNORE INTO `sqlite_sequence` VALUES('" + name + "', " + seq + ");");
-                                        tmp.Append("UPDATE `sqlite_sequence` SET seq=" + seq + " WHERE name='" + name + "';");
+                                        tmp.AppendLine("INSERT OR IGNORE INTO `sqlite_sequence` VALUES('" + name + "', " + seq + ");");
+                                        tmp.AppendLine("UPDATE `sqlite_sequence` SET seq=" + seq + " WHERE name='" + name + "';");
                                     }
                                     else
                                     {
@@ -920,7 +920,7 @@ namespace Honoo.Data
             streamWriter.WriteLine("PRAGMA foreign_keys = OFF;");
             streamWriter.WriteLine();
             streamWriter.WriteLine("-- ----------------------------------------------------------------------------------------------------------------");
-            streamWriter.WriteLine("-- Records of " + tableName);
+            streamWriter.WriteLine("-- Records of \"" + tableName + "\"");
             streamWriter.WriteLine("-- --------------------------------------------------------");
             while (reader.Read())
             {
@@ -932,8 +932,8 @@ namespace Honoo.Data
                 {
                     string name = reader.GetString(0);
                     long seq = reader.GetInt64(1);
-                    tmp.Append("INSERT OR IGNORE INTO `sqlite_sequence` VALUES('" + name + "', " + seq + ");");
-                    tmp.Append("UPDATE `sqlite_sequence` SET seq=" + seq + " WHERE name='" + name + "';");
+                    tmp.AppendLine("INSERT OR IGNORE INTO `sqlite_sequence` VALUES('" + name + "', " + seq + ");");
+                    tmp.AppendLine("UPDATE `sqlite_sequence` SET seq=" + seq + " WHERE name='" + name + "';");
                 }
                 else
                 {
@@ -988,7 +988,7 @@ namespace Honoo.Data
                         streamWriter.WriteLine("PRAGMA foreign_keys = OFF;");
                         streamWriter.WriteLine();
                         streamWriter.WriteLine("-- ----------------------------------------------------------------------------------------------------------------");
-                        streamWriter.WriteLine("-- Records of " + tableName);
+                        streamWriter.WriteLine("-- Records of \"" + tableName + "\"");
                         streamWriter.WriteLine("-- --------------------------------------------------------");
                     }
                 }
@@ -1025,7 +1025,7 @@ namespace Honoo.Data
                 if (!table.Ignore && table.TableName != "sqlite_sequence")
                 {
                     tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                    tmp.AppendLine("-- Table structure for " + table.TableName);
+                    tmp.AppendLine("-- Table structure for \"" + table.TableName + "\"");
                     tmp.AppendLine("-- --------------------------------------------------------");
                     string tableCreate = (string)tableCreates.Select("name='" + table.TableName + "'")[0]["sql"];
                     tmp.AppendLine("DROP TABLE IF EXISTS `" + table.TableName + "`;");
@@ -1059,7 +1059,7 @@ namespace Honoo.Data
                 {
                     string triggerCreate = (string)triggerCreates.Select("name='" + trigger + "'")[0]["sql"];
                     tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                    tmp.AppendLine("-- Trigger structure for " + trigger);
+                    tmp.AppendLine("-- Trigger structure for \"" + trigger + "\"");
                     tmp.AppendLine("-- --------------------------------------------------------");
                     tmp.AppendLine("DROP TRIGGER IF EXISTS `" + trigger + "`;");
                     tmp.AppendLine("DELIMITER ;;");
@@ -1094,7 +1094,7 @@ namespace Honoo.Data
                 {
                     string viewCreate = (string)viewCreates.Select("name='" + view + "'")[0]["sql"];
                     tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                    tmp.AppendLine("-- View structure for " + view);
+                    tmp.AppendLine("-- View structure for \"" + view + "\"");
                     tmp.AppendLine("-- --------------------------------------------------------");
                     tmp.AppendLine("DROP VIEW IF EXISTS `" + view + "`;");
                     tmp.AppendLine(viewCreate + ";");

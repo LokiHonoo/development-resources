@@ -663,9 +663,9 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="manifest">Dump manifest.</param>
         /// <param name="folder">Save to folder.</param>
-        /// <param name="encoding">File encoding.</param>
         /// <param name="splitFileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
-        public static void DumpToFiles(MySqlConnection connection, MySqlDumpManifest manifest, string folder, Encoding encoding, long splitFileSize)
+        /// <param name="encoding">File encoding.</param>
+        public static void DumpToFiles(MySqlConnection connection, MySqlDumpManifest manifest, string folder, long splitFileSize, Encoding encoding)
         {
             DumpToFiles(connection, manifest, folder, encoding, splitFileSize, null, null, out _);
         }
@@ -915,7 +915,7 @@ namespace Honoo.Data
                     {
                         string eventCreate = (string)create.Rows[0][3];
                         tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                        tmp.AppendLine("-- Event structure for " + event_);
+                        tmp.AppendLine("-- Event structure for \"" + event_ + "\"");
                         tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP EVENT IF EXISTS `" + event_ + "`;");
                         tmp.AppendLine("DELIMITER ;;");
@@ -953,7 +953,7 @@ namespace Honoo.Data
                     {
                         string functionCreate = (string)create.Rows[0][2];
                         tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                        tmp.AppendLine("-- Function structure for " + function);
+                        tmp.AppendLine("-- Function structure for \"" + function + "\"");
                         tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP FUNCTION IF EXISTS `" + function + "`;");
                         tmp.AppendLine("DELIMITER ;;");
@@ -991,7 +991,7 @@ namespace Honoo.Data
                     {
                         string procedureCreate = (string)create.Rows[0][2];
                         tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                        tmp.AppendLine("-- Procedure structure for " + procedure);
+                        tmp.AppendLine("-- Procedure structure for \"" + procedure + "\"");
                         tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP PROCEDURE IF EXISTS `" + procedure + "`;");
                         tmp.AppendLine("DELIMITER ;;");
@@ -1071,7 +1071,7 @@ namespace Honoo.Data
                             if (reader.HasRows)
                             {
                                 tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                                tmp.AppendLine("-- Records of " + tableName);
+                                tmp.AppendLine("-- Records of \"" + tableName + "\"");
                                 tmp.AppendLine("-- --------------------------------------------------------");
                                 while (reader.Read())
                                 {
@@ -1150,7 +1150,7 @@ namespace Honoo.Data
             streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
             streamWriter.WriteLine();
             streamWriter.WriteLine("-- ----------------------------------------------------------------------------------------------------------------");
-            streamWriter.WriteLine("-- Records of " + tableName);
+            streamWriter.WriteLine("-- Records of \"" + tableName + "\"");
             streamWriter.WriteLine("-- --------------------------------------------------------");
             while (reader.Read())
             {
@@ -1209,7 +1209,7 @@ namespace Honoo.Data
                     streamWriter.WriteLine("SET FOREIGN_KEY_CHECKS = 0;");
                     streamWriter.WriteLine();
                     streamWriter.WriteLine("-- ----------------------------------------------------------------------------------------------------------------");
-                    streamWriter.WriteLine("-- Records of " + tableName);
+                    streamWriter.WriteLine("-- Records of \"" + tableName + "\"");
                     streamWriter.WriteLine("-- --------------------------------------------------------");
                 }
                 streamWriter.Write(tmp);
@@ -1248,7 +1248,7 @@ namespace Honoo.Data
                     {
                         string tableCreate = (string)info.Tables[0].Rows[0][1];
                         tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                        tmp.AppendLine("-- Table structure for " + table.TableName);
+                        tmp.AppendLine("-- Table structure for \"" + table.TableName + "\"");
                         tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP TABLE IF EXISTS `" + table.TableName + "`;");
                         tmp.AppendLine(tableCreate + ";");
@@ -1284,7 +1284,7 @@ namespace Honoo.Data
                     {
                         string triggerCreate = (string)create.Rows[0][2];
                         tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                        tmp.AppendLine("-- Trigger structure for " + trigger);
+                        tmp.AppendLine("-- Trigger structure for \"" + trigger + "\"");
                         tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP TRIGGER IF EXISTS `" + trigger + "`;");
                         tmp.AppendLine("DELIMITER ;;");
@@ -1322,7 +1322,7 @@ namespace Honoo.Data
                     {
                         string viewCreate = (string)create.Rows[0][1];
                         tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                        tmp.AppendLine("-- View structure for " + view);
+                        tmp.AppendLine("-- View structure for \"" + view + "\"");
                         tmp.AppendLine("-- --------------------------------------------------------");
                         tmp.AppendLine("DROP VIEW IF EXISTS `" + view + "`;");
                         tmp.AppendLine(viewCreate + ";");
