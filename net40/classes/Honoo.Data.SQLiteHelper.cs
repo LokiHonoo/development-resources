@@ -798,7 +798,7 @@ namespace Honoo.Data
                             if (reader.HasRows)
                             {
                                 tmp.AppendLine("-- ----------------------------------------------------------------------------------------------------------------");
-                                tmp.AppendLine("-- Records of \"" + table.TableName + "\"");
+                                tmp.AppendLine("-- Table records of \"" + table.TableName + "\"");
                                 tmp.AppendLine("-- --------------------------------------------------------");
                                 while (reader.Read())
                                 {
@@ -920,7 +920,7 @@ namespace Honoo.Data
             streamWriter.WriteLine("PRAGMA foreign_keys = OFF;");
             streamWriter.WriteLine();
             streamWriter.WriteLine("-- ----------------------------------------------------------------------------------------------------------------");
-            streamWriter.WriteLine("-- Records of \"" + tableName + "\"");
+            streamWriter.WriteLine("-- Table records of \"" + tableName + "\"");
             streamWriter.WriteLine("-- --------------------------------------------------------");
             while (reader.Read())
             {
@@ -988,7 +988,7 @@ namespace Honoo.Data
                         streamWriter.WriteLine("PRAGMA foreign_keys = OFF;");
                         streamWriter.WriteLine();
                         streamWriter.WriteLine("-- ----------------------------------------------------------------------------------------------------------------");
-                        streamWriter.WriteLine("-- Records of \"" + tableName + "\"");
+                        streamWriter.WriteLine("-- Table records of \"" + tableName + "\"");
                         streamWriter.WriteLine("-- --------------------------------------------------------");
                     }
                 }
