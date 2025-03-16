@@ -1,8 +1,5 @@
-﻿using Honoo.Data;
-using Honoo.IO;
+﻿using Honoo.IO;
 using System;
-using System.Data;
-using System.Data.SQLite;
 
 namespace Honoo
 {
@@ -12,17 +9,9 @@ namespace Honoo
 
         private static void Main()
         {
-            // TestBinaries();
-            // TestPermutationAndCombination();
-            //TestNumericChange();
-
-            SQLiteConnection connection = SQLiteHelper.BuildConnection("aaa.db", "");
-            connection.Open();
-            SQLiteHelper.ExecuteNonQuery(connection, CommandType.Text, "CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT, algorithm TEXT, key BLOB);");
-            SQLiteHelper.ExecuteNonQuery(connection, CommandType.Text,
-                            $"INSERT INTO products (name, description, algorithm, key) VALUES ('aaa', 'sss', 'ddd', x'{Convert.ToHexString(new byte[] { 1, 1, 1 })}');");
-            using var products = SQLiteHelper.GetDataTable(connection, "SELECT id, name, description, algorithm, key FROM products;");
-            connection.Close();
+            TestBinaries();
+            TestPermutationAndCombination();
+            TestNumericChange();
 
             Console.ReadKey(true);
         }
@@ -68,8 +57,8 @@ namespace Honoo
             Console.WriteLine(BitConverter.ToUInt64(bytes, 0));
             Console.WriteLine(Honoo.Binaries.LEToUInt64(bytes, 0, 8));
 
-            Console.WriteLine(BitConverter.ToString(bytes));
-            Console.WriteLine(Honoo.Binaries.BytesToHex(bytes));
+            Console.WriteLine(Convert.ToHexString(bytes));
+            Console.WriteLine(Honoo.Binaries.BytesToHex(bytes, false));
             Console.WriteLine(Honoo.Binaries.BytesToHex(bytes, 0, bytes.Length, false, ":", 4, "    "));
 
             Console.WriteLine(Honoo.Binaries.LEToUInt64(Honoo.Binaries.UInt64ToLE(BitConverter.ToUInt64(bytes, 0)), 0, 8));

@@ -411,15 +411,19 @@ namespace Honoo
         /// 将字节数组转换为十六进制文本。
         /// </summary>
         /// <param name="bytes">要转换的字节数组。</param>
+        /// <param name="uppercase">字符转换为大写。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static string BytesToHex(byte[] bytes)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1308:将字符串规范化为大写", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static string BytesToHex(byte[] bytes, bool uppercase)
         {
             if (bytes is null)
             {
                 throw new ArgumentNullException(nameof(bytes));
             }
-            return BytesToHex(bytes, 0, bytes.Length, false, string.Empty, 0, string.Empty);
+            string hex = BitConverter.ToString(bytes).Replace("-", "");
+            return uppercase ? hex : hex.ToLowerInvariant();
         }
 
         /// <summary>
@@ -428,15 +432,19 @@ namespace Honoo
         /// <param name="buffer">要转换的字节数组。</param>
         /// <param name="offset">读取的字节数组偏移量。</param>
         /// <param name="length">读取的字节数组长度。</param>
+        /// <param name="uppercase">字符转换为大写。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static string BytesToHex(byte[] buffer, int offset, int length)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1308:将字符串规范化为大写", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static string BytesToHex(byte[] buffer, int offset, int length, bool uppercase)
         {
             if (buffer is null)
             {
                 throw new ArgumentNullException(nameof(buffer));
             }
-            return BytesToHex(buffer, offset, length, false, string.Empty, 0, string.Empty);
+            string hex = BitConverter.ToString(buffer, offset, length).Replace("-", "");
+            return uppercase ? hex : hex.ToLowerInvariant();
         }
 
         /// <summary>
@@ -486,8 +494,7 @@ namespace Honoo
                 }
                 else
                 {
-                    string h = buffer[offset].ToString("x2", CultureInfo.InvariantCulture);
-                    result.Append(uppercase ? h.ToUpperInvariant() : h);
+                    result.Append(buffer[offset].ToString(uppercase ? "X2" : "x2", CultureInfo.InvariantCulture));
                     count++;
                     offset++;
                     if (split.Length > 0 && offset < length)
