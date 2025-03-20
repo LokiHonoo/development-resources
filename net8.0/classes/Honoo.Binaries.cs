@@ -378,6 +378,46 @@ namespace Honoo
         }
 
         /// <summary>
+        /// 移除多个指定的字符串，将十六进制字符串转换为字节数组。
+        /// </summary>
+        /// <param name="hex">十六进制字符串。</param>
+        /// <param name="replaces">要移除的字符串集合。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception" />
+        public static byte[] GetBytes(string hex, params string[] replaces)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(hex);
+            ArgumentNullException.ThrowIfNull(replaces);
+            foreach (var replace in replaces)
+            {
+                hex = hex.Replace(replace, string.Empty, StringComparison.Ordinal);
+            }
+            return GetBytes(hex);
+        }
+
+        /// <summary>
+        /// 将十六进制字符串转换为字节数组。字符串必须是无分隔符的表示形式。
+        /// </summary>
+        /// <param name="hex">无分隔符的十六进制字符串。</param>
+        /// <returns></returns>
+        /// <exception cref="Exception" />
+        public static byte[] GetBytes(string hex)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(hex);
+            if (hex.Length % 2 > 0)
+            {
+                throw new ArgumentException("Hex string length must be multiple of 2.");
+            }
+            byte[] result = new byte[hex.Length / 2];
+
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+            }
+            return result;
+        }
+
+        /// <summary>
         /// 将字节数组转换为十六进制文本。
         /// </summary>
         /// <param name="bytes">要转换的字节数组。</param>
@@ -386,7 +426,7 @@ namespace Honoo
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1308:将字符串规范化为大写", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static string BytesToHex(byte[] bytes, bool uppercase)
+        public static string GetHex(byte[] bytes, bool uppercase)
         {
             ArgumentNullException.ThrowIfNull(bytes);
             string hex = Convert.ToHexString(bytes);
@@ -404,7 +444,7 @@ namespace Honoo
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1308:将字符串规范化为大写", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static string BytesToHex(byte[] buffer, int offset, int length, bool uppercase)
+        public static string GetHex(byte[] buffer, int offset, int length, bool uppercase)
         {
             ArgumentNullException.ThrowIfNull(buffer);
             string hex = Convert.ToHexString(buffer, offset, length);
@@ -423,7 +463,7 @@ namespace Honoo
         /// <param name="indents">指定每行缩进字符。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static string BytesToHex(byte[] buffer, int offset, int length, bool uppercase, string split, int lineBreaks, string indents)
+        public static string GetHex(byte[] buffer, int offset, int length, bool uppercase, string split, int lineBreaks, string indents)
         {
             ArgumentNullException.ThrowIfNull(buffer);
             split ??= string.Empty;
@@ -460,46 +500,6 @@ namespace Honoo
                 }
             }
             return result.ToString();
-        }
-
-        /// <summary>
-        /// 移除多个指定的字符串，将十六进制字符串转换为字节数组。
-        /// </summary>
-        /// <param name="hex">十六进制字符串。</param>
-        /// <param name="replaces">要移除的字符串集合。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception" />
-        public static byte[] HexToBytes(string hex, params string[] replaces)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(hex);
-            ArgumentNullException.ThrowIfNull(replaces);
-            foreach (var replace in replaces)
-            {
-                hex = hex.Replace(replace, string.Empty, StringComparison.Ordinal);
-            }
-            return HexToBytes(hex);
-        }
-
-        /// <summary>
-        /// 将十六进制字符串转换为字节数组。字符串必须是无分隔符的表示形式。
-        /// </summary>
-        /// <param name="hex">无分隔符的十六进制字符串。</param>
-        /// <returns></returns>
-        /// <exception cref="Exception" />
-        public static byte[] HexToBytes(string hex)
-        {
-            ArgumentException.ThrowIfNullOrWhiteSpace(hex);
-            if (hex.Length % 2 > 0)
-            {
-                throw new ArgumentException("Hex string length must be multiple of 2.");
-            }
-            byte[] result = new byte[hex.Length / 2];
-
-            for (int i = 0; i < result.Length; i++)
-            {
-                result[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
-            }
-            return result;
         }
 
         /// <summary>

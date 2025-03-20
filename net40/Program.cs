@@ -57,8 +57,8 @@ namespace Honoo
             Console.WriteLine(Honoo.Binaries.LEToUInt64(bytes, 0, 8));
 
             Console.WriteLine(BitConverter.ToString(bytes));
-            Console.WriteLine(Honoo.Binaries.BytesToHex(bytes, false));
-            Console.WriteLine(Honoo.Binaries.BytesToHex(bytes, 0, bytes.Length, false, ":", 4, "    "));
+            Console.WriteLine(Honoo.Binaries.GetHex(bytes, false));
+            Console.WriteLine(Honoo.Binaries.GetHex(bytes, 0, bytes.Length, false, ":", 4, "    "));
 
             Console.WriteLine(Honoo.Binaries.LEToUInt64(Honoo.Binaries.UInt64ToLE(BitConverter.ToUInt64(bytes, 0)), 0, 8));
         }
