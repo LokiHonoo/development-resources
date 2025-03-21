@@ -1,5 +1,6 @@
 ﻿using Honoo.IO;
 using System;
+using System.Numerics;
 
 namespace Honoo
 {
@@ -18,23 +19,19 @@ namespace Honoo
 
         #endregion Main
 
-        private static void Created(int[] result, object? userState)
+        private static void Created(int[] result, BigInteger index, BigInteger total, object? userState)
         {
             for (int i = 0; i < result.Length; i++)
             {
                 if (i == result.Length - 1)
                 {
-                    Console.WriteLine(result[i]);
+                    Console.WriteLine($"{result[i]}    index {index}/{total}");
                 }
                 else
                 {
                     Console.Write(result[i]);
                     Console.Write(' ');
                 }
-            }
-            if (userState != null)
-            {
-                ((Counter)userState).Count++;
             }
         }
 
@@ -94,17 +91,14 @@ namespace Honoo
         {
             int[] a = [11, 22, 33, 44, 55, 66, 77, 88, 99];
             int m = 5;
-            var counter = new Counter();
             var combination = new Collections.Generic.Combination<int>(a, m);
-            combination.Output(Created, counter);
+            combination.Output(Created, null);
             Console.WriteLine($"combination n={a.Length} m={m} Due count={combination.Count}");
-            Console.WriteLine($"combination output count={counter.Count}");
             Console.ReadKey(true);
-            counter.Count = 0;
             var permutation = new Collections.Generic.Permutation<int>(a, m);
-            permutation.Output(Created, counter);
+            permutation.Output(Created, null);
             Console.WriteLine($"permutation n={a.Length} m={m} Due count={permutation.Count}");
-            Console.WriteLine($"permutation output count={counter.Count}");
+            Console.ReadKey(true);
         }
 
         internal sealed class Counter

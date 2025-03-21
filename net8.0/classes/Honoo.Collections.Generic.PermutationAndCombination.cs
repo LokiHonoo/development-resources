@@ -36,8 +36,10 @@ namespace Honoo.Collections.Generic
         /// 组合完成一组元素后的回调函数。
         /// </summary>
         /// <param name="result">组合完成后的一组元素集合。</param>
+        /// <param name="index">从 0 开始的创建完成的集合序号。</param>
+        /// <param name="total">可组合的最大数目。</param>
         /// <param name="userState">传递用户参数。</param>
-        public delegate void CreatedCallback(T[] result, object? userState);
+        public delegate void CreatedCallback(T[] result, BigInteger index, BigInteger total, object? userState);
 
         #endregion 委托
 
@@ -106,8 +108,8 @@ namespace Honoo.Collections.Generic
             {
                 throw new IndexOutOfRangeException("可计算的组合数量超出了容器容量 (Int32)。");
             }
-            List<T[]> result = new((int)_count);
-            Output((r, s) => { result.Add(r); }, null);
+            var result = new List<T[]>((int)_count);
+            Output((r, i, t, s) => { result.Add(r); }, null);
             return result;
         }
 
@@ -116,9 +118,10 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        public void Output(CreatedCallback? created, object? userState)
+        public void Output(CreatedCallback created, object? userState)
         {
-            Combine(_array, _m, 0, _m, created, userState);
+            BigInteger index = BigInteger.Zero;
+            Combine(_array, _m, 0, _m, created, ref index, _count, userState);
         }
 
         /// <summary>
@@ -129,15 +132,17 @@ namespace Honoo.Collections.Generic
         /// <param name="ii">循环到的主要分段元素数组的索引。</param>
         /// <param name="jj">循环到的盈余分段元素数组的索引。</param>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
+        /// <param name="index">从 0 开始的创建完成的集合序号。</param>
+        /// <param name="total">可组合的最大数目。</param>
         /// <param name="userState">传递用户参数。</param>
-        private static void Combine(T[] array, int m, int ii, int jj, CreatedCallback? created, object? userState)
+        private static void Combine(T[] array, int m, int ii, int jj, CreatedCallback created, ref BigInteger index, BigInteger total, object? userState)
         {
             for (int i = ii; i < m; i++)
             {
                 for (int j = jj; j < array.Length; j++)
                 {
                     Swap(array, i, j);
-                    Combine(array, m, i + 1, j + 1, created, userState);
+                    Combine(array, m, i + 1, j + 1, created, ref index, total, userState);
                     Swap(array, i, j);
                 }
             }
@@ -146,7 +151,8 @@ namespace Honoo.Collections.Generic
             {
                 result[i] = array[i];
             }
-            created?.Invoke(result, userState);
+            created?.Invoke(result, index, total, userState);
+            index++;
         }
 
         /// <summary>
@@ -189,8 +195,10 @@ namespace Honoo.Collections.Generic
         /// 排列完成一组元素后的回调函数。
         /// </summary>
         /// <param name="result">排列完成后的一组元素集合。</param>
+        /// <param name="index">从 0 开始的创建完成的集合序号。</param>
+        /// <param name="total">可排列的最大数目。</param>
         /// <param name="userState">传递用户参数。</param>
-        public delegate void CreatedCallback(T[] result, object? userState);
+        public delegate void CreatedCallback(T[] result, BigInteger index, BigInteger total, object? userState);
 
         #endregion 委托
 
@@ -254,8 +262,8 @@ namespace Honoo.Collections.Generic
             {
                 throw new IndexOutOfRangeException("可计算的排列数量超出了容器容量 (Int32)。");
             }
-            List<T[]> result = new((int)_count);
-            Output((r, s) => { result.Add(r); }, null);
+            var result = new List<T[]>((int)_count);
+            Output((r, i, t, s) => { result.Add(r); }, null);
             return result;
         }
 
@@ -264,16 +272,17 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        public void Output(CreatedCallback? created, object? userState)
+        public void Output(CreatedCallback created, object? userState)
         {
+            BigInteger index = BigInteger.Zero;
             if (_m == _array.Length)
             {
-                Permutate(_array, 0, created, userState);
+                Permutate(_array, 0, created, ref index, _count, userState);
             }
             else
             {
-                Combination<T> combination = new(_array, _m);
-                combination.Output((r, s) => { Permutate(r, 0, created, s); }, userState);
+                var combination = new Combination<T>(_array, _m);
+                combination.Output((r, i, t, s) => { Permutate(r, 0, created, ref index, _count, s); }, userState);
             }
         }
 
@@ -283,14 +292,17 @@ namespace Honoo.Collections.Generic
         /// <param name="array">元素数组。</param>
         /// <param name="ii">已循环到的元素数组的索引。</param>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
+        /// <param name="index">从 0 开始的创建完成的集合序号。</param>
+        /// <param name="total">可排列的最大数目。</param>
         /// <param name="userState">传递用户参数。</param>
-        private static void Permutate(T[] array, int ii, CreatedCallback? created, object? userState)
+        private static void Permutate(T[] array, int ii, CreatedCallback created, ref BigInteger index, BigInteger total, object? userState)
         {
             if (ii == array.Length - 1)
             {
                 T[] result = new T[array.Length];
                 array.CopyTo(result, 0);
-                created?.Invoke(result, userState);
+                created?.Invoke(result, index, total, userState);
+                index++;
             }
             else
             {
@@ -298,12 +310,12 @@ namespace Honoo.Collections.Generic
                 {
                     if (i == ii)
                     {
-                        Permutate(array, ii + 1, created, userState);
+                        Permutate(array, ii + 1, created, ref index, total, userState);
                     }
                     else
                     {
                         Swap(array, i, ii);
-                        Permutate(array, ii + 1, created, userState);
+                        Permutate(array, ii + 1, created, ref index, total, userState);
                         Swap(array, i, ii);
                     }
                 }
