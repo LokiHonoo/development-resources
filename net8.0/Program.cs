@@ -13,7 +13,6 @@ namespace Honoo
             TestBinaries();
             TestPermutationAndCombination();
             TestNumericChange();
-
             Console.ReadKey(true);
         }
 
@@ -54,11 +53,13 @@ namespace Honoo
             Console.WriteLine(BitConverter.ToUInt64(bytes, 0));
             Console.WriteLine(Honoo.Binaries.LEToUInt64(bytes, 0, 8));
 
-            Console.WriteLine(Convert.ToHexString(bytes));
+            Console.WriteLine(BitConverter.ToString(bytes));
             Console.WriteLine(Honoo.Binaries.GetHex(bytes, false));
             Console.WriteLine(Honoo.Binaries.GetHex(bytes, 0, bytes.Length, false, ":", 4, "    "));
 
             Console.WriteLine(Honoo.Binaries.LEToUInt64(Honoo.Binaries.UInt64ToLE(BitConverter.ToUInt64(bytes, 0)), 0, 8));
+
+            Console.ReadKey(true);
         }
 
         private static void TestNumericChange()
@@ -85,6 +86,8 @@ namespace Honoo
             Console.WriteLine(value + " " + unit);
             value = Numerics.GetSpeed(length, SpeedBits.Gbps, 2, out unit);
             Console.WriteLine(value + " " + unit);
+
+            Console.ReadKey(true);
         }
 
         private static void TestPermutationAndCombination()
@@ -99,11 +102,6 @@ namespace Honoo
             permutation.Output(Created, null);
             Console.WriteLine($"permutation n={a.Length} m={m} Due count={permutation.Count}");
             Console.ReadKey(true);
-        }
-
-        internal sealed class Counter
-        {
-            internal long Count { get; set; }
         }
     }
 }

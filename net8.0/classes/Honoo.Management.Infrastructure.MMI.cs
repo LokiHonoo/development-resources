@@ -5,12 +5,12 @@
  * This code page is published by the MIT license.
  */
 
+using Microsoft.Management.Infrastructure;
+using Microsoft.Management.Infrastructure.Options;
 using System;
 using System.Collections.Generic;
-using System.Management;
-using System.Xml.Linq;
 
-namespace Honoo.Windows
+namespace Honoo.Management.Infrastructure
 {
     /// <summary>
     /// Win32Class.
@@ -480,240 +480,63 @@ namespace Honoo.Windows
     }
 
     /// <summary>
-    /// Windows Management Instrumentation.
+    /// Microsoft Management Infrastructure.
     /// </summary>
-    public static partial class WMI
+    public static class MMI
     {
         /// <summary>
-        /// Get Win32Class data. Simple demo.
+        /// Query MMI data. Simple demo.
         /// </summary>
-        /// <param name="query">Query Win32Class.</param>
-        /// <param name="properties"></param>
+        /// <param name="computer">Computer name as LocalHost.</param>
+        /// <param name="sessionOptions"></param>
+        /// <param name="win32Class"></param>
+        /// <param name="operationOptions"></param>
+        /// <param name="instances"></param>
         /// <returns></returns>
-        public static bool TryGetValue(Win32Class query, out PropertyDataCollection[] properties)
+        /// <exception cref="Exception"></exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static bool Query(string computer, CimSessionOptions sessionOptions, Win32Class win32Class, CimOperationOptions operationOptions, out IEnumerable<CimInstance>? instances)
         {
-            var results = new List<PropertyDataCollection>();
-            using (ManagementObjectSearcher mos = new ManagementObjectSearcher(new SelectQuery(query.ToString())))
+            if (string.IsNullOrWhiteSpace(computer))
             {
-                using (ManagementObjectCollection moc = mos.Get())
-                {
-                    if (moc.Count > 0)
-                    {
-                        foreach (ManagementBaseObject mbo in moc)
-                        {
-                            results.Add(mbo.Properties);
-                        }
-                    }
-                }
+                throw new ArgumentException($"\"{nameof(computer)}\" cannot null or white space.", nameof(computer));
             }
-            properties = results.ToArray();
-            return results.Count > 0;
+            ArgumentNullException.ThrowIfNull(sessionOptions);
+            ArgumentNullException.ThrowIfNull(operationOptions);
+            try
+            {
+                using (var session = CimSession.Create(computer, sessionOptions))
+                {
+                    instances = session.QueryInstances("root\\cimv2", "WQL", $"SELECT * FROM {win32Class}", operationOptions);
+                }
+                return true;
+            }
+            catch
+            {
+                instances = null;
+                return false;
+            }
         }
 
         /// <summary>
-        /// Get Win32Class data. Simple demo.
+        /// Query MMI data. Simple demo.
         /// </summary>
-        /// <param name="query">Query Win32Class.</param>
-        /// <param name="properties"></param>
+        /// <param name="computer">Computer name as LocalHost.</param>
+        /// <param name="win32Class"></param>
+        /// <param name="timeout"></param>
+        /// <param name="instances"></param>
         /// <returns></returns>
-        public static bool TryGetValue(Win32Class query, out XElement[] properties)
+        /// <exception cref="Exception"></exception>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
+        public static bool Query(string computer, Win32Class win32Class, TimeSpan timeout, out IEnumerable<CimInstance>? instances)
         {
-            var results = new List<XElement>();
-            using (ManagementObjectSearcher mos = new ManagementObjectSearcher(new SelectQuery(query.ToString())))
+            using (var sessionOptions = new CimSessionOptions() { Timeout = timeout })
+            using (var operationOptions = new CimOperationOptions() { Timeout = timeout })
             {
-                using (ManagementObjectCollection moc = mos.Get())
-                {
-                    if (moc.Count > 0)
-                    {
-                        foreach (ManagementBaseObject mbo in moc)
-                        {
-                            XElement root = new XElement(query.ToString());
-                            foreach (PropertyData pd in mbo.Properties)
-                            {
-                                XElement element = new XElement("Property");
-                                element.Add(new XAttribute("Name", pd.Name));
-                                element.Add(new XAttribute("Origin", pd.Origin));
-                                element.Add(new XAttribute("Qualifiers", pd.Qualifiers));
-                                element.Add(new XAttribute("CimType", pd.Type));
-                                element.Add(new XAttribute("IsLocal", pd.IsLocal));
-                                element.Add(new XAttribute("IsArray", pd.IsArray));
-                                if (pd.IsLocal)
-                                {
-                                    if (pd.IsArray)
-                                    {
-                                        switch (pd.Type)
-                                        {
-                                            case CimType.None: break;
-
-                                            case CimType.SInt8:
-                                                {
-                                                    var list = (sbyte[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-
-                                            case CimType.UInt8:
-                                                {
-                                                    var list = (byte[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-                                            case CimType.SInt16:
-                                                {
-                                                    var list = (short[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-                                            case CimType.UInt16:
-                                                {
-                                                    var list = (ushort[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-                                            case CimType.SInt32:
-                                                {
-                                                    var list = (int[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-                                            case CimType.UInt32:
-                                                {
-                                                    var list = (uint[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-                                            case CimType.SInt64:
-                                                {
-                                                    var list = (long[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-                                            case CimType.UInt64:
-                                                {
-                                                    var list = (ulong[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-                                            case CimType.Real32:
-                                                {
-                                                    var list = (float[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-                                            case CimType.Real64:
-                                                {
-                                                    var list = (double[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-                                            case CimType.Boolean:
-                                                {
-                                                    var list = (bool[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-                                            case CimType.String:
-                                                {
-                                                    var list = (string[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-
-                                            case CimType.DateTime:
-                                                {
-                                                    var list = (DateTime[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-
-                                            case CimType.Reference:
-                                                {
-                                                    var list = (string[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-
-                                            case CimType.Char16:
-                                                {
-                                                    var list = (char[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-
-                                            case CimType.Object:
-                                            default:
-                                                {
-                                                    var list = (object[])pd.Value;
-                                                    foreach (var item in list)
-                                                    {
-                                                        element.Add(new XElement("value", item));
-                                                    }
-                                                    break;
-                                                }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (pd.Type != CimType.None)
-                                        {
-                                            element.Value = pd.Value.ToString();
-                                        }
-                                    }
-                                }
-                                root.Add(element);
-                            }
-                            results.Add(root);
-                        }
-                    }
-                }
+                return Query(computer, sessionOptions, win32Class, operationOptions, out instances);
             }
-            properties = results.ToArray();
-            return results.Count > 0;
         }
     }
 }

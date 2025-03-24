@@ -1,8 +1,8 @@
 ﻿using Honoo.IO;
-using Honoo.Windows;
+using Honoo.Windows.Management.WMI;
 using System;
+using System.Management;
 using System.Numerics;
-using System.Xml.Linq;
 
 namespace Honoo
 {
@@ -61,6 +61,8 @@ namespace Honoo
             Console.WriteLine(Honoo.Binaries.GetHex(bytes, 0, bytes.Length, false, ":", 4, "    "));
 
             Console.WriteLine(Honoo.Binaries.LEToUInt64(Honoo.Binaries.UInt64ToLE(BitConverter.ToUInt64(bytes, 0)), 0, 8));
+
+            Console.ReadKey(true);
         }
 
         private static void TestNumericChange()
@@ -87,6 +89,8 @@ namespace Honoo
             Console.WriteLine(value + " " + unit);
             value = Numerics.GetSpeed(length, SpeedBits.Gbps, 2, out unit);
             Console.WriteLine(value + " " + unit);
+
+            Console.ReadKey(true);
         }
 
         private static void TestPermutationAndCombination()
@@ -105,16 +109,35 @@ namespace Honoo
 
         private static void TestWMI()
         {
-            WMI.TryGetValue(Win32Class.Win32_Processor, out XElement[] result);
-            foreach (var item in result)
+            if (WMI.Query(Win32Class.Win32_Processor, TimeSpan.FromSeconds(2), out ManagementObjectCollection baseObjects) == ManagementStatus.NoError)
             {
-                Console.WriteLine(item);
+                foreach (var o in baseObjects)
+                {
+                    Console.WriteLine(o.GetText(TextFormat.Mof));
+                }
             }
-        }
-
-        internal sealed class Counter
-        {
-            internal long Count { get; set; }
+            if (WMI.Query(Win32Class.Win32_Processor, TimeSpan.FromSeconds(2), TextFormat.Mof, out string[] texts1) == ManagementStatus.NoError)
+            {
+                foreach (var text in texts1)
+                {
+                    Console.WriteLine(text);
+                }
+            }
+            if (WMI.Query(Win32Class.Win32_Processor, TimeSpan.FromSeconds(2), TextFormat.WmiDtd20, out string[] texts2) == ManagementStatus.NoError)
+            {
+                foreach (var text in texts2)
+                {
+                    Console.WriteLine(text);
+                }
+            }
+            if (WMI.Query(Win32Class.Win32_Processor, TimeSpan.FromSeconds(2), TextFormat.CimDtd20, out string[] texts3) == ManagementStatus.NoError)
+            {
+                foreach (var text in texts3)
+                {
+                    Console.WriteLine(text);
+                }
+            }
+            Console.ReadKey(true);
         }
     }
 }
