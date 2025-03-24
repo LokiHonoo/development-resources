@@ -97,7 +97,7 @@ namespace Honoo.Illumination
     /// <summary>
     /// 颜色计算器。
     /// </summary>
-    public static class Convertor
+    public static class ColorConvertor
     {
         #region 成员
 
@@ -124,7 +124,7 @@ namespace Honoo.Illumination
         /// <param name="CCT">CCT 值。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        public static double[] CCT2XYZ(double CCT, Reference reference)
+        public static double[] CCT2XYZ(double CCT, ColorReference reference)
         {
             if (reference is null)
             {
@@ -168,7 +168,7 @@ namespace Honoo.Illumination
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static double DominantWavelength(double[] xyY, Reference reference)
+        public static double DominantWavelength(double[] xyY, ColorReference reference)
         {
             if (xyY is null)
             {
@@ -270,7 +270,7 @@ namespace Honoo.Illumination
         /// <param name="Lab">Lab 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        public static double[] Lab2XYZ(double[] Lab, Reference reference)
+        public static double[] Lab2XYZ(double[] Lab, ColorReference reference)
         {
             if (Lab is null)
             {
@@ -355,7 +355,7 @@ namespace Honoo.Illumination
         /// <param name="Luv">Luv 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        public static double[] Luv2XYZ(double[] Luv, Reference reference)
+        public static double[] Luv2XYZ(double[] Luv, ColorReference reference)
         {
             if (Luv is null)
             {
@@ -428,7 +428,7 @@ namespace Honoo.Illumination
         /// <param name="RGB">RGB(0-1.0) 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        public static double[] RGB2XYZ(double[] RGB, Reference reference)
+        public static double[] RGB2XYZ(double[] RGB, ColorReference reference)
         {
             if (RGB is null)
             {
@@ -517,7 +517,7 @@ namespace Honoo.Illumination
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static double XYZ2CCT(double[] XYZ, Reference reference)
+        public static double XYZ2CCT(double[] XYZ, ColorReference reference)
         {
             if (XYZ is null)
             {
@@ -566,7 +566,7 @@ namespace Honoo.Illumination
         /// <param name="XYZ">XYZ 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        public static double[] XYZ2Lab(double[] XYZ, Reference reference)
+        public static double[] XYZ2Lab(double[] XYZ, ColorReference reference)
         {
             if (XYZ is null)
             {
@@ -593,7 +593,7 @@ namespace Honoo.Illumination
         /// <param name="XYZ">XYZ 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        public static double[] XYZ2Luv(double[] XYZ, Reference reference)
+        public static double[] XYZ2Luv(double[] XYZ, ColorReference reference)
         {
             if (XYZ is null)
             {
@@ -626,7 +626,7 @@ namespace Honoo.Illumination
         /// <param name="XYZ">XYZ 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        public static double[] XYZ2RGB(double[] XYZ, Reference reference)
+        public static double[] XYZ2RGB(double[] XYZ, ColorReference reference)
         {
             if (XYZ is null)
             {
@@ -686,7 +686,7 @@ namespace Honoo.Illumination
         /// <param name="XYZ">XYZ 值的数组。</param>
         /// <param name="reference">转换参照值。</param>
         /// <returns></returns>
-        public static double[] XYZ2xyY(double[] XYZ, Reference reference)
+        public static double[] XYZ2xyY(double[] XYZ, ColorReference reference)
         {
             if (XYZ is null)
             {
@@ -799,7 +799,7 @@ namespace Honoo.Illumination
     /// <summary>
     /// 转换参照值。
     /// </summary>
-    public sealed class Reference
+    public sealed class ColorReference
     {
         #region 成员
 
@@ -1069,7 +1069,7 @@ namespace Honoo.Illumination
         /// <param name="adaptation">调整器。</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1814:与多维数组相比，首选使用交错数组", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public Reference(Illuminant illuminant, Observer observer, RGBModel model, Adaptation adaptation)
+        public ColorReference(Illuminant illuminant, Observer observer, RGBModel model, Adaptation adaptation)
         {
             this.Illuminant = illuminant;
             this.Observer = observer;
