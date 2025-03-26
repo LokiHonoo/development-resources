@@ -22,7 +22,7 @@ namespace Honoo.Data
     /// <summary>
     /// SQLite helper.
     /// </summary>
-    public static class SqliteHelper
+    internal static class SqliteHelper
     {
         #region Connection
 
@@ -31,7 +31,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static SqliteConnection BuildConnection(SqliteConnectionStringBuilder connectionStringBuilder)
+        internal static SqliteConnection BuildConnection(SqliteConnectionStringBuilder connectionStringBuilder)
         {
             ArgumentNullException.ThrowIfNull(connectionStringBuilder);
             return new SqliteConnection(connectionStringBuilder.ConnectionString);
@@ -42,7 +42,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         /// <returns></returns>
-        public static SqliteConnection BuildConnection(string connectionString)
+        internal static SqliteConnection BuildConnection(string connectionString)
         {
             return new SqliteConnection(connectionString);
         }
@@ -53,7 +53,7 @@ namespace Honoo.Data
         /// <param name="dataSource">Data file path.</param>
         /// <param name="password">Password.</param>
         /// <returns></returns>
-        public static SqliteConnection BuildConnection(string dataSource, string password)
+        internal static SqliteConnection BuildConnection(string dataSource, string password)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder() { DataSource = dataSource };
             if (!string.IsNullOrEmpty(password)) { connectionStringBuilder.Password = password; }
@@ -65,7 +65,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(SqliteConnectionStringBuilder connectionStringBuilder)
+        internal static string BuildConnectionString(SqliteConnectionStringBuilder connectionStringBuilder)
         {
             ArgumentNullException.ThrowIfNull(connectionStringBuilder);
             return connectionStringBuilder.ConnectionString;
@@ -77,7 +77,7 @@ namespace Honoo.Data
         /// <param name="dataSource">Data file path.</param>
         /// <param name="password">Password.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(string dataSource, string password)
+        internal static string BuildConnectionString(string dataSource, string password)
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder() { DataSource = dataSource };
             if (!string.IsNullOrEmpty(password)) { connectionStringBuilder.Password = password; }
@@ -95,7 +95,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int FillDataSet(DataSet dataSet, SqliteConnection connection, string selectCommandText)
+        internal static int FillDataSet(DataSet dataSet, SqliteConnection connection, string selectCommandText)
         {
             return FillDataSet(dataSet, connection, selectCommandText, null);
         }
@@ -111,7 +111,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:丢失范围之前释放对象", Justification = "<挂起>")]
-        public static int FillDataSet(DataSet dataSet, SqliteConnection connection, string selectCommandText, params SqliteParameter[]? parameters)
+        internal static int FillDataSet(DataSet dataSet, SqliteConnection connection, string selectCommandText, params SqliteParameter[]? parameters)
         {
             ArgumentNullException.ThrowIfNull(dataSet);
             ArgumentNullException.ThrowIfNull(selectCommandText);
@@ -133,7 +133,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int FillDataTable(DataTable dataTable, SqliteConnection connection, string selectCommandText)
+        internal static int FillDataTable(DataTable dataTable, SqliteConnection connection, string selectCommandText)
         {
             return FillDataTable(dataTable, connection, selectCommandText, null);
         }
@@ -148,7 +148,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int FillDataTable(DataTable dataTable, SqliteConnection connection, string selectCommandText, params SqliteParameter[]? parameters)
+        internal static int FillDataTable(DataTable dataTable, SqliteConnection connection, string selectCommandText, params SqliteParameter[]? parameters)
         {
             ArgumentNullException.ThrowIfNull(dataTable);
             ArgumentNullException.ThrowIfNull(connection);
@@ -228,7 +228,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static DataSet GetDataSet(SqliteConnection connection, string selectCommandText)
+        internal static DataSet GetDataSet(SqliteConnection connection, string selectCommandText)
         {
             return GetDataSet(connection, selectCommandText, null);
         }
@@ -242,7 +242,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static DataSet GetDataSet(SqliteConnection connection, string selectCommandText, params SqliteParameter[]? parameters)
+        internal static DataSet GetDataSet(SqliteConnection connection, string selectCommandText, params SqliteParameter[]? parameters)
         {
             var dataSet = new DataSet();
             FillDataSet(dataSet, connection, selectCommandText, parameters);
@@ -255,7 +255,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static DataTable GetDataTable(SqliteConnection connection, string selectCommandText)
+        internal static DataTable GetDataTable(SqliteConnection connection, string selectCommandText)
         {
             return GetDataTable(connection, selectCommandText, null);
         }
@@ -269,7 +269,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static DataTable GetDataTable(SqliteConnection connection, string selectCommandText, params SqliteParameter[]? parameters)
+        internal static DataTable GetDataTable(SqliteConnection connection, string selectCommandText, params SqliteParameter[]? parameters)
         {
             var dataTable = new DataTable();
             FillDataTable(dataTable, connection, selectCommandText, parameters);
@@ -287,7 +287,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static SqliteCommand GetCommand(SqliteConnection connection, CommandType commandType, string commandText)
+        internal static SqliteCommand GetCommand(SqliteConnection connection, CommandType commandType, string commandText)
         {
             return GetCommand(connection, commandType, commandText, null);
         }
@@ -302,7 +302,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static SqliteCommand GetCommand(SqliteConnection connection, CommandType commandType, string commandText, params SqliteParameter[]? parameters)
+        internal static SqliteCommand GetCommand(SqliteConnection connection, CommandType commandType, string commandText, params SqliteParameter[]? parameters)
         {
             var command = new SqliteCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
@@ -320,7 +320,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(SqliteConnection connection, CommandType commandType, string commandText)
+        internal static int ExecuteNonQuery(SqliteConnection connection, CommandType commandType, string commandText)
         {
             return ExecuteNonQuery(connection, commandType, commandText, null);
         }
@@ -335,7 +335,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int ExecuteNonQuery(SqliteConnection connection, CommandType commandType, string commandText, params SqliteParameter[]? parameters)
+        internal static int ExecuteNonQuery(SqliteConnection connection, CommandType commandType, string commandText, params SqliteParameter[]? parameters)
         {
             using var command = new SqliteCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
@@ -349,7 +349,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object? ExecuteScalar(SqliteConnection connection, CommandType commandType, string commandText)
+        internal static object? ExecuteScalar(SqliteConnection connection, CommandType commandType, string commandText)
         {
             return ExecuteScalar(connection, commandType, commandText, null);
         }
@@ -364,7 +364,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static object? ExecuteScalar(SqliteConnection connection, CommandType commandType, string commandText, params SqliteParameter[]? parameters)
+        internal static object? ExecuteScalar(SqliteConnection connection, CommandType commandType, string commandText, params SqliteParameter[]? parameters)
         {
             using var command = new SqliteCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
@@ -382,7 +382,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SqliteConnection connection, CommandType commandType, string commandText)
+        internal static int TransactionExecuteNonQuery(SqliteConnection connection, CommandType commandType, string commandText)
         {
             return TransactionExecuteNonQuery(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
@@ -395,7 +395,7 @@ namespace Honoo.Data
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SqliteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        internal static int TransactionExecuteNonQuery(SqliteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
             return TransactionExecuteNonQuery(connection, commandType, commandText, isolationLevel, null);
         }
@@ -412,7 +412,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int TransactionExecuteNonQuery(SqliteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqliteParameter[]? parameters)
+        internal static int TransactionExecuteNonQuery(SqliteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqliteParameter[]? parameters)
         {
             ArgumentNullException.ThrowIfNull(connection);
             int result = 0;
@@ -453,7 +453,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object? TransactionExecuteScalar(SqliteConnection connection, CommandType commandType, string commandText)
+        internal static object? TransactionExecuteScalar(SqliteConnection connection, CommandType commandType, string commandText)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
@@ -466,7 +466,7 @@ namespace Honoo.Data
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static object? TransactionExecuteScalar(SqliteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        internal static object? TransactionExecuteScalar(SqliteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, isolationLevel, null);
         }
@@ -483,7 +483,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static object? TransactionExecuteScalar(SqliteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqliteParameter[]? parameters)
+        internal static object? TransactionExecuteScalar(SqliteConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqliteParameter[]? parameters)
         {
             ArgumentNullException.ThrowIfNull(connection);
             object? result = null;
@@ -527,7 +527,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="manifest">Dump manifest.</param>
         /// <param name="textWriter">TextWriter.</param>
-        public static void Dump(SqliteConnection connection, SqliteDumpManifest manifest, TextWriter textWriter)
+        internal static void Dump(SqliteConnection connection, SqliteDumpManifest manifest, TextWriter textWriter)
         {
             Dump(connection, manifest, textWriter, null, null, out _);
         }
@@ -541,7 +541,7 @@ namespace Honoo.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        public static void Dump(SqliteConnection connection,
+        internal static void Dump(SqliteConnection connection,
                                 SqliteDumpManifest manifest,
                                 TextWriter textWriter,
                                 SqliteWrittenCallback? written,
@@ -586,7 +586,7 @@ namespace Honoo.Data
         /// <param name="folder">Save to folder.</param>
         /// <param name="fileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
         /// <param name="encoding">File encoding.</param>
-        public static void DumpToFiles(SqliteConnection connection, SqliteDumpManifest manifest, string folder, long fileSize, Encoding encoding)
+        internal static void DumpToFiles(SqliteConnection connection, SqliteDumpManifest manifest, string folder, long fileSize, Encoding encoding)
         {
             DumpToFiles(connection, manifest, folder, encoding, fileSize, null, null, out _);
         }
@@ -602,7 +602,7 @@ namespace Honoo.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        public static void DumpToFiles(SqliteConnection connection,
+        internal static void DumpToFiles(SqliteConnection connection,
                                        SqliteDumpManifest manifest,
                                        string folder,
                                        Encoding encoding,
@@ -658,7 +658,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <returns></returns>
-        public static SqliteDumpManifest GetDumpManifest(SqliteConnection connection)
+        internal static SqliteDumpManifest GetDumpManifest(SqliteConnection connection)
         {
             var manifest = new SqliteDumpManifest();
             using (var dt = GetDataTable(connection, "SELECT type, name FROM `SQLite_master`;"))
@@ -1110,13 +1110,13 @@ namespace Honoo.Data
     /// <param name="association">The name associated with dumping.</param>
     /// <param name="userState">User state.</param>
     /// <param name="cancel">Cancel dump.</param>
-    public delegate void SqliteWrittenCallback(long written, long total, SqliteDumpProjectType projectType, string association, object? userState, ref bool cancel);
+    internal delegate void SqliteWrittenCallback(long written, long total, SqliteDumpProjectType projectType, string association, object? userState, ref bool cancel);
 
     /// <summary>
     /// Note the type of dumping in the progress report.
     /// </summary>
     [Flags]
-    public enum SqliteDumpProjectType
+    internal enum SqliteDumpProjectType
     {
         /// <summary>Summary header.</summary>
         Summary = 1,
@@ -1137,45 +1137,38 @@ namespace Honoo.Data
     /// <summary>
     /// Dump manifest.
     /// </summary>
-    public sealed class SqliteDumpManifest
+    internal sealed class SqliteDumpManifest
     {
         /// <summary>
         /// Tables dump project.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
-        public List<SqliteTableDumpProject> Tables { get; } = new List<SqliteTableDumpProject>();
+        internal List<SqliteTableDumpProject> Tables { get; } = new List<SqliteTableDumpProject>();
 
         /// <summary>
         /// Triggers dump project.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
-        public List<SqliteDumpProject> Triggers { get; } = new List<SqliteDumpProject>();
+        internal List<SqliteDumpProject> Triggers { get; } = new List<SqliteDumpProject>();
 
         /// <summary>
         /// Views dump project.
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
-        public List<SqliteDumpProject> Views { get; } = new List<SqliteDumpProject>();
+        internal List<SqliteDumpProject> Views { get; } = new List<SqliteDumpProject>();
     }
 
     /// <summary>
     /// Dump project.
     /// </summary>
-    public sealed class SqliteDumpProject
+    internal sealed class SqliteDumpProject
     {
         /// <summary>
         /// Dump project.
         /// </summary>
         /// <param name="name">Project name.</param>
         /// <param name="ignore">Ignore this project.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0290:使用主构造函数", Justification = "<挂起>")]
-        public SqliteDumpProject(string name, bool ignore)
+        internal SqliteDumpProject(string name, bool ignore)
         {
             this.Name = name;
             this.Ignore = ignore;
@@ -1184,18 +1177,18 @@ namespace Honoo.Data
         /// <summary>
         /// Ignore this project. Default false.
         /// </summary>
-        public bool Ignore { get; set; }
+        internal bool Ignore { get; set; }
 
         /// <summary>
         /// Project name.
         /// </summary>
-        public string Name { get; }
+        internal string Name { get; }
     }
 
     /// <summary>
     /// Table dump project.
     /// </summary>
-    public sealed class SqliteTableDumpProject
+    internal sealed class SqliteTableDumpProject
     {
         /// <summary>
         /// Table dump project.
@@ -1203,8 +1196,7 @@ namespace Honoo.Data
         /// <param name="tableName">Table name.</param>
         /// <param name="ignore">Ignore this project.</param>
         /// <param name="includingRecord">Dump records.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0290:使用主构造函数", Justification = "<挂起>")]
-        public SqliteTableDumpProject(string tableName, bool ignore, bool includingRecord)
+        internal SqliteTableDumpProject(string tableName, bool ignore, bool includingRecord)
         {
             this.TableName = tableName;
             this.Ignore = ignore;
@@ -1214,17 +1206,17 @@ namespace Honoo.Data
         /// <summary>
         /// Ignore this project. Default false.
         /// </summary>
-        public bool Ignore { get; set; }
+        internal bool Ignore { get; set; }
 
         /// <summary>
         /// Dump including records.
         /// </summary>
-        public bool IncludingRecord { get; set; }
+        internal bool IncludingRecord { get; set; }
 
         /// <summary>
         /// Table name.
         /// </summary>
-        public string TableName { get; }
+        internal string TableName { get; }
     }
 
     #endregion Dump
@@ -1234,7 +1226,7 @@ namespace Honoo.Data
     /// <summary>
     /// Command text.
     /// </summary>
-    public static class SqliteCommandText
+    internal static class SqliteCommandText
     {
         #region Database
 
@@ -1242,7 +1234,7 @@ namespace Honoo.Data
         /// Displays the database version.
         /// </summary>
         /// <returns></returns>
-        public static string ShowVersion()
+        internal static string ShowVersion()
         {
             return "SELECT SQLite_VERSION();";
         }
@@ -1255,7 +1247,7 @@ namespace Honoo.Data
         /// Displays tables in the current database.
         /// </summary>
         /// <returns></returns>
-        public static string ShowTables()
+        internal static string ShowTables()
         {
             return "SELECT * FROM `SQLite_master` WHERE `type` = 'table';";
         }
@@ -1265,7 +1257,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="like">Part of the table name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowTables(string like)
+        internal static string ShowTables(string like)
         {
             return "SELECT * FROM `SQLite_master` WHERE `type` = 'table' AND `name` LIKE '" + like + "';";
         }
@@ -1274,7 +1266,7 @@ namespace Honoo.Data
         /// Displays triggers in the current database.
         /// </summary>
         /// <returns></returns>
-        public static string ShowTriggers()
+        internal static string ShowTriggers()
         {
             return "SELECT * FROM `SQLite_master` WHERE `type` = 'trigger';";
         }
@@ -1284,7 +1276,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="like">Part of the trigger name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowTriggers(string like)
+        internal static string ShowTriggers(string like)
         {
             return "SELECT * FROM `SQLite_master` WHERE `type` = 'trigger' AND `name` LIKE '" + like + "';";
         }
@@ -1295,7 +1287,7 @@ namespace Honoo.Data
         /// <param name="like">Part of the trigger name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        public static string ShowTriggers(string like, string table)
+        internal static string ShowTriggers(string like, string table)
         {
             return "SELECT * FROM `SQLite_master` WHERE `type` = 'trigger' AND `tbl_name` = '" + table + "' AND `name` LIKE '" + like + "';";
         }
@@ -1304,7 +1296,7 @@ namespace Honoo.Data
         /// Displays views in the current database.
         /// </summary>
         /// <returns></returns>
-        public static string ShowViews()
+        internal static string ShowViews()
         {
             return "SELECT * FROM `SQLite_master` WHERE `type` = 'view';";
         }
@@ -1314,7 +1306,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="like">Part of the view name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowViews(string like)
+        internal static string ShowViews(string like)
         {
             return "SELECT * FROM `SQLite_master` WHERE `type` = 'view' AND `name` LIKE '" + like + "';";
         }
@@ -1323,7 +1315,7 @@ namespace Honoo.Data
         /// Compress database files to recycle wasted space in the database.
         /// </summary>
         /// <returns></returns>
-        public static string Vacuum()
+        internal static string Vacuum()
         {
             return "VACUUM;";
         }

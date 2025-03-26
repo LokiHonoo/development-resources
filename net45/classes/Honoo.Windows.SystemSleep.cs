@@ -12,7 +12,7 @@ namespace Honoo.Windows
     /// <summary>
     /// 系统休眠。
     /// </summary>
-    public static class SystemSleep
+    internal static class SystemSleep
     {
         #region Native
 
@@ -33,7 +33,7 @@ namespace Honoo.Windows
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
         /// <returns></returns>
-        public static uint PreventSleep(bool includeDisplay)
+        internal static uint PreventSleep(bool includeDisplay)
         {
             if (includeDisplay)
             {
@@ -50,7 +50,7 @@ namespace Honoo.Windows
         /// </summary>
         /// <param name="includeDisplay">是否阻止关闭显示器。</param>
         /// <returns></returns>
-        public static uint ResetSleepTimer(bool includeDisplay)
+        internal static uint ResetSleepTimer(bool includeDisplay)
         {
             if (includeDisplay)
             {
@@ -66,7 +66,7 @@ namespace Honoo.Windows
         ///恢复系统休眠策略。
         /// </summary>
         /// <returns></returns>
-        public static uint ResotreSleep()
+        internal static uint ResotreSleep()
         {
             return SetThreadExecutionState(ES_CONTINUOUS);
         }

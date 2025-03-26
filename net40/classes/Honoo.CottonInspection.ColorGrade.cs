@@ -14,7 +14,7 @@ namespace Honoo.CottonInspection
     /// <summary>
     /// 棉花检验，颜色级转换。
     /// </summary>
-    public static class ColorGrade
+    internal static class ColorGrade
     {
         /// <summary>
         /// 颜色级和聚焦扫描值对应关系表。
@@ -528,7 +528,7 @@ namespace Honoo.CottonInspection
         /// 获取关系表的 CSV 表格。
         /// </summary>
         /// <returns></returns>
-        public static string GetCSV()
+        internal static string GetCSV()
         {
             StringBuilder sb = new StringBuilder();
             double b = 4d;
@@ -564,7 +564,7 @@ namespace Honoo.CottonInspection
         /// <returns></returns>
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
-        public static byte GetGrade(double rd, double b)
+        internal static byte GetGrade(double rd, double b)
         {
             b = Math.Round(b, 1);
             rd = Math.Round(rd, 1);
@@ -588,7 +588,7 @@ namespace Honoo.CottonInspection
         /// <returns></returns>
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
-        public static string GetName(byte value)
+        internal static string GetName(byte value)
         {
             switch (value)
             {

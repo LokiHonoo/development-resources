@@ -15,7 +15,7 @@ namespace Honoo.Collections.Generic
     /// 求数组组合。组合的结果是元素的浅表复制。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
-    public sealed class Combination<T>
+    internal sealed class Combination<T>
     {
         #region 成员
 
@@ -26,7 +26,7 @@ namespace Honoo.Collections.Generic
         /// <summary>
         /// 获取可组合的集合数量。
         /// </summary>
-        public BigInteger Count => _count;
+        internal BigInteger Count => _count;
 
         #endregion 成员
 
@@ -39,7 +39,7 @@ namespace Honoo.Collections.Generic
         /// <param name="index">从 0 开始的创建完成的集合序号。</param>
         /// <param name="total">可组合的最大数目。</param>
         /// <param name="userState">传递用户参数。</param>
-        public delegate void CreatedCallback(T[] result, BigInteger index, BigInteger total, object userState);
+        internal delegate void CreatedCallback(T[] result, BigInteger index, BigInteger total, object userState);
 
         #endregion 委托
 
@@ -51,7 +51,7 @@ namespace Honoo.Collections.Generic
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        public Combination(IList<T> array, int m)
+        internal Combination(IList<T> array, int m)
         {
             if (array is null)
             {
@@ -81,7 +81,7 @@ namespace Honoo.Collections.Generic
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1000:不要在泛型类型中声明静态成员", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static BigInteger C(int n, int m)
+        internal static BigInteger C(int n, int m)
         {
             BigInteger numerator = BigInteger.One;
             BigInteger denominator = BigInteger.One;
@@ -105,7 +105,7 @@ namespace Honoo.Collections.Generic
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public List<T[]> Output()
+        internal List<T[]> Output()
         {
             if (_count > int.MaxValue)
             {
@@ -121,7 +121,7 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <param name="created">组合完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        public void Output(CreatedCallback created, object userState)
+        internal void Output(CreatedCallback created, object userState)
         {
             BigInteger index = BigInteger.Zero;
             Combine(_array, _m, 0, _m, created, ref index, _count, userState);
@@ -177,7 +177,7 @@ namespace Honoo.Collections.Generic
     /// 求数组排列。排列的结果是元素的浅表复制。
     /// </summary>
     /// <typeparam name="T">元素泛型。</typeparam>
-    public sealed class Permutation<T>
+    internal sealed class Permutation<T>
     {
         #region 成员
 
@@ -188,7 +188,7 @@ namespace Honoo.Collections.Generic
         /// <summary>
         /// 获取可排列的集合数量。
         /// </summary>
-        public BigInteger Count => _count;
+        internal BigInteger Count => _count;
 
         #endregion 成员
 
@@ -201,7 +201,7 @@ namespace Honoo.Collections.Generic
         /// <param name="index">从 0 开始的创建完成的集合序号。</param>
         /// <param name="total">可排列的最大数目。</param>
         /// <param name="userState">传递用户参数。</param>
-        public delegate void CreatedCallback(T[] result, BigInteger index, BigInteger total, object userState);
+        internal delegate void CreatedCallback(T[] result, BigInteger index, BigInteger total, object userState);
 
         #endregion 委托
 
@@ -213,7 +213,7 @@ namespace Honoo.Collections.Generic
         /// <param name="array">元素数组。</param>
         /// <param name="m">指定选择的元素数量。</param>
         /// <exception cref="Exception" />
-        public Permutation(IList<T> array, int m)
+        internal Permutation(IList<T> array, int m)
         {
             if (array is null)
             {
@@ -243,7 +243,7 @@ namespace Honoo.Collections.Generic
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1000:不要在泛型类型中声明静态成员", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static BigInteger P(int n, int m)
+        internal static BigInteger P(int n, int m)
         {
             BigInteger integer = BigInteger.One;
             for (int i = 0; i < m; i++)
@@ -262,7 +262,7 @@ namespace Honoo.Collections.Generic
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:不要引发保留的异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public List<T[]> Output()
+        internal List<T[]> Output()
         {
             if (_count > int.MaxValue)
             {
@@ -278,7 +278,7 @@ namespace Honoo.Collections.Generic
         /// </summary>
         /// <param name="created">排列完成一组元素后的回调函数。</param>
         /// <param name="userState">传递用户参数。</param>
-        public void Output(CreatedCallback created, object userState)
+        internal void Output(CreatedCallback created, object userState)
         {
             BigInteger index = BigInteger.Zero;
             if (_m == _array.Length)

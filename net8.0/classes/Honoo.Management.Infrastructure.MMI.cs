@@ -1,6 +1,6 @@
 ﻿/*
  * https://github.com/LokiHonoo/development-resources
- * Copyright (C) Loki Honoo 2015. All rights reserved.
+ * Copyright (C) Loki Honoo 2024. All rights reserved.
  *
  * This code page is published by the MIT license.
  */
@@ -17,7 +17,7 @@ namespace Honoo.Management.Infrastructure
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:标识符不应包含下划线", Justification = "<挂起>")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-    public enum Win32Class
+    internal enum Win32Class
     {
 #pragma warning disable CS1591 // 缺少对公共可见类型或成员的 XML 注释
 
@@ -482,7 +482,7 @@ namespace Honoo.Management.Infrastructure
     /// <summary>
     /// Microsoft Management Infrastructure.
     /// </summary>
-    public static class MMI
+    internal static class MMI
     {
         /// <summary>
         /// Query MMI data. Simple demo.
@@ -496,7 +496,7 @@ namespace Honoo.Management.Infrastructure
         /// <exception cref="Exception"></exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static bool Query(string computer, CimSessionOptions sessionOptions, Win32Class win32Class, CimOperationOptions operationOptions, out IEnumerable<CimInstance>? instances)
+        internal static bool Query(string computer, CimSessionOptions sessionOptions, Win32Class win32Class, CimOperationOptions operationOptions, out IEnumerable<CimInstance>? instances)
         {
             if (string.IsNullOrWhiteSpace(computer))
             {
@@ -530,7 +530,7 @@ namespace Honoo.Management.Infrastructure
         /// <exception cref="Exception"></exception>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static bool Query(string computer, Win32Class win32Class, TimeSpan timeout, out IEnumerable<CimInstance>? instances)
+        internal static bool Query(string computer, Win32Class win32Class, TimeSpan timeout, out IEnumerable<CimInstance>? instances)
         {
             using (var sessionOptions = new CimSessionOptions() { Timeout = timeout })
             using (var operationOptions = new CimOperationOptions() { Timeout = timeout })

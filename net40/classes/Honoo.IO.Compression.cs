@@ -18,7 +18,7 @@ namespace Honoo.IO.Compression
     /// <summary>
     /// Deflate 压缩算法辅助。
     /// </summary>
-    public static class Deflate
+    internal static class Deflate
     {
         /// <summary>
         /// 使用 DeflateStream 压缩字节数组。
@@ -26,7 +26,7 @@ namespace Honoo.IO.Compression
         /// <param name="bytes">要压缩的字节数组。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] Compress(byte[] bytes)
+        internal static byte[] Compress(byte[] bytes)
         {
             if (bytes is null)
             {
@@ -43,7 +43,7 @@ namespace Honoo.IO.Compression
         /// <param name="count">要压缩的字节个数。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] Compress(byte[] bytes, int offset, int count)
+        internal static byte[] Compress(byte[] bytes, int offset, int count)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -61,7 +61,7 @@ namespace Honoo.IO.Compression
         /// <param name="bytes">使用 Deflate 压缩过的字节数组。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] Decompress(byte[] bytes)
+        internal static byte[] Decompress(byte[] bytes)
         {
             if (bytes is null)
             {
@@ -78,7 +78,7 @@ namespace Honoo.IO.Compression
         /// <param name="count">要解压的字节个数。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] Decompress(byte[] bytes, int offset, int count)
+        internal static byte[] Decompress(byte[] bytes, int offset, int count)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -94,7 +94,7 @@ namespace Honoo.IO.Compression
     /// <summary>
     /// GZip 压缩算法辅助。
     /// </summary>
-    public static class GZip
+    internal static class GZip
     {
         /// <summary>
         /// 使用 GZip 压缩字节数组。
@@ -102,7 +102,7 @@ namespace Honoo.IO.Compression
         /// <param name="bytes">要压缩的字节数组。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] Compress(byte[] bytes)
+        internal static byte[] Compress(byte[] bytes)
         {
             if (bytes is null)
             {
@@ -119,7 +119,7 @@ namespace Honoo.IO.Compression
         /// <param name="count">要压缩的字节个数。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] Compress(byte[] bytes, int offset, int count)
+        internal static byte[] Compress(byte[] bytes, int offset, int count)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -137,7 +137,7 @@ namespace Honoo.IO.Compression
         /// <param name="bytes">使用 GZip 压缩过的字节数组。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] Decompress(byte[] bytes)
+        internal static byte[] Decompress(byte[] bytes)
         {
             if (bytes is null)
             {
@@ -154,7 +154,7 @@ namespace Honoo.IO.Compression
         /// <param name="count">要解压的字节个数。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] Decompress(byte[] bytes, int offset, int count)
+        internal static byte[] Decompress(byte[] bytes, int offset, int count)
         {
             using (MemoryStream ms = new MemoryStream())
             {

@@ -14,7 +14,7 @@ namespace Honoo
     /// <summary>
     /// 二进制对象辅助。
     /// </summary>
-    public static class Binaries
+    internal static class Binaries
     {
         #region 比较
 
@@ -25,7 +25,7 @@ namespace Honoo
         /// <param name="second"></param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static bool SequenceEqual(byte[] first, byte[] second)
+        internal static bool SequenceEqual(byte[] first, byte[] second)
         {
             if (first is null)
             {
@@ -62,7 +62,7 @@ namespace Honoo
         /// <param name="length"></param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static bool SequenceEqual(byte[] first, int firstOffset, byte[] second, int secondOffset, int length)
+        internal static bool SequenceEqual(byte[] first, int firstOffset, byte[] second, int secondOffset, int length)
         {
             if (first is null)
             {
@@ -101,7 +101,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static short BEToInt16(byte[] buffer, int offset, int length)
+        internal static short BEToInt16(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -132,7 +132,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static int BEToInt32(byte[] buffer, int offset, int length)
+        internal static int BEToInt32(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -176,7 +176,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static long BEToInt64(byte[] buffer, int offset, int length)
+        internal static long BEToInt64(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -258,7 +258,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static ushort BEToUInt16(byte[] buffer, int offset, int length)
+        internal static ushort BEToUInt16(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -289,7 +289,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static uint BEToUInt32(byte[] buffer, int offset, int length)
+        internal static uint BEToUInt32(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -333,7 +333,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static ulong BEToUInt64(byte[] buffer, int offset, int length)
+        internal static ulong BEToUInt64(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -414,7 +414,7 @@ namespace Honoo
         /// <param name="replaces">要移除的字符串集合。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] GetBytes(string hex, params string[] replaces)
+        internal static byte[] GetBytes(string hex, params string[] replaces)
         {
             if (string.IsNullOrWhiteSpace(hex))
             {
@@ -437,7 +437,7 @@ namespace Honoo
         /// <param name="hex">无分隔符的十六进制字符串。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static byte[] GetBytes(string hex)
+        internal static byte[] GetBytes(string hex)
         {
             if (string.IsNullOrWhiteSpace(hex))
             {
@@ -465,7 +465,7 @@ namespace Honoo
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1308:将字符串规范化为大写", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static string GetHex(byte[] bytes, bool uppercase)
+        internal static string GetHex(byte[] bytes, bool uppercase)
         {
             if (bytes is null)
             {
@@ -486,7 +486,7 @@ namespace Honoo
         /// <exception cref="Exception" />
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1308:将字符串规范化为大写", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static string GetHex(byte[] buffer, int offset, int length, bool uppercase)
+        internal static string GetHex(byte[] buffer, int offset, int length, bool uppercase)
         {
             if (buffer is null)
             {
@@ -508,7 +508,7 @@ namespace Honoo
         /// <param name="indents">指定每行缩进字符。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static string GetHex(byte[] buffer, int offset, int length, bool uppercase, string split, int lineBreaks, string indents)
+        internal static string GetHex(byte[] buffer, int offset, int length, bool uppercase, string split, int lineBreaks, string indents)
         {
             if (buffer is null)
             {
@@ -560,7 +560,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] Int16ToBE(short value)
+        internal static byte[] Int16ToBE(short value)
         {
             return new byte[] { (byte)(value >> 8), (byte)value };
         }
@@ -570,7 +570,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] Int16ToLE(short value)
+        internal static byte[] Int16ToLE(short value)
         {
             return new byte[] { (byte)value, (byte)(value >> 8) };
         }
@@ -580,7 +580,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] Int32ToBE(int value)
+        internal static byte[] Int32ToBE(int value)
         {
             return new byte[] { (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value };
         }
@@ -590,7 +590,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] Int32ToLE(int value)
+        internal static byte[] Int32ToLE(int value)
         {
             return new byte[] { (byte)value, (byte)(value >> 8), (byte)(value >> 16), (byte)(value >> 24) };
         }
@@ -600,7 +600,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] Int64ToBE(long value)
+        internal static byte[] Int64ToBE(long value)
         {
             return new byte[]
             {
@@ -620,7 +620,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] Int64ToLE(long value)
+        internal static byte[] Int64ToLE(long value)
         {
             return new byte[]
             {
@@ -643,7 +643,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static short LEToInt16(byte[] buffer, int offset, int length)
+        internal static short LEToInt16(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -674,7 +674,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static int LEToInt32(byte[] buffer, int offset, int length)
+        internal static int LEToInt32(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -718,7 +718,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static long LEToInt64(byte[] buffer, int offset, int length)
+        internal static long LEToInt64(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -800,7 +800,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static ushort LEToUInt16(byte[] buffer, int offset, int length)
+        internal static ushort LEToUInt16(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -831,7 +831,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static uint LEToUInt32(byte[] buffer, int offset, int length)
+        internal static uint LEToUInt32(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -875,7 +875,7 @@ namespace Honoo
         /// <param name="length">读取的字节数量。</param>
         /// <returns></returns>
         /// <exception cref="Exception" />
-        public static ulong LEToUInt64(byte[] buffer, int offset, int length)
+        internal static ulong LEToUInt64(byte[] buffer, int offset, int length)
         {
             if (buffer is null)
             {
@@ -954,7 +954,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] UInt16ToBE(ushort value)
+        internal static byte[] UInt16ToBE(ushort value)
         {
             return new byte[] { (byte)(value >> 8), (byte)value };
         }
@@ -964,7 +964,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] UInt16ToLE(ushort value)
+        internal static byte[] UInt16ToLE(ushort value)
         {
             return new byte[] { (byte)value, (byte)(value >> 8) };
         }
@@ -974,7 +974,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] UInt32ToBE(uint value)
+        internal static byte[] UInt32ToBE(uint value)
         {
             return new byte[] { (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value };
         }
@@ -984,7 +984,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] UInt32ToLE(uint value)
+        internal static byte[] UInt32ToLE(uint value)
         {
             return new byte[] { (byte)value, (byte)(value >> 8), (byte)(value >> 16), (byte)(value >> 24) };
         }
@@ -994,7 +994,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] UInt64ToBE(ulong value)
+        internal static byte[] UInt64ToBE(ulong value)
         {
             return new byte[]
             {
@@ -1014,7 +1014,7 @@ namespace Honoo
         /// </summary>
         /// <param name="value">要转换的值。</param>
         /// <returns></returns>
-        public static byte[] UInt64ToLE(ulong value)
+        internal static byte[] UInt64ToLE(ulong value)
         {
             return new byte[]
             {

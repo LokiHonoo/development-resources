@@ -15,7 +15,7 @@ namespace Honoo.Data
     /// <summary>
     /// Sql helper.
     /// </summary>
-    public static class SqlHelper
+    internal static class SqlHelper
     {
         #region Connection
 
@@ -24,7 +24,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static SqlConnection BuildConnection(SqlConnectionStringBuilder connectionStringBuilder)
+        internal static SqlConnection BuildConnection(SqlConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder is null)
             {
@@ -38,7 +38,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         /// <returns></returns>
-        public static SqlConnection BuildConnection(string connectionString)
+        internal static SqlConnection BuildConnection(string connectionString)
         {
             return new SqlConnection(connectionString);
         }
@@ -51,7 +51,7 @@ namespace Honoo.Data
         /// <param name="password">Password.。</param>
         /// <param name="catalog">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        public static SqlConnection BuildConnection(string dataSource, string userID, string password, string catalog)
+        internal static SqlConnection BuildConnection(string dataSource, string userID, string password, string catalog)
         {
             var connectionStringBuilder = new SqlConnectionStringBuilder()
             {
@@ -74,7 +74,7 @@ namespace Honoo.Data
         /// <param name="password">Password.。</param>
         /// <param name="catalog">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        public static SqlConnection BuildConnection(string server, uint port, string userID, string password, string catalog)
+        internal static SqlConnection BuildConnection(string server, uint port, string userID, string password, string catalog)
         {
             string dataSource = string.Format(CultureInfo.InvariantCulture, "{0},{1}", server, port);
             var connectionStringBuilder = new SqlConnectionStringBuilder()
@@ -94,7 +94,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(SqlConnectionStringBuilder connectionStringBuilder)
+        internal static string BuildConnectionString(SqlConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder is null)
             {
@@ -111,7 +111,7 @@ namespace Honoo.Data
         /// <param name="password">Password.。</param>
         /// <param name="catalog">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(string dataSource, string userID, string password, string catalog)
+        internal static string BuildConnectionString(string dataSource, string userID, string password, string catalog)
         {
             var connectionStringBuilder = new SqlConnectionStringBuilder()
             {
@@ -134,7 +134,7 @@ namespace Honoo.Data
         /// <param name="password">Password.。</param>
         /// <param name="catalog">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(string server, uint port, string userID, string password, string catalog)
+        internal static string BuildConnectionString(string server, uint port, string userID, string password, string catalog)
         {
             string dataSource = string.Format(CultureInfo.InvariantCulture, "{0},{1}", server, port);
             var connectionStringBuilder = new SqlConnectionStringBuilder()
@@ -160,7 +160,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText)
+        internal static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText)
         {
             return FillDataSet(dataSet, connection, selectCommandText, null);
         }
@@ -175,7 +175,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
+        internal static int FillDataSet(DataSet dataSet, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
             using (var dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
@@ -191,7 +191,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText)
+        internal static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText)
         {
             return FillDataTable(dataTable, connection, selectCommandText, null);
         }
@@ -206,7 +206,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
+        internal static int FillDataTable(DataTable dataTable, SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
             if (connection is null)
             {
@@ -227,7 +227,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText)
+        internal static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText)
         {
             return new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
         }
@@ -241,7 +241,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
+        internal static SqlDataAdapter GetDataAdapter(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
             var dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
             if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
@@ -254,7 +254,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static DataSet GetDataSet(SqlConnection connection, string selectCommandText)
+        internal static DataSet GetDataSet(SqlConnection connection, string selectCommandText)
         {
             return GetDataSet(connection, selectCommandText, null);
         }
@@ -268,7 +268,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static DataSet GetDataSet(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
+        internal static DataSet GetDataSet(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
             var dataSet = new DataSet();
             using (var dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
@@ -285,7 +285,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static DataTable GetDataTable(SqlConnection connection, string selectCommandText)
+        internal static DataTable GetDataTable(SqlConnection connection, string selectCommandText)
         {
             return GetDataTable(connection, selectCommandText, null);
         }
@@ -299,7 +299,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static DataTable GetDataTable(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
+        internal static DataTable GetDataTable(SqlConnection connection, string selectCommandText, params SqlParameter[] parameters)
         {
             var dataTable = new DataTable();
             using (var dataAdapter = new SqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
@@ -321,7 +321,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static SqlCommand GetCommand(SqlConnection connection, CommandType commandType, string commandText)
+        internal static SqlCommand GetCommand(SqlConnection connection, CommandType commandType, string commandText)
         {
             return GetCommand(connection, commandType, commandText, null);
         }
@@ -336,7 +336,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static SqlCommand GetCommand(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
+        internal static SqlCommand GetCommand(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
         {
             var command = new SqlCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
@@ -354,7 +354,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText)
+        internal static int ExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText)
         {
             return ExecuteNonQuery(connection, commandType, commandText, null);
         }
@@ -369,7 +369,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int ExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
+        internal static int ExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
         {
             using (var command = new SqlCommand(commandText, connection) { CommandType = commandType })
             {
@@ -385,7 +385,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText)
+        internal static object ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText)
         {
             return ExecuteScalar(connection, commandType, commandText, null);
         }
@@ -400,7 +400,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static object ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
+        internal static object ExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, params SqlParameter[] parameters)
         {
             using (var command = new SqlCommand(commandText, connection) { CommandType = commandType })
             {
@@ -420,7 +420,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText)
+        internal static int TransactionExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText)
         {
             return TransactionExecuteNonQuery(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
@@ -433,7 +433,7 @@ namespace Honoo.Data
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        internal static int TransactionExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
             return TransactionExecuteNonQuery(connection, commandType, commandText, isolationLevel, null);
         }
@@ -450,7 +450,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int TransactionExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
+        internal static int TransactionExecuteNonQuery(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
             if (connection is null)
             {
@@ -496,7 +496,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText)
+        internal static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
@@ -509,7 +509,7 @@ namespace Honoo.Data
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        internal static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, isolationLevel, null);
         }
@@ -526,7 +526,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
+        internal static object TransactionExecuteScalar(SqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params SqlParameter[] parameters)
         {
             if (connection is null)
             {
@@ -573,14 +573,14 @@ namespace Honoo.Data
     /// <summary>
     /// Return command text.
     /// </summary>
-    public static class SqlCommandText
+    internal static class SqlCommandText
     {
         #region Engine
 
         /// <summary>
         /// Displays database files.
         /// </summary>
-        public static string ShowAltFiles()
+        internal static string ShowAltFiles()
         {
             return "SELECT * FROM sysaltfiles";
         }
@@ -588,7 +588,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays character set and collation.
         /// </summary>
-        public static string ShowCharsets()
+        internal static string ShowCharsets()
         {
             return "SELECT * FROM syscharsets";
         }
@@ -596,7 +596,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays configuration options.
         /// </summary>
-        public static string ShowConfigures()
+        internal static string ShowConfigures()
         {
             return "SELECT * FROM sysconfigures";
         }
@@ -604,7 +604,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays current config options.
         /// </summary>
-        public static string ShowCurConfigs()
+        internal static string ShowCurConfigs()
         {
             return "SELECT * FROM syscurconfigs";
         }
@@ -612,7 +612,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays file groups.
         /// </summary>
-        public static string ShowFileGroups()
+        internal static string ShowFileGroups()
         {
             return "SELECT * FROM sysfilegroups";
         }
@@ -620,7 +620,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays file, sysfiles is a virtual table.
         /// </summary>
-        public static string ShowFiles()
+        internal static string ShowFiles()
         {
             return "SELECT * FROM sysfiles";
         }
@@ -628,7 +628,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays external Keywords.
         /// </summary>
-        public static string ShowForeignKeys()
+        internal static string ShowForeignKeys()
         {
             return "SELECT * FROM sysforeignkeys";
         }
@@ -636,7 +636,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays languages.
         /// </summary>
-        public static string ShowLanguages()
+        internal static string ShowLanguages()
         {
             return "SELECT * FROM syslanguages";
         }
@@ -644,7 +644,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays login account information.
         /// </summary>
-        public static string ShowLogins()
+        internal static string ShowLogins()
         {
             return "SELECT * FROM syslogins";
         }
@@ -652,7 +652,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays members.
         /// </summary>
-        public static string ShowMembers()
+        internal static string ShowMembers()
         {
             return "SELECT * FROM sysmembers";
         }
@@ -660,7 +660,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays objects of all types.
         /// </summary>
-        public static string ShowObjects()
+        internal static string ShowObjects()
         {
             return "SELECT * FROM sysobjects;";
         }
@@ -668,7 +668,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays server login information.
         /// </summary>
-        public static string ShowOleDbUsers()
+        internal static string ShowOleDbUsers()
         {
             return "SELECT * FROM sysoledbusers";
         }
@@ -676,7 +676,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays permissions.
         /// </summary>
-        public static string ShowPermissions()
+        internal static string ShowPermissions()
         {
             return "SELECT * FROM syspermissions;";
         }
@@ -684,7 +684,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays processes.
         /// </summary>
-        public static string ShowProcesses()
+        internal static string ShowProcesses()
         {
             return "SELECT * FROM sysprocesses;";
         }
@@ -692,7 +692,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays Remote login account.
         /// </summary>
-        public static string ShowRemoteLogins()
+        internal static string ShowRemoteLogins()
         {
             return "SELECT * FROM sysremotelogins;";
         }
@@ -706,7 +706,7 @@ namespace Honoo.Data
         /// <para>RF = Replication filter stored procedure. S = System table. TF = table function. TR = Trigger.</para>
         /// <para>U = User table. UQ = UNIQUE .V = View. X = Extended stored procedure.</para>
         /// </param>
-        public static string ShowSysObject(string xType)
+        internal static string ShowSysObject(string xType)
         {
             return "SELECT * FROM sysobjects WHERE xtype = N'" + xType + "';";
         }
@@ -714,7 +714,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays system data types and user defined data types.
         /// </summary>
-        public static string ShowTypes()
+        internal static string ShowTypes()
         {
             return "SELECT * FROM systypes;";
         }
@@ -722,7 +722,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays users.
         /// </summary>
-        public static string ShowUsers()
+        internal static string ShowUsers()
         {
             return "SELECT * FROM sysusers;";
         }
@@ -736,7 +736,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="database">The name of the database to create.</param>
         /// <returns></returns>
-        public static string CreateDatabase(string database)
+        internal static string CreateDatabase(string database)
         {
             return "CREATE DATABASE [" + database + "];";
         }
@@ -746,7 +746,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="database">The name of the database to delete.</param>
         /// <returns></returns>
-        public static string DropDatabase(string database)
+        internal static string DropDatabase(string database)
         {
             return "IF EXISTS (SELECT name FROM sysdatabases WHERE name = N'" + database + "') DROP DATABASE [" + database + "];";
         }
@@ -755,7 +755,7 @@ namespace Honoo.Data
         /// Displays all visible database names.
         /// </summary>
         /// <returns></returns>
-        public static string ShowDatabases()
+        internal static string ShowDatabases()
         {
             return "SELECT * FROM sysdatabases;";
         }
@@ -767,7 +767,7 @@ namespace Honoo.Data
         /// <summary>
         /// Displays all types of columns.
         /// </summary>
-        public static string ShowColumns()
+        internal static string ShowColumns()
         {
             return "SELECT * FROM syscolumns;";
         }
@@ -776,7 +776,7 @@ namespace Honoo.Data
         /// Displays the columns of the specified type, and the data types provided by the current data server or data source can be queried through the systypes table.
         /// </summary>
         /// <param name="xType">syscolumns xtype。</param>
-        public static string ShowColumns(int xType)
+        internal static string ShowColumns(int xType)
         {
             return "SELECT * FROM syscolumns WHERE xtype = " + xType + ";";
         }
@@ -786,7 +786,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="procedure">The name of the stored procedure.</param>
         /// <returns></returns>
-        public static string ShowCreateProcedure(string procedure)
+        internal static string ShowCreateProcedure(string procedure)
         {
             return "EXEC sp_helptext N'" + procedure + "';";
         }
@@ -796,7 +796,7 @@ namespace Honoo.Data
         /// </summary>
         /// <returns></returns>
         /// <param name="category">Set to 0 to represent the user stored procedure.</param>
-        public static string ShowProcedures(int category)
+        internal static string ShowProcedures(int category)
         {
             return "SELECT * FROM sysobjects WHERE xtype= N'P' AND category = " + category + ";";
         }
@@ -805,7 +805,7 @@ namespace Honoo.Data
         /// Display basic information for all stored procedures.
         /// </summary>
         /// <returns></returns>
-        public static string ShowProcedures()
+        internal static string ShowProcedures()
         {
             return "SELECT * FROM sysobjects WHERE xtype= N'P';";
         }

@@ -14,7 +14,7 @@ namespace Honoo.Data
     /// <summary>
     /// Odbc helper.
     /// </summary>
-    public static class OdbcHelper
+    internal static class OdbcHelper
     {
         #region Connection
 
@@ -23,7 +23,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static OdbcConnection BuildConnection(OdbcConnectionStringBuilder connectionStringBuilder)
+        internal static OdbcConnection BuildConnection(OdbcConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder is null)
             {
@@ -37,7 +37,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         /// <returns></returns>
-        public static OdbcConnection BuildConnection(string connectionString)
+        internal static OdbcConnection BuildConnection(string connectionString)
         {
             return new OdbcConnection(connectionString);
         }
@@ -47,7 +47,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(OdbcConnectionStringBuilder connectionStringBuilder)
+        internal static string BuildConnectionString(OdbcConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder is null)
             {
@@ -67,7 +67,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int FillDataSet(DataSet dataSet, OdbcConnection connection, string selectCommandText)
+        internal static int FillDataSet(DataSet dataSet, OdbcConnection connection, string selectCommandText)
         {
             return FillDataSet(dataSet, connection, selectCommandText, null);
         }
@@ -82,7 +82,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int FillDataSet(DataSet dataSet, OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
+        internal static int FillDataSet(DataSet dataSet, OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
         {
             using (var dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
@@ -98,7 +98,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int FillDataTable(DataTable dataTable, OdbcConnection connection, string selectCommandText)
+        internal static int FillDataTable(DataTable dataTable, OdbcConnection connection, string selectCommandText)
         {
             return FillDataTable(dataTable, connection, selectCommandText, null);
         }
@@ -113,7 +113,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int FillDataTable(DataTable dataTable, OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
+        internal static int FillDataTable(DataTable dataTable, OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
         {
             using (var dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
@@ -130,7 +130,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static OdbcDataAdapter GetDataAdapter(OdbcConnection connection, string selectCommandText)
+        internal static OdbcDataAdapter GetDataAdapter(OdbcConnection connection, string selectCommandText)
         {
             return new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
         }
@@ -144,7 +144,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static OdbcDataAdapter GetDataAdapter(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
+        internal static OdbcDataAdapter GetDataAdapter(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
         {
             var dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
             if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
@@ -157,7 +157,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static DataSet GetDataSet(OdbcConnection connection, string selectCommandText)
+        internal static DataSet GetDataSet(OdbcConnection connection, string selectCommandText)
         {
             return GetDataSet(connection, selectCommandText, null);
         }
@@ -171,7 +171,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static DataSet GetDataSet(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
+        internal static DataSet GetDataSet(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
         {
             var dataSet = new DataSet();
             using (var dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
@@ -188,7 +188,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static DataTable GetDataTable(OdbcConnection connection, string selectCommandText)
+        internal static DataTable GetDataTable(OdbcConnection connection, string selectCommandText)
         {
             return GetDataTable(connection, selectCommandText, null);
         }
@@ -202,7 +202,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static DataTable GetDataTable(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
+        internal static DataTable GetDataTable(OdbcConnection connection, string selectCommandText, params OdbcParameter[] parameters)
         {
             var dataTable = new DataTable();
             using (var dataAdapter = new OdbcDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
@@ -224,7 +224,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static OdbcCommand GetCommand(OdbcConnection connection, CommandType commandType, string commandText)
+        internal static OdbcCommand GetCommand(OdbcConnection connection, CommandType commandType, string commandText)
         {
             return GetCommand(connection, commandType, commandText, null);
         }
@@ -239,7 +239,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static OdbcCommand GetCommand(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[] parameters)
+        internal static OdbcCommand GetCommand(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[] parameters)
         {
             var command = new OdbcCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
@@ -257,7 +257,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText)
+        internal static int ExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText)
         {
             return ExecuteNonQuery(connection, commandType, commandText, null);
         }
@@ -272,7 +272,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int ExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[] parameters)
+        internal static int ExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[] parameters)
         {
             using (var command = new OdbcCommand(commandText, connection) { CommandType = commandType })
             {
@@ -288,7 +288,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText)
+        internal static object ExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText)
         {
             return ExecuteScalar(connection, commandType, commandText, null);
         }
@@ -303,7 +303,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static object ExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[] parameters)
+        internal static object ExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText, params OdbcParameter[] parameters)
         {
             using (var command = new OdbcCommand(commandText, connection) { CommandType = commandType })
             {
@@ -323,7 +323,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText)
+        internal static int TransactionExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText)
         {
             return TransactionExecuteNonQuery(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
@@ -336,7 +336,7 @@ namespace Honoo.Data
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        internal static int TransactionExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
             return TransactionExecuteNonQuery(connection, commandType, commandText, isolationLevel, null);
         }
@@ -353,7 +353,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int TransactionExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params OdbcParameter[] parameters)
+        internal static int TransactionExecuteNonQuery(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params OdbcParameter[] parameters)
         {
             if (connection is null)
             {
@@ -399,7 +399,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText)
+        internal static object TransactionExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
@@ -412,7 +412,7 @@ namespace Honoo.Data
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        internal static object TransactionExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, isolationLevel, null);
         }
@@ -429,7 +429,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static object TransactionExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params OdbcParameter[] parameters)
+        internal static object TransactionExecuteScalar(OdbcConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params OdbcParameter[] parameters)
         {
             if (connection is null)
             {

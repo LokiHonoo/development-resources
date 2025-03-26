@@ -22,7 +22,7 @@ namespace Honoo.Data
     /// <summary>
     /// MySql helper.
     /// </summary>
-    public static class MySqlHelper
+    internal static class MySqlHelper
     {
         #region Connection
 
@@ -31,7 +31,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static MySqlConnection BuildConnection(MySqlConnectionStringBuilder connectionStringBuilder)
+        internal static MySqlConnection BuildConnection(MySqlConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder is null)
             {
@@ -45,7 +45,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionString">Connection string.</param>
         /// <returns></returns>
-        public static MySqlConnection BuildConnection(string connectionString)
+        internal static MySqlConnection BuildConnection(string connectionString)
         {
             return new MySqlConnection(connectionString);
         }
@@ -58,7 +58,7 @@ namespace Honoo.Data
         /// <param name="password">Password.。</param>
         /// <param name="database">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        public static MySqlConnection BuildConnection(string host, string userID, string password, string database)
+        internal static MySqlConnection BuildConnection(string host, string userID, string password, string database)
         {
             if (string.IsNullOrEmpty(host))
             {
@@ -99,7 +99,7 @@ namespace Honoo.Data
         /// <param name="password">Password.。</param>
         /// <param name="database">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        public static MySqlConnection BuildConnection(string server, uint port, string userID, string password, string database)
+        internal static MySqlConnection BuildConnection(string server, uint port, string userID, string password, string database)
         {
             var connectionStringBuilder = new MySqlConnectionStringBuilder()
             {
@@ -119,7 +119,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connectionStringBuilder">ConnectionStringBuilder.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(MySqlConnectionStringBuilder connectionStringBuilder)
+        internal static string BuildConnectionString(MySqlConnectionStringBuilder connectionStringBuilder)
         {
             if (connectionStringBuilder is null)
             {
@@ -136,7 +136,7 @@ namespace Honoo.Data
         /// <param name="password">Password.。</param>
         /// <param name="database">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(string host, string userID, string password, string database)
+        internal static string BuildConnectionString(string host, string userID, string password, string database)
         {
             if (string.IsNullOrEmpty(host))
             {
@@ -177,7 +177,7 @@ namespace Honoo.Data
         /// <param name="password">Password.。</param>
         /// <param name="database">The name of the database associated with the connection.</param>
         /// <returns></returns>
-        public static string BuildConnectionString(string server, uint port, string userID, string password, string database)
+        internal static string BuildConnectionString(string server, uint port, string userID, string password, string database)
         {
             var connectionStringBuilder = new MySqlConnectionStringBuilder()
             {
@@ -203,7 +203,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText)
+        internal static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText)
         {
             return FillDataSet(dataSet, connection, selectCommandText, null);
         }
@@ -218,7 +218,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
+        internal static int FillDataSet(DataSet dataSet, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             using (var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
@@ -234,7 +234,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText)
+        internal static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText)
         {
             return FillDataTable(dataTable, connection, selectCommandText, null);
         }
@@ -249,7 +249,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
+        internal static int FillDataTable(DataTable dataTable, MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             using (var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
             {
@@ -266,7 +266,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText)
+        internal static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText)
         {
             return new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
         }
@@ -280,7 +280,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
+        internal static MySqlDataAdapter GetDataAdapter(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey };
             if (parameters != null && parameters.Length > 0) { dataAdapter.SelectCommand.Parameters.AddRange(parameters); }
@@ -293,7 +293,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static DataSet GetDataSet(MySqlConnection connection, string selectCommandText)
+        internal static DataSet GetDataSet(MySqlConnection connection, string selectCommandText)
         {
             return GetDataSet(connection, selectCommandText, null);
         }
@@ -307,7 +307,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static DataSet GetDataSet(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
+        internal static DataSet GetDataSet(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             var dataSet = new DataSet();
             using (var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
@@ -324,7 +324,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="selectCommandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static DataTable GetDataTable(MySqlConnection connection, string selectCommandText)
+        internal static DataTable GetDataTable(MySqlConnection connection, string selectCommandText)
         {
             return GetDataTable(connection, selectCommandText, null);
         }
@@ -338,7 +338,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static DataTable GetDataTable(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
+        internal static DataTable GetDataTable(MySqlConnection connection, string selectCommandText, params MySqlParameter[] parameters)
         {
             var dataTable = new DataTable();
             using (var dataAdapter = new MySqlDataAdapter(selectCommandText, connection) { MissingSchemaAction = MissingSchemaAction.AddWithKey })
@@ -360,7 +360,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static MySqlCommand GetCommand(MySqlConnection connection, CommandType commandType, string commandText)
+        internal static MySqlCommand GetCommand(MySqlConnection connection, CommandType commandType, string commandText)
         {
             return GetCommand(connection, commandType, commandText, null);
         }
@@ -375,7 +375,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static MySqlCommand GetCommand(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
+        internal static MySqlCommand GetCommand(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
         {
             var command = new MySqlCommand(commandText, connection) { CommandType = commandType };
             if (parameters != null && parameters.Length > 0) { command.Parameters.AddRange(parameters); }
@@ -393,7 +393,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText)
+        internal static int ExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText)
         {
             return ExecuteNonQuery(connection, commandType, commandText, null);
         }
@@ -408,7 +408,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int ExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
+        internal static int ExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
         {
             using (var command = new MySqlCommand(commandText, connection) { CommandType = commandType })
             {
@@ -424,7 +424,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object ExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText)
+        internal static object ExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText)
         {
             return ExecuteScalar(connection, commandType, commandText, null);
         }
@@ -439,7 +439,7 @@ namespace Honoo.Data
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static object ExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
+        internal static object ExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText, params MySqlParameter[] parameters)
         {
             using (var command = new MySqlCommand(commandText, connection) { CommandType = commandType })
             {
@@ -459,7 +459,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText)
+        internal static int TransactionExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText)
         {
             return TransactionExecuteNonQuery(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
@@ -472,7 +472,7 @@ namespace Honoo.Data
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static int TransactionExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        internal static int TransactionExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
             return TransactionExecuteNonQuery(connection, commandType, commandText, isolationLevel, null);
         }
@@ -489,7 +489,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static int TransactionExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
+        internal static int TransactionExecuteNonQuery(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
         {
             if (connection is null)
             {
@@ -535,7 +535,7 @@ namespace Honoo.Data
         /// <param name="commandType">Sql command type.</param>
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText)
+        internal static object TransactionExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, IsolationLevel.ReadCommitted, null);
         }
@@ -548,7 +548,7 @@ namespace Honoo.Data
         /// <param name="commandText">Sql command. Check SQL queries for security vulnerabilities.</param>
         /// <param name="isolationLevel">The transaction isolation level of the connection.</param>
         /// <returns></returns>
-        public static object TransactionExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
+        internal static object TransactionExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel)
         {
             return TransactionExecuteScalar(connection, commandType, commandText, isolationLevel, null);
         }
@@ -565,7 +565,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:检查 SQL 查询是否存在安全漏洞", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:不捕获常规异常类型", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-        public static object TransactionExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
+        internal static object TransactionExecuteScalar(MySqlConnection connection, CommandType commandType, string commandText, IsolationLevel isolationLevel, params MySqlParameter[] parameters)
         {
             if (connection is null)
             {
@@ -614,7 +614,7 @@ namespace Honoo.Data
         /// <param name="connection">Connection.</param>
         /// <param name="manifest">Dump manifest.</param>
         /// <param name="textWriter">TextWriter.</param>
-        public static void Dump(MySqlConnection connection, MySqlDumpManifest manifest, TextWriter textWriter)
+        internal static void Dump(MySqlConnection connection, MySqlDumpManifest manifest, TextWriter textWriter)
         {
             Dump(connection, manifest, textWriter, null, null, out _);
         }
@@ -628,7 +628,7 @@ namespace Honoo.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        public static void Dump(MySqlConnection connection, MySqlDumpManifest manifest, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
+        internal static void Dump(MySqlConnection connection, MySqlDumpManifest manifest, TextWriter textWriter, MySqlWrittenCallback written, object userState, out bool cancelled)
         {
             if (connection is null)
             {
@@ -687,7 +687,7 @@ namespace Honoo.Data
         /// <param name="folder">Save to folder.</param>
         /// <param name="encoding">File encoding.</param>
         /// <param name="splitFileSize">Each file does not exceed the specified size. Cannot specify a value less than 1 MB. Unit is byte.</param>
-        public static void DumpToFiles(MySqlConnection connection, MySqlDumpManifest manifest, string folder, Encoding encoding, long splitFileSize)
+        internal static void DumpToFiles(MySqlConnection connection, MySqlDumpManifest manifest, string folder, Encoding encoding, long splitFileSize)
         {
             DumpToFiles(connection, manifest, folder, encoding, splitFileSize, null, null, out _);
         }
@@ -703,7 +703,7 @@ namespace Honoo.Data
         /// <param name="written">A delegate that report written progress.</param>
         /// <param name="userState">User state.</param>
         /// <param name="cancelled">Indicates whether it is finished normally or has been canceled.</param>
-        public static void DumpToFiles(MySqlConnection connection,
+        internal static void DumpToFiles(MySqlConnection connection,
                                        MySqlDumpManifest manifest,
                                        string folder,
                                        Encoding encoding,
@@ -770,7 +770,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="connection">Connection.</param>
         /// <returns></returns>
-        public static MySqlDumpManifest GetDumpManifest(MySqlConnection connection)
+        internal static MySqlDumpManifest GetDumpManifest(MySqlConnection connection)
         {
             if (connection is null)
             {
@@ -1398,13 +1398,13 @@ namespace Honoo.Data
     /// <param name="association">The name associated with dumping.</param>
     /// <param name="userState">User state.</param>
     /// <param name="cancel">Cancel dump.</param>
-    public delegate void MySqlWrittenCallback(long written, long total, MySqlDumpProjectType projectType, string association, object userState, ref bool cancel);
+    internal delegate void MySqlWrittenCallback(long written, long total, MySqlDumpProjectType projectType, string association, object userState, ref bool cancel);
 
     /// <summary>
     /// Note the type of dumping in the progress report.
     /// </summary>
     [Flags]
-    public enum MySqlDumpProjectType
+    internal enum MySqlDumpProjectType
     {
         /// <summary>Summary header.</summary>
         Summary = 1,
@@ -1434,7 +1434,7 @@ namespace Honoo.Data
     /// <summary>
     /// Dump manifest.
     /// </summary>
-    public sealed class MySqlDumpManifest
+    internal sealed class MySqlDumpManifest
     {
         /// <summary>
         /// Events dump project.
@@ -1442,7 +1442,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
-        public List<MySqlDumpProject> Events { get; } = new List<MySqlDumpProject>();
+        internal List<MySqlDumpProject> Events { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Functions dump project.
@@ -1450,7 +1450,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
-        public List<MySqlDumpProject> Functions { get; } = new List<MySqlDumpProject>();
+        internal List<MySqlDumpProject> Functions { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Procedures dump project.
@@ -1458,7 +1458,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
-        public List<MySqlDumpProject> Procedures { get; } = new List<MySqlDumpProject>();
+        internal List<MySqlDumpProject> Procedures { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Tables dump project.
@@ -1466,7 +1466,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
-        public List<MySqlTableDumpProject> Tables { get; } = new List<MySqlTableDumpProject>();
+        internal List<MySqlTableDumpProject> Tables { get; } = new List<MySqlTableDumpProject>();
 
         /// <summary>
         /// Triggers dump project.
@@ -1474,7 +1474,7 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
-        public List<MySqlDumpProject> Triggers { get; } = new List<MySqlDumpProject>();
+        internal List<MySqlDumpProject> Triggers { get; } = new List<MySqlDumpProject>();
 
         /// <summary>
         /// Views dump project.
@@ -1482,20 +1482,20 @@ namespace Honoo.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:不要公开泛型列表", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0028:简化集合初始化", Justification = "<挂起>")]
-        public List<MySqlDumpProject> Views { get; } = new List<MySqlDumpProject>();
+        internal List<MySqlDumpProject> Views { get; } = new List<MySqlDumpProject>();
     }
 
     /// <summary>
     /// Dump project.
     /// </summary>
-    public sealed class MySqlDumpProject
+    internal sealed class MySqlDumpProject
     {
         /// <summary>
         /// Dump project.
         /// </summary>
         /// <param name="name">Project name.</param>
         /// <param name="ignore">Ignore this project.</param>
-        public MySqlDumpProject(string name, bool ignore)
+        internal MySqlDumpProject(string name, bool ignore)
         {
             this.Name = name;
             this.Ignore = ignore;
@@ -1504,18 +1504,18 @@ namespace Honoo.Data
         /// <summary>
         /// Ignore this project. Default false.
         /// </summary>
-        public bool Ignore { get; set; }
+        internal bool Ignore { get; set; }
 
         /// <summary>
         /// Project name.
         /// </summary>
-        public string Name { get; }
+        internal string Name { get; }
     }
 
     /// <summary>
     /// Table dump project.
     /// </summary>
-    public sealed class MySqlTableDumpProject
+    internal sealed class MySqlTableDumpProject
     {
         /// <summary>
         /// Table dump project.
@@ -1523,7 +1523,7 @@ namespace Honoo.Data
         /// <param name="tableName">Table name.</param>
         /// <param name="ignore">Ignore this project.</param>
         /// <param name="includingRecord">Dump records.</param>
-        public MySqlTableDumpProject(string tableName, bool ignore, bool includingRecord)
+        internal MySqlTableDumpProject(string tableName, bool ignore, bool includingRecord)
         {
             this.TableName = tableName;
             this.Ignore = ignore;
@@ -1533,17 +1533,17 @@ namespace Honoo.Data
         /// <summary>
         /// Ignore this project. Default false.
         /// </summary>
-        public bool Ignore { get; set; }
+        internal bool Ignore { get; set; }
 
         /// <summary>
         /// Dump including records.
         /// </summary>
-        public bool IncludingRecord { get; set; }
+        internal bool IncludingRecord { get; set; }
 
         /// <summary>
         /// Table name.
         /// </summary>
-        public string TableName { get; }
+        internal string TableName { get; }
     }
 
     #endregion Dump
@@ -1553,7 +1553,7 @@ namespace Honoo.Data
     /// <summary>
     /// Return command text.
     /// </summary>
-    public static class MySqlCommandText
+    internal static class MySqlCommandText
     {
         #region Database
 
@@ -1561,7 +1561,7 @@ namespace Honoo.Data
         /// Displays the database version.
         /// </summary>
         /// <returns></returns>
-        public static string ShowVersion()
+        internal static string ShowVersion()
         {
             return "SELECT @@version;";
         }
@@ -1574,7 +1574,7 @@ namespace Honoo.Data
         /// Displays the storage engine and default engine available after installation.
         /// </summary>
         /// <returns></returns>
-        public static string ShowEngines()
+        internal static string ShowEngines()
         {
             return "SHOW ENGINES;";
         }
@@ -1583,7 +1583,7 @@ namespace Honoo.Data
         /// Displays the error caused by the last execution statement.
         /// </summary>
         /// <returns></returns>
-        public static string ShowErrors()
+        internal static string ShowErrors()
         {
             return "SHOW ERRORS;";
         }
@@ -1592,7 +1592,7 @@ namespace Honoo.Data
         /// Displays the name and value of the global system variable.
         /// </summary>
         /// <returns></returns>
-        public static string ShowGlobalVariables()
+        internal static string ShowGlobalVariables()
         {
             return "SHOW GLOBAL VARIABLES;";
         }
@@ -1602,7 +1602,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="like">Part of the variable name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowGlobalVariables(string like)
+        internal static string ShowGlobalVariables(string like)
         {
             return "SHOW GLOBAL VARIABLES LIKE '" + like + "';";
         }
@@ -1611,7 +1611,7 @@ namespace Honoo.Data
         /// Displays the permissions for all user.
         /// </summary>
         /// <returns></returns>
-        public static string ShowGrants()
+        internal static string ShowGrants()
         {
             return "SHOW GRANTS;";
         }
@@ -1622,7 +1622,7 @@ namespace Honoo.Data
         /// <param name="user">User.</param>
         /// <param name="host">Host.</param>
         /// <returns></returns>
-        public static string ShowGrants(string user, string host)
+        internal static string ShowGrants(string user, string host)
         {
             return "SHOW GRANTS FOR `" + user + "`@`" + host + "`;";
         }
@@ -1631,7 +1631,7 @@ namespace Honoo.Data
         /// Displays the status of the InnoDB storage engine.
         /// </summary>
         /// <returns></returns>
-        public static string ShowInnoDbStatus()
+        internal static string ShowInnoDbStatus()
         {
             return "SHOW INNODB STATUS;";
         }
@@ -1640,7 +1640,7 @@ namespace Honoo.Data
         /// Displays the log.
         /// </summary>
         /// <returns></returns>
-        public static string ShowLogs()
+        internal static string ShowLogs()
         {
             return "SHOW LOGS;";
         }
@@ -1649,7 +1649,7 @@ namespace Honoo.Data
         /// Displays the different permissions supported by the server.
         /// </summary>
         /// <returns></returns>
-        public static string ShowPrivileges()
+        internal static string ShowPrivileges()
         {
             return "SHOW PRIVILEGES;";
         }
@@ -1658,7 +1658,7 @@ namespace Honoo.Data
         /// Displays all processes that are running in the system.
         /// </summary>
         /// <returns></returns>
-        public static string ShowProcesslist()
+        internal static string ShowProcesslist()
         {
             return "SHOW PROCESSLIST;";
         }
@@ -1667,7 +1667,7 @@ namespace Honoo.Data
         /// Displays information about some system-specific resources, such as the number of threads running.
         /// </summary>
         /// <returns></returns>
-        public static string ShowStatus()
+        internal static string ShowStatus()
         {
             return "SHOW STATUS;";
         }
@@ -1677,7 +1677,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="like">Part of the variable name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowStatus(string like)
+        internal static string ShowStatus(string like)
         {
             return "SHOW STATUS LIKE '" + like + "';";
         }
@@ -1686,7 +1686,7 @@ namespace Honoo.Data
         /// Displays the available storage engine and default engine after installation.
         /// </summary>
         /// <returns></returns>
-        public static string ShowStorageEngines()
+        internal static string ShowStorageEngines()
         {
             return "SHOW STORAGE ENGINES;";
         }
@@ -1695,7 +1695,7 @@ namespace Honoo.Data
         /// Displays the name and value of the system variable.
         /// </summary>
         /// <returns></returns>
-        public static string ShowVariables()
+        internal static string ShowVariables()
         {
             return "SHOW VARIABLES;";
         }
@@ -1705,7 +1705,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="like">Part of the variable name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowVariables(string like)
+        internal static string ShowVariables(string like)
         {
             return "SHOW VARIABLES LIKE '" + like + "';";
         }
@@ -1714,7 +1714,7 @@ namespace Honoo.Data
         /// Displays the warning generated by the last executed statement.
         /// </summary>
         /// <returns></returns>
-        public static string ShowWarnings()
+        internal static string ShowWarnings()
         {
             return "SHOW WARNINGS;";
         }
@@ -1728,7 +1728,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="database">The name of the database to create.</param>
         /// <returns></returns>
-        public static string CreateDatabase(string database)
+        internal static string CreateDatabase(string database)
         {
             return "CREATE DATABASE `" + database + "`;";
         }
@@ -1740,7 +1740,7 @@ namespace Honoo.Data
         /// <param name="charset">Character set. Such for utf8.</param>
         /// <param name="collate">Collate. Such for utf8_general_ci.</param>
         /// <returns></returns>
-        public static string CreateDatabase(string database, string charset, string collate)
+        internal static string CreateDatabase(string database, string charset, string collate)
         {
             return "CREATE DATABASE `" + database + "` DEFAULT CHARSET " + charset + " COLLATE " + collate + ";";
         }
@@ -1750,7 +1750,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="database">The name of the database to delete.</param>
         /// <returns></returns>
-        public static string DropDatabase(string database)
+        internal static string DropDatabase(string database)
         {
             return "DROP DATABASE IF EXISTS `" + database + "`;";
         }
@@ -1760,7 +1760,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="database">Database name.</param>
         /// <returns></returns>
-        public static string ShowCreateDatabase(string database)
+        internal static string ShowCreateDatabase(string database)
         {
             return "SHOW CREATE DATABASE `" + database + "`;";
         }
@@ -1769,7 +1769,7 @@ namespace Honoo.Data
         /// Displays all visible database names.
         /// </summary>
         /// <returns></returns>
-        public static string ShowDatabases()
+        internal static string ShowDatabases()
         {
             return "SHOW DATABASES;";
         }
@@ -1783,7 +1783,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        public static string Desc(string table)
+        internal static string Desc(string table)
         {
             return "DESC `" + table + "`;";
         }
@@ -1793,7 +1793,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="eventName">The name of the event.</param>
         /// <returns></returns>
-        public static string DropEvent(string eventName)
+        internal static string DropEvent(string eventName)
         {
             return "DROP EVENT IF EXISTS `" + eventName + "`;";
         }
@@ -1803,7 +1803,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="function">The name of the function.</param>
         /// <returns></returns>
-        public static string DropFunction(string function)
+        internal static string DropFunction(string function)
         {
             return "DROP FUNCTION IF EXISTS `" + function + "`;";
         }
@@ -1813,7 +1813,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="procedure">The name of the stored procedure.</param>
         /// <returns></returns>
-        public static string DropProcedure(string procedure)
+        internal static string DropProcedure(string procedure)
         {
             return "DROP PROCEDURE IF EXISTS `" + procedure + "`;";
         }
@@ -1823,7 +1823,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="trigger">The name of the trigger.</param>
         /// <returns></returns>
-        public static string DropTrigger(string trigger)
+        internal static string DropTrigger(string trigger)
         {
             return "DROP TRIGGER IF EXISTS `" + trigger + "`;";
         }
@@ -1833,7 +1833,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="view">The name of the view.</param>
         /// <returns></returns>
-        public static string DropView(string view)
+        internal static string DropView(string view)
         {
             return "DROP VIEW IF EXISTS `" + view + "`;";
         }
@@ -1843,7 +1843,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        public static string ShowColumns(string table)
+        internal static string ShowColumns(string table)
         {
             return "SHOW COLUMNS FROM `" + table + "`;";
         }
@@ -1853,7 +1853,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="eventName">The name of the event.</param>
         /// <returns></returns>
-        public static string ShowCreateEvent(string eventName)
+        internal static string ShowCreateEvent(string eventName)
         {
             return "SHOW CREATE EVENT `" + eventName + "`;";
         }
@@ -1863,7 +1863,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="function">The name of the function.</param>
         /// <returns></returns>
-        public static string ShowCreateFunction(string function)
+        internal static string ShowCreateFunction(string function)
         {
             return "SHOW CREATE FUNCTION `" + function + "`;";
         }
@@ -1873,7 +1873,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="procedure">The name of the stored procedure.</param>
         /// <returns></returns>
-        public static string ShowCreateProcedure(string procedure)
+        internal static string ShowCreateProcedure(string procedure)
         {
             return "SHOW CREATE PROCEDURE `" + procedure + "`;";
         }
@@ -1883,7 +1883,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        public static string ShowCreateTable(string table)
+        internal static string ShowCreateTable(string table)
         {
             return "SHOW CREATE TABLE `" + table + "`;";
         }
@@ -1893,7 +1893,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="trigger">The name of the trigger.</param>
         /// <returns></returns>
-        public static string ShowCreateTrigger(string trigger)
+        internal static string ShowCreateTrigger(string trigger)
         {
             return "SHOW CREATE TRIGGER `" + trigger + "`;";
         }
@@ -1903,7 +1903,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="view">The name of the table.</param>
         /// <returns></returns>
-        public static string ShowCreateView(string view)
+        internal static string ShowCreateView(string view)
         {
             return "SHOW CREATE VIEW `" + view + "`;";
         }
@@ -1912,7 +1912,7 @@ namespace Honoo.Data
         /// Displays basic information about all events in all databases.
         /// </summary>
         /// <returns></returns>
-        public static string ShowEvents()
+        internal static string ShowEvents()
         {
             return "SHOW EVENTS;";
         }
@@ -1922,7 +1922,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="database">The name of the database.</param>
         /// <returns></returns>
-        public static string ShowEvents(string database)
+        internal static string ShowEvents(string database)
         {
             return "SHOW EVENTS WHERE `Db` = '" + database + "';";
         }
@@ -1931,7 +1931,7 @@ namespace Honoo.Data
         /// Displays basic information about all functions in all databases.
         /// </summary>
         /// <returns></returns>
-        public static string ShowFunctionStatus()
+        internal static string ShowFunctionStatus()
         {
             return "SHOW FUNCTION STATUS;";
         }
@@ -1941,7 +1941,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="database">The name of the database.</param>
         /// <returns></returns>
-        public static string ShowFunctionStatus(string database)
+        internal static string ShowFunctionStatus(string database)
         {
             return "SHOW FUNCTION STATUS WHERE `Db` = '" + database + "';";
         }
@@ -1951,7 +1951,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        public static string ShowIndex(string table)
+        internal static string ShowIndex(string table)
         {
             return "SHOW INDEX FROM `" + table + "`;";
         }
@@ -1960,7 +1960,7 @@ namespace Honoo.Data
         /// Displays basic information about stored procedures.
         /// </summary>
         /// <returns></returns>
-        public static string ShowProcedureStatus()
+        internal static string ShowProcedureStatus()
         {
             return "SHOW PROCEDURE STATUS;";
         }
@@ -1970,7 +1970,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="database">The name of the database.</param>
         /// <returns></returns>
-        public static string ShowProcedureStatus(string database)
+        internal static string ShowProcedureStatus(string database)
         {
             return "SHOW PROCEDURE STATUS WHERE `Db` = '" + database + "';";
         }
@@ -1979,7 +1979,7 @@ namespace Honoo.Data
         /// Displays tables and views in the current database.
         /// </summary>
         /// <returns></returns>
-        public static string ShowTables()
+        internal static string ShowTables()
         {
             return "SHOW TABLES;";
         }
@@ -1989,7 +1989,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="like">Part of the table name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowTables(string like)
+        internal static string ShowTables(string like)
         {
             return "SHOW TABLES LIKE '" + like + "';";
         }
@@ -1998,7 +1998,7 @@ namespace Honoo.Data
         /// Displays the details of the tables and views in the current database.
         /// </summary>
         /// <returns></returns>
-        public static string ShowTableStatus()
+        internal static string ShowTableStatus()
         {
             return "SHOW TABLE STATUS;";
         }
@@ -2008,7 +2008,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="like">Part of the table name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowTableStatus(string like)
+        internal static string ShowTableStatus(string like)
         {
             return "SHOW TABLE STATUS LIKE '" + like + "';";
         }
@@ -2017,7 +2017,7 @@ namespace Honoo.Data
         /// Displays triggers in the current database.
         /// </summary>
         /// <returns></returns>
-        public static string ShowTriggers()
+        internal static string ShowTriggers()
         {
             return "SHOW TRIGGERS;";
         }
@@ -2027,7 +2027,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="like">Part of the trigger name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <returns></returns>
-        public static string ShowTriggers(string like)
+        internal static string ShowTriggers(string like)
         {
             return "SHOW TRIGGERS LIKE '" + like + "';";
         }
@@ -2038,7 +2038,7 @@ namespace Honoo.Data
         /// <param name="like">Part of the trigger name. Follow the syntax rules for the "LIKE" keyword.</param>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        public static string ShowTriggers(string like, string table)
+        internal static string ShowTriggers(string like, string table)
         {
             return "SHOW TRIGGERS WHERE `Table` = '" + table + "' AND `Trigger` LIKE '" + like + "';";
         }
@@ -2048,7 +2048,7 @@ namespace Honoo.Data
         /// </summary>
         /// <param name="table">The name of the table.</param>
         /// <returns></returns>
-        public static string Truncate(string table)
+        internal static string Truncate(string table)
         {
             return "TRUNCATE TABLE `" + table + "`;";
         }

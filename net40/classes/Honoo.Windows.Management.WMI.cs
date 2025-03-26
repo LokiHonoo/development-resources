@@ -12,14 +12,14 @@ using System.Management;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Honoo.Windows.Management.WMI
+namespace Honoo.Windows.Management
 {
     /// <summary>
     /// Win32Class.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:标识符不应包含下划线", Justification = "<挂起>")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
-    public enum Win32Class
+    internal enum Win32Class
     {
 #pragma warning disable CS1591 // 缺少对公共可见类型或成员的 XML 注释
 
@@ -484,7 +484,7 @@ namespace Honoo.Windows.Management.WMI
     /// <summary>
     /// Windows Management Instrumentation.
     /// </summary>
-    public static class WMI
+    internal static class WMI
     {
         /// <summary>
         /// Query WMI data. Simple demo.
@@ -495,7 +495,7 @@ namespace Honoo.Windows.Management.WMI
         /// <param name="baseObjects"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static ManagementStatus Query(ManagementScope scope, ObjectQuery query, EnumerationOptions options, out ManagementObjectCollection baseObjects)
+        internal static ManagementStatus Query(ManagementScope scope, ObjectQuery query, EnumerationOptions options, out ManagementObjectCollection baseObjects)
         {
             if (scope is null)
             {
@@ -534,7 +534,7 @@ namespace Honoo.Windows.Management.WMI
         /// <param name="texts"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static ManagementStatus Query(ManagementScope scope, ObjectQuery query, EnumerationOptions options, TextFormat format, out string[] texts)
+        internal static ManagementStatus Query(ManagementScope scope, ObjectQuery query, EnumerationOptions options, TextFormat format, out string[] texts)
         {
             if (scope is null)
             {
@@ -604,7 +604,7 @@ namespace Honoo.Windows.Management.WMI
         /// <param name="baseObjects"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static ManagementStatus Query(Win32Class win32Class, TimeSpan timeout, out ManagementObjectCollection baseObjects)
+        internal static ManagementStatus Query(Win32Class win32Class, TimeSpan timeout, out ManagementObjectCollection baseObjects)
         {
             var scope = new ManagementScope();
             var query = new SelectQuery(win32Class.ToString());
@@ -621,7 +621,7 @@ namespace Honoo.Windows.Management.WMI
         /// <param name="texts"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static ManagementStatus Query(Win32Class win32Class, TimeSpan timeout, TextFormat format, out string[] texts)
+        internal static ManagementStatus Query(Win32Class win32Class, TimeSpan timeout, TextFormat format, out string[] texts)
         {
             var scope = new ManagementScope();
             var query = new SelectQuery(win32Class.ToString());
