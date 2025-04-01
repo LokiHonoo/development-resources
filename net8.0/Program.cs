@@ -20,18 +20,7 @@ namespace Honoo
 
         private static void Created(int[] result, BigInteger index, BigInteger total, object? userState)
         {
-            for (int i = 0; i < result.Length; i++)
-            {
-                if (i == result.Length - 1)
-                {
-                    Console.WriteLine($"{result[i]}    index {index}/{total}");
-                }
-                else
-                {
-                    Console.Write(result[i]);
-                    Console.Write(' ');
-                }
-            }
+            Console.WriteLine($"{string.Join(" ", result)}    index {index}/{total}");
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5394:请勿使用不安全的随机性", Justification = "<挂起>")]
