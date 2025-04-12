@@ -9,7 +9,7 @@ using System;
 using System.Globalization;
 using System.Text;
 
-namespace Honoo
+namespace Honoo.IO
 {
     /// <summary>
     /// 二进制对象辅助。
@@ -27,8 +27,14 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static bool SequenceEqual(byte[] first, byte[] second)
         {
-            ArgumentNullException.ThrowIfNull(first);
-            ArgumentNullException.ThrowIfNull(second);
+            if (first is null)
+            {
+                throw new ArgumentNullException(nameof(first));
+            }
+            if (second is null)
+            {
+                throw new ArgumentNullException(nameof(second));
+            }
             if (first.Length == second.Length)
             {
                 for (int i = 0; i < first.Length; i++)
@@ -58,8 +64,14 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static bool SequenceEqual(byte[] first, int firstOffset, byte[] second, int secondOffset, int length)
         {
-            ArgumentNullException.ThrowIfNull(first);
-            ArgumentNullException.ThrowIfNull(second);
+            if (first is null)
+            {
+                throw new ArgumentNullException(nameof(first));
+            }
+            if (second is null)
+            {
+                throw new ArgumentNullException(nameof(second));
+            }
             if (first.Length - firstOffset >= length && second.Length - secondOffset >= length)
             {
                 for (int i = 0; i < length; i++)
@@ -91,7 +103,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static short BEToInt16(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 2)
             {
                 throw new ArgumentException("Input length must be between 1 - 2.");
@@ -119,7 +134,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static int BEToInt32(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 4)
             {
                 throw new ArgumentException("Input length must be between 1 - 4.");
@@ -160,7 +178,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static long BEToInt64(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 8)
             {
                 throw new ArgumentException("Input length must be between 1 - 8.");
@@ -239,7 +260,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static ushort BEToUInt16(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 2)
             {
                 throw new ArgumentException("Input length must be between 1 - 2.");
@@ -267,7 +291,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static uint BEToUInt32(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 4)
             {
                 throw new ArgumentException("Input length must be between 1 - 4.");
@@ -308,7 +335,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static ulong BEToUInt64(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 8)
             {
                 throw new ArgumentException("Input length must be between 1 - 8.");
@@ -386,11 +416,17 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static byte[] GetBytes(string hex, params string[] replaces)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(hex);
-            ArgumentNullException.ThrowIfNull(replaces);
+            if (string.IsNullOrWhiteSpace(hex))
+            {
+                throw new ArgumentException($"\"{nameof(hex)}”is not null or white space.\"", nameof(hex));
+            }
+            if (replaces is null)
+            {
+                throw new ArgumentNullException(nameof(replaces));
+            }
             foreach (var replace in replaces)
             {
-                hex = hex.Replace(replace, string.Empty, StringComparison.Ordinal);
+                hex = hex.Replace(replace, string.Empty);
             }
             return GetBytes(hex);
         }
@@ -403,7 +439,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static byte[] GetBytes(string hex)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(hex);
+            if (string.IsNullOrWhiteSpace(hex))
+            {
+                throw new ArgumentException($"\"{nameof(hex)}”is not null or white space.\"", nameof(hex));
+            }
             if (hex.Length % 2 > 0)
             {
                 throw new ArgumentException("Hex string length must be multiple of 2.");
@@ -428,8 +467,11 @@ namespace Honoo
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         internal static string GetHex(byte[] bytes, bool uppercase)
         {
-            ArgumentNullException.ThrowIfNull(bytes);
-            string hex = Convert.ToHexString(bytes);
+            if (bytes is null)
+            {
+                throw new ArgumentNullException(nameof(bytes));
+            }
+            string hex = BitConverter.ToString(bytes).Replace("-", "");
             return uppercase ? hex : hex.ToLowerInvariant();
         }
 
@@ -446,8 +488,11 @@ namespace Honoo
         [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         internal static string GetHex(byte[] buffer, int offset, int length, bool uppercase)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
-            string hex = Convert.ToHexString(buffer, offset, length);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+            string hex = BitConverter.ToString(buffer, offset, length).Replace("-", "");
             return uppercase ? hex : hex.ToLowerInvariant();
         }
 
@@ -465,9 +510,18 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static string GetHex(byte[] buffer, int offset, int length, bool uppercase, string split, int lineBreaks, string indents)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
-            split ??= string.Empty;
-            indents ??= string.Empty;
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
+            if (split is null)
+            {
+                split = string.Empty;
+            }
+            if (indents is null)
+            {
+                indents = string.Empty;
+            }
             var result = new StringBuilder();
             bool newLine = true;
             int count = 0;
@@ -489,8 +543,7 @@ namespace Honoo
                 }
                 else
                 {
-                    string h = buffer[offset].ToString("x2", CultureInfo.InvariantCulture);
-                    result.Append(uppercase ? h.ToUpperInvariant() : h);
+                    result.Append(buffer[offset].ToString(uppercase ? "X2" : "x2", CultureInfo.InvariantCulture));
                     count++;
                     offset++;
                     if (split.Length > 0 && offset < length)
@@ -509,7 +562,7 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] Int16ToBE(short value)
         {
-            return [(byte)(value >> 8), (byte)value];
+            return new byte[] { (byte)(value >> 8), (byte)value };
         }
 
         /// <summary>
@@ -519,7 +572,7 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] Int16ToLE(short value)
         {
-            return [(byte)value, (byte)(value >> 8)];
+            return new byte[] { (byte)value, (byte)(value >> 8) };
         }
 
         /// <summary>
@@ -529,7 +582,7 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] Int32ToBE(int value)
         {
-            return [(byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value];
+            return new byte[] { (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value };
         }
 
         /// <summary>
@@ -539,7 +592,7 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] Int32ToLE(int value)
         {
-            return [(byte)value, (byte)(value >> 8), (byte)(value >> 16), (byte)(value >> 24)];
+            return new byte[] { (byte)value, (byte)(value >> 8), (byte)(value >> 16), (byte)(value >> 24) };
         }
 
         /// <summary>
@@ -549,8 +602,8 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] Int64ToBE(long value)
         {
-            return
-              [
+            return new byte[]
+            {
                 (byte)(value >> 56),
                 (byte)(value >> 48),
                 (byte)(value >> 40),
@@ -559,7 +612,7 @@ namespace Honoo
                 (byte)(value >> 16),
                 (byte)(value >> 8),
                 (byte)value,
-            ];
+            };
         }
 
         /// <summary>
@@ -569,8 +622,8 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] Int64ToLE(long value)
         {
-            return
-            [
+            return new byte[]
+            {
                 (byte)value,
                 (byte)(value >> 8),
                 (byte)(value >> 16),
@@ -579,7 +632,7 @@ namespace Honoo
                 (byte)(value >> 40),
                 (byte)(value >> 48),
                 (byte)(value >> 56),
-            ];
+            };
         }
 
         /// <summary>
@@ -592,7 +645,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static short LEToInt16(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 2)
             {
                 throw new ArgumentException("Input length must be between 1 - 2.");
@@ -620,7 +676,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static int LEToInt32(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 4)
             {
                 throw new ArgumentException("Input length must be between 1 - 4.");
@@ -661,7 +720,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static long LEToInt64(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 8)
             {
                 throw new ArgumentException("Input length must be between 1 - 8.");
@@ -740,7 +802,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static ushort LEToUInt16(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 2)
             {
                 throw new ArgumentException("Input length must be between 1 - 2.");
@@ -768,7 +833,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static uint LEToUInt32(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 4)
             {
                 throw new ArgumentException("Input length must be between 1 - 4.");
@@ -809,7 +877,10 @@ namespace Honoo
         /// <exception cref="Exception" />
         internal static ulong LEToUInt64(byte[] buffer, int offset, int length)
         {
-            ArgumentNullException.ThrowIfNull(buffer);
+            if (buffer is null)
+            {
+                throw new ArgumentNullException(nameof(buffer));
+            }
             if (length <= 0 || length > 8)
             {
                 throw new ArgumentException("Input length must be between 1 - 8.");
@@ -885,7 +956,7 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] UInt16ToBE(ushort value)
         {
-            return [(byte)(value >> 8), (byte)value];
+            return new byte[] { (byte)(value >> 8), (byte)value };
         }
 
         /// <summary>
@@ -895,7 +966,7 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] UInt16ToLE(ushort value)
         {
-            return [(byte)value, (byte)(value >> 8)];
+            return new byte[] { (byte)value, (byte)(value >> 8) };
         }
 
         /// <summary>
@@ -905,7 +976,7 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] UInt32ToBE(uint value)
         {
-            return [(byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value];
+            return new byte[] { (byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value };
         }
 
         /// <summary>
@@ -915,7 +986,7 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] UInt32ToLE(uint value)
         {
-            return [(byte)value, (byte)(value >> 8), (byte)(value >> 16), (byte)(value >> 24)];
+            return new byte[] { (byte)value, (byte)(value >> 8), (byte)(value >> 16), (byte)(value >> 24) };
         }
 
         /// <summary>
@@ -925,8 +996,8 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] UInt64ToBE(ulong value)
         {
-            return
-            [
+            return new byte[]
+            {
                 (byte)(value >> 56),
                 (byte)(value >> 48),
                 (byte)(value >> 40),
@@ -935,7 +1006,7 @@ namespace Honoo
                 (byte)(value >> 16),
                 (byte)(value >> 8),
                 (byte)value,
-            ];
+            };
         }
 
         /// <summary>
@@ -945,8 +1016,8 @@ namespace Honoo
         /// <returns></returns>
         internal static byte[] UInt64ToLE(ulong value)
         {
-            return
-            [
+            return new byte[]
+            {
                 (byte)value,
                 (byte)(value >> 8),
                 (byte)(value >> 16),
@@ -955,7 +1026,7 @@ namespace Honoo
                 (byte)(value >> 40),
                 (byte)(value >> 48),
                 (byte)(value >> 56),
-            ];
+            };
         }
 
         #endregion 转换
