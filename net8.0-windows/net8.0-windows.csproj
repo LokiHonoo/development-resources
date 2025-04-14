@@ -15,10 +15,16 @@
 		<PackageProjectUrl>https://github.com/LokiHonoo/development-resources</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>Development resource and notes.</Description>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
 		<AnalysisLevel>latest-all</AnalysisLevel>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<BaseOutputPath>..\bin\</BaseOutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
 	</PropertyGroup>
-
+	
+	<ItemGroup>
+		<PackageReference Include="System.Management" Version="9.0.3" />
+	</ItemGroup>
+	
 </Project>

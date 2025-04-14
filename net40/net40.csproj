@@ -13,20 +13,15 @@
 	<PackageProjectUrl>https://github.com/LokiHonoo/development-resources</PackageProjectUrl>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<Description>Development resource and notes.</Description>
-	<AnalysisLevel>latest-all</AnalysisLevel>
+	 <EnableNETAnalyzers>True</EnableNETAnalyzers>
+	 <AnalysisLevel>latest-all</AnalysisLevel>
 	<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	<BaseOutputPath>..\bin\</BaseOutputPath>
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MySql.Data">
-			<Version>6.9.12</Version>
-		</PackageReference>
+		<PackageReference Include="MySql.Data" Version="6.9.12" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.111" />
 	</ItemGroup>
-	
-  <ItemGroup>
-    <Reference Include="System.Management" />
-  </ItemGroup>
 
 </Project>

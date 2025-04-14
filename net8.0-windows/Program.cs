@@ -1,4 +1,6 @@
-﻿namespace net8._0_windows
+﻿using System;
+
+namespace Honoo
 {
     internal class Program
     {

@@ -1,7 +1,5 @@
 ﻿using Honoo.IO;
-using Honoo.Windows.Management;
 using System;
-using System.Management;
 using System.Numerics;
 
 namespace Honoo
@@ -15,7 +13,6 @@ namespace Honoo
             TestBinaries();
             TestPermutationAndCombination();
             TestNumericChange();
-            TestWMI();
             Console.ReadKey(true);
         }
 
@@ -33,23 +30,23 @@ namespace Honoo
             byte[] bytes = new byte[19];
             new Random().NextBytes(bytes);
             Console.WriteLine(BitConverter.ToInt16(bytes, 6));
-            Console.WriteLine(Honoo.Binaries.LEToInt16(bytes, 6, 2));
+            Console.WriteLine(Binaries.LEToInt16(bytes, 6, 2));
             Console.WriteLine(BitConverter.ToInt32(bytes, 4));
-            Console.WriteLine(Honoo.Binaries.LEToInt32(bytes, 4, 4));
+            Console.WriteLine(  Binaries.LEToInt32(bytes, 4, 4));
             Console.WriteLine(BitConverter.ToInt64(bytes, 0));
-            Console.WriteLine(Honoo.Binaries.LEToInt64(bytes, 0, 8));
+            Console.WriteLine(Binaries.LEToInt64(bytes, 0, 8));
             Console.WriteLine(BitConverter.ToUInt16(bytes, 6));
-            Console.WriteLine(Honoo.Binaries.LEToUInt16(bytes, 6, 2));
+            Console.WriteLine(Binaries.LEToUInt16(bytes, 6, 2));
             Console.WriteLine(BitConverter.ToUInt32(bytes, 4));
-            Console.WriteLine(Honoo.Binaries.LEToUInt32(bytes, 4, 4));
+            Console.WriteLine(Binaries.LEToUInt32(bytes, 4, 4));
             Console.WriteLine(BitConverter.ToUInt64(bytes, 0));
-            Console.WriteLine(Honoo.Binaries.LEToUInt64(bytes, 0, 8));
+            Console.WriteLine(Binaries.LEToUInt64(bytes, 0, 8));
 
             Console.WriteLine(BitConverter.ToString(bytes));
-            Console.WriteLine(Honoo.Binaries.GetHex(bytes, false));
-            Console.WriteLine(Honoo.Binaries.GetHex(bytes, 0, bytes.Length, false, ":", 4, "    "));
+            Console.WriteLine(Binaries.GetHex(bytes, false));
+            Console.WriteLine(Binaries.GetHex(bytes, 0, bytes.Length, false, ":", 4, "    "));
 
-            Console.WriteLine(Honoo.Binaries.LEToUInt64(Honoo.Binaries.UInt64ToLE(BitConverter.ToUInt64(bytes, 0)), 0, 8));
+            Console.WriteLine(Binaries.LEToUInt64(Binaries.UInt64ToLE(BitConverter.ToUInt64(bytes, 0)), 0, 8));
 
             Console.ReadKey(true);
         }
@@ -96,37 +93,6 @@ namespace Honoo
             Console.ReadKey(true);
         }
 
-        private static void TestWMI()
-        {
-            if (WMI.Query(Win32Class.Win32_Processor, TimeSpan.FromSeconds(2), out ManagementObjectCollection baseObjects) == ManagementStatus.NoError)
-            {
-                foreach (var o in baseObjects)
-                {
-                    Console.WriteLine(o.GetText(TextFormat.Mof));
-                }
-            }
-            if (WMI.Query(Win32Class.Win32_Processor, TimeSpan.FromSeconds(2), TextFormat.Mof, out string[] texts1) == ManagementStatus.NoError)
-            {
-                foreach (var text in texts1)
-                {
-                    Console.WriteLine(text);
-                }
-            }
-            if (WMI.Query(Win32Class.Win32_Processor, TimeSpan.FromSeconds(2), TextFormat.WmiDtd20, out string[] texts2) == ManagementStatus.NoError)
-            {
-                foreach (var text in texts2)
-                {
-                    Console.WriteLine(text);
-                }
-            }
-            if (WMI.Query(Win32Class.Win32_Processor, TimeSpan.FromSeconds(2), TextFormat.CimDtd20, out string[] texts3) == ManagementStatus.NoError)
-            {
-                foreach (var text in texts3)
-                {
-                    Console.WriteLine(text);
-                }
-            }
-            Console.ReadKey(true);
-        }
+   
     }
 }
