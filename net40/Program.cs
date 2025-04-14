@@ -32,7 +32,7 @@ namespace Honoo
             Console.WriteLine(BitConverter.ToInt16(bytes, 6));
             Console.WriteLine(Binaries.LEToInt16(bytes, 6, 2));
             Console.WriteLine(BitConverter.ToInt32(bytes, 4));
-            Console.WriteLine(  Binaries.LEToInt32(bytes, 4, 4));
+            Console.WriteLine(Binaries.LEToInt32(bytes, 4, 4));
             Console.WriteLine(BitConverter.ToInt64(bytes, 0));
             Console.WriteLine(Binaries.LEToInt64(bytes, 0, 8));
             Console.WriteLine(BitConverter.ToUInt16(bytes, 6));
@@ -92,7 +92,5 @@ namespace Honoo
             Console.WriteLine($"permutation n={a.Length} m={m} Due count={permutation.Count}");
             Console.ReadKey(true);
         }
-
-   
     }
 }

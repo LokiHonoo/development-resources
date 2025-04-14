@@ -9,7 +9,6 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Honoo.Drawing
@@ -47,12 +46,12 @@ namespace Honoo.Drawing
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
         internal string szTypeName;
 
-        public override  bool Equals(object obj)
+        public override bool Equals(object obj)
         {
             return obj is SHFILEINFO s && this.hIcon.Equals(s.hIcon);
         }
 
-        public override  int GetHashCode()
+        public override int GetHashCode()
         {
             return base.GetHashCode();
         }
@@ -67,7 +66,7 @@ namespace Honoo.Drawing
             return !(left == right);
         }
 
-        public  bool Equals(SHFILEINFO other)
+        public bool Equals(SHFILEINFO other)
         {
             return other is SHFILEINFO s && this.GetHashCode().Equals(s.GetHashCode());
         }

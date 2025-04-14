@@ -6,15 +6,15 @@ namespace Honoo
 {
     internal class Program
     {
-
         #region Main
-        static void Main()
+
+        private static void Main()
         {
             TestWMI();
             Console.ReadKey(true);
         }
-        #endregion
 
+        #endregion Main
 
         private static void TestWMI()
         {
