@@ -16,7 +16,7 @@ namespace Honoo.Windows
     {
         #region Native
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         private static extern uint SetThreadExecutionState(uint Flags);
 

@@ -19,15 +19,15 @@ namespace Honoo.Windows
 
         #region Native
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         private static extern bool GetConsoleMode(IntPtr consoleHandle, out uint mode);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         private static extern IntPtr GetStdHandle(int consoleHandle);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         private static extern bool SetConsoleMode(IntPtr consoleHandle, uint mode);
 
@@ -75,7 +75,7 @@ namespace Honoo.Windows
 
         #region Native
 
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         private static extern bool SetConsoleCtrlHandler(CtrlHandlerRoutine routine, bool add);
 
