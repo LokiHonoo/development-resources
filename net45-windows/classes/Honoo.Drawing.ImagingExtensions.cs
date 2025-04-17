@@ -8,7 +8,6 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
 namespace Honoo.Drawing
@@ -17,7 +16,7 @@ namespace Honoo.Drawing
     /// Contains information about a file object.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    internal struct SHFILEINFO : IEquatable<SHFILEINFO>
+    internal struct SHFILEINFOA : IEquatable<SHFILEINFOA>
     {
         /// <summary>
         /// A handle to the icon that represents the file. You are responsible for destroying this handle with DestroyIcon when you no longer need it.
@@ -48,7 +47,7 @@ namespace Honoo.Drawing
 
         public override bool Equals(object obj)
         {
-            return obj is SHFILEINFO s && this.hIcon.Equals(s.hIcon);
+            return obj is SHFILEINFOA s && this.hIcon.Equals(s.hIcon);
         }
 
         public override int GetHashCode()
@@ -56,26 +55,26 @@ namespace Honoo.Drawing
             return base.GetHashCode();
         }
 
-        public static bool operator ==(SHFILEINFO left, SHFILEINFO right)
+        public static bool operator ==(SHFILEINFOA left, SHFILEINFOA right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(SHFILEINFO left, SHFILEINFO right)
+        public static bool operator !=(SHFILEINFOA left, SHFILEINFOA right)
         {
             return !(left == right);
         }
 
-        public bool Equals(SHFILEINFO other)
+        public bool Equals(SHFILEINFOA other)
         {
-            return other is SHFILEINFO s && this.GetHashCode().Equals(s.GetHashCode());
+            return other is SHFILEINFOA s && this.GetHashCode().Equals(s.GetHashCode());
         }
     }
 
     /// <summary>
     /// Images class.
     /// </summary>
-    internal static class Images
+    internal static class ImagingExtensions
     {
         /// <summary>
         ///
@@ -238,15 +237,9 @@ namespace Honoo.Drawing
         /// </summary>
         /// <param name="pszPath">A pointer to a null-terminated string of maximum length MAX_PATH that contains the path and file name. Both absolute and relative paths are valid.</param>
         /// <returns></returns>
-        internal static BitmapSource GetFromHIcon(string pszPath)
+        internal static BitmapSource CreateFromHIcon(string pszPath)
         {
-            uint uflags = SHGFI_ICON | SHGFI_USEFILEATTRIBUTES;
-            uint dwFileAttributes = FILE_ATTRIBUTE_NORMAL;
-            if (SHGetFileInfo(pszPath, dwFileAttributes, out SHFILEINFO fi, (uint)Marshal.SizeOf(typeof(SHFILEINFO)), uflags) != 0)
-            {
-                return Imaging.CreateBitmapSourceFromHIcon(fi.hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            }
-            return null;
+            return CreateFromHIcon(pszPath, FILE_ATTRIBUTE_NORMAL, SHGFI_ICON | SHGFI_USEFILEATTRIBUTES, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
         }
 
         /// <summary>
@@ -257,13 +250,9 @@ namespace Honoo.Drawing
         /// <param name="dwFileAttributes">A combination of one or more file attribute flags (FILE_ATTRIBUTE_ values as defined in Winnt.h). If uFlags does not include the SHGFI_USEFILEATTRIBUTES flag, this parameter is ignored.</param>
         /// <param name="uflags">The flags that specify the file information to retrieve. This parameter can be a combination of the following values.</param>
         /// <returns></returns>
-        internal static BitmapSource GetFromHIcon(string pszPath, uint dwFileAttributes, uint uflags)
+        internal static BitmapSource CreateFromHIcon(string pszPath, uint dwFileAttributes, uint uflags)
         {
-            if (SHGetFileInfo(pszPath, dwFileAttributes, out SHFILEINFO fi, (uint)Marshal.SizeOf(typeof(SHFILEINFO)), uflags) != 0)
-            {
-                return Imaging.CreateBitmapSourceFromHIcon(fi.hIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            }
-            return null;
+            return CreateFromHIcon(pszPath, dwFileAttributes, uflags, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
         }
 
         /// <summary>
@@ -275,14 +264,25 @@ namespace Honoo.Drawing
         /// <param name="sourceRect">The size of the source image. Can be Int32Rect.Empty,</param>
         /// <param name="options">A value of the enumeration that specifies how to handle conversions. Can be BitmapSizeOptions.FromEmptyOptions().</param>
         /// <returns></returns>
-        internal static BitmapSource GetFromHIcon(string pszPath, uint dwFileAttributes, uint uflags, Int32Rect sourceRect, BitmapSizeOptions options)
+        internal static BitmapSource CreateFromHIcon(string pszPath, uint dwFileAttributes, uint uflags, Int32Rect sourceRect, BitmapSizeOptions options)
         {
-            if (SHGetFileInfo(pszPath, dwFileAttributes, out SHFILEINFO fi, (uint)Marshal.SizeOf(typeof(SHFILEINFO)), uflags) != 0)
+            if (SHGetFileInfo(pszPath, dwFileAttributes, out SHFILEINFOA fi, (uint)Marshal.SizeOf(typeof(SHFILEINFO)), uflags) != 0)
             {
-                return Imaging.CreateBitmapSourceFromHIcon(fi.hIcon, sourceRect, options);
+                var result = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(fi.hIcon, sourceRect, options);
+                DeleteObject(fi.hIcon);
+                return result;
             }
             return null;
         }
+
+        /// <summary>
+        /// Delete the specified GDI+ object.
+        /// </summary>
+        /// <param name="hObject">Object IntPtr.</param>
+        /// <returns></returns>
+        [DllImport("gdi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        internal static extern bool DeleteObject(IntPtr hObject);
 
         /// <summary>
         /// Get image settings.
@@ -291,9 +291,9 @@ namespace Honoo.Drawing
         /// <param name="dwFileAttributes">A combination of one or more file attribute flags (FILE_ATTRIBUTE_ values as defined in Winnt.h). If uFlags does not include the SHGFI_USEFILEATTRIBUTES flag, this parameter is ignored.</param>
         /// <param name="uflags">The flags that specify the file information to retrieve. This parameter can be a combination of the following values.</param>
         /// <returns></returns>
-        internal static SHFILEINFO? GetSHFILEINFO(string pszPath, uint dwFileAttributes, uint uflags)
+        internal static SHFILEINFOA? GetFileInfo(string pszPath, uint dwFileAttributes, uint uflags)
         {
-            if (SHGetFileInfo(pszPath, dwFileAttributes, out SHFILEINFO fi, (uint)Marshal.SizeOf(typeof(SHFILEINFO)), uflags) != 0)
+            if (SHGetFileInfo(pszPath, dwFileAttributes, out SHFILEINFOA fi, (uint)Marshal.SizeOf(typeof(SHFILEINFO)), uflags) != 0)
             {
                 return fi;
             }
@@ -301,6 +301,7 @@ namespace Honoo.Drawing
         }
 
         [DllImport("shell32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern int SHGetFileInfo(string pszPath, uint dwFileAttributes, out SHFILEINFO psfi, uint cbFileInfo, uint uflags);
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+        private static extern int SHGetFileInfo(string pszPath, uint dwFileAttributes, out SHFILEINFOA psfi, uint cbFileInfo, uint uflags);
     }
 }
